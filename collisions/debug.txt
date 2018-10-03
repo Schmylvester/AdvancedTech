@@ -1,0 +1,2 @@
+Device and swap chain created successfully
+

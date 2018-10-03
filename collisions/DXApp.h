@@ -1,0 +1,52 @@
+#pragma once
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <string>
+#include "DXUtil.h"
+#include "KeyboardInput.h"
+
+class Debug;
+
+class DXApp
+{
+public:
+	DXApp() = delete;
+	DXApp(HINSTANCE h_instance, Debug* _debug);
+	virtual ~DXApp();
+
+	//main application loop
+	int run();
+
+	virtual bool init();
+	virtual void update(float dt) = 0;
+	virtual void render(float dt) = 0;
+	virtual LRESULT msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
+
+	ID3D11Device* getDevice();
+	ID3D11DeviceContext* getContext();
+protected:
+	void setColour(int colour_index);
+	bool initWindow();
+	bool initDirect3D();
+	int quitApp();
+
+	float m_colour[4];
+
+	HWND m_h_app_wnd;
+	HINSTANCE m_h_app_instance;
+	UINT m_client_width = 800;
+	UINT m_client_height = 600;
+	std::string m_app_title;
+	DWORD m_wnd_style;
+
+	ID3D11Device* m_dev = nullptr;
+	ID3D11DeviceContext* m_dev_con = nullptr;
+	IDXGISwapChain* m_swap_chain = nullptr;
+	ID3D11RenderTargetView* m_render_target_view = nullptr;
+	D3D_DRIVER_TYPE m_driver_type;
+	D3D_FEATURE_LEVEL m_feature_level;
+	D3D11_VIEWPORT m_viewport;
+
+	Debug* debugger;
+	KeyboardInput input;
+};
