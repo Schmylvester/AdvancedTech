@@ -1,35 +1,67 @@
 #include "Cube.h"
+#include "RenderCube.h"
+#include "PhysicsCube.h"
 
-Cube::Cube(DXApp* app, Transform transform)
+Cube::Cube(DXApp* app)
 {
-	m_transform = transform;
-	float col = (float)(rand() % 100) / 100;
+	m_render = new RenderCube(app);
+	m_physics = new PhysicsCube();
+	for (int i = 0; i < 8; i++)
+	{
+		m_corners[i].x = (i < 4) ? -1 : 1;
+		m_corners[i].y = ((i / 2) % 2) == 0 ? -1 : 1;
+		m_corners[i].z = (i % 2 == 0) ? -1 : 1;
 
-	float dist[3];
-	dist[0] = transform.scale[0] / 2;
-	dist[1] = transform.scale[1] / 2;
-	dist[2] = transform.scale[2] / 2;
+		m_corners[i].x *= 0.05f;
+		m_corners[i].y *= 0.05f;
+		m_corners[i].z *= 0.05f;
 
-	Triangle* t;
-	Vertex vertices[3];
-	
-	t = new Triangle();
-	t->initPipeline(app);
-	vertices[0] = { transform.position[0] - dist[0], transform.position[1] + dist[1], transform.position[2] + dist[2], col, col, col, 1.0f };
-	vertices[1] = { transform.position[0] + dist[0], transform.position[1] - dist[1], transform.position[2] + dist[2], col, col, col, 1.0f };
-	vertices[2] = { transform.position[0] - dist[0], transform.position[1] - dist[1], transform.position[2] + dist[2], col, col, col, 1.0f };
-	t->setVertices(vertices);
-	m_polygons.push_back(t);
-
-	t = new Triangle();
-	t->initPipeline(app);
-	vertices[0] = { transform.position[0] + dist[0], transform.position[1] - dist[1], transform.position[2] + dist[2], col, col, col, 1.0f };
-	vertices[1] = { transform.position[0] - dist[0], transform.position[1] + dist[1], transform.position[2] + dist[2], col, col, col, 1.0f };
-	vertices[2] = { transform.position[0] + dist[0], transform.position[1] + dist[1], transform.position[2] + dist[2], col, col, col, 1.0f };
-	t->setVertices(vertices);
-	m_polygons.push_back(t);
+		m_render->updateVertices(i, m_corners[i].x, m_corners[i].y, m_corners[i].z);
+		setRenderTriangles();
+	}
 }
 
 Cube::~Cube()
 {
+	Memory::SafeDelete(m_physics);
+	Memory::SafeDelete(m_render);
+}
+
+void Cube::draw()
+{
+	for(int i = 0; i < 8; i++)
+		m_render->updateVertices(i, m_corners[i].x, m_corners[i].y, m_corners[i].z);
+	setRenderTriangles();
+	m_render->draw();
+}
+
+void Cube::tick(float dt)
+{
+	Vector3 old_pos = m_position;
+	m_physics->tick(m_position, m_rotation, dt);
+	if (old_pos != m_position)
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			m_corners[i].x += (m_position.x - old_pos.x);
+			m_corners[i].y += (m_position.y - old_pos.y);
+			m_corners[i].z += (m_position.z - old_pos.z);
+		}
+	}
+}
+
+void Cube::setRenderTriangles()
+{
+	m_render->setTriangleValues(0, 1, 7, 5);
+	m_render->setTriangleValues(1, 3, 7, 1);
+	m_render->setTriangleValues(2, 5, 7, 4);
+	m_render->setTriangleValues(3, 4, 7, 6);
+	m_render->setTriangleValues(4, 6, 7, 3);
+	m_render->setTriangleValues(5, 4, 6, 0);
+	m_render->setTriangleValues(6, 0, 6, 2);
+	m_render->setTriangleValues(7, 2, 6, 3);
+	m_render->setTriangleValues(8, 0, 2, 3);
+	m_render->setTriangleValues(9, 3, 1, 0);
+	m_render->setTriangleValues(10, 5, 4, 1);
+	m_render->setTriangleValues(11, 1, 4, 0);
 }

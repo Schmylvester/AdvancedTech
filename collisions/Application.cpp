@@ -21,21 +21,15 @@ bool Application::init()
 		return false;
 	}
 
-	Transform cube_transform;
-	cube_transform.position[0] = 0;
-	cube_transform.position[1] = 0;
-	cube_transform.position[2] = 0;
-	cube_transform.scale[0] = 1;
-	cube_transform.scale[1] = 1;
-	cube_transform.scale[2] = 1;
-	m_cube = new Cube(this, cube_transform);
+	m_cube = new Cube(this);
 
 	return true;
 }
 
 void Application::update(float dt)
 {
-	input.clearInputs();
+	input.tick();
+	m_cube->tick(dt);
 }
 
 void Application::render(float dt)

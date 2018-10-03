@@ -2,6 +2,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <string>
+#include <time.h>
 #include "DXUtil.h"
 #include "KeyboardInput.h"
 
@@ -24,11 +25,13 @@ public:
 
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getContext();
+	float getWidthHeightRatio();
 protected:
 	void setColour(int colour_index);
 	bool initWindow();
 	bool initDirect3D();
 	int quitApp();
+	float getDeltaTime();
 
 	float m_colour[4];
 
@@ -49,4 +52,5 @@ protected:
 
 	Debug* debugger;
 	KeyboardInput input;
+	clock_t last_clock = clock();
 };

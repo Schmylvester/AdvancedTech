@@ -1,10 +1,15 @@
 ﻿  Application.cpp
+c:\users\hitti\desktop\directx\collisions\collisions\application.cpp(31): error C2039: 'clearInputs': is not a member of 'KeyboardInput'
+  c:\users\hitti\desktop\directx\collisions\collisions\keyboardinput.h(12): note: see declaration of 'KeyboardInput'
   DXApp.cpp
 c:\users\hitti\desktop\directx\collisions\collisions\dxapp.cpp(102): warning C4838: conversion from 'UINT' to 'LONG' requires a narrowing conversion
 c:\users\hitti\desktop\directx\collisions\collisions\dxapp.cpp(166): warning C4018: '<': signed/unsigned mismatch
 c:\users\hitti\desktop\directx\collisions\collisions\dxapp.cpp(197): warning C4244: '=': conversion from 'UINT' to 'FLOAT', possible loss of data
 c:\users\hitti\desktop\directx\collisions\collisions\dxapp.cpp(198): warning C4244: '=': conversion from 'UINT' to 'FLOAT', possible loss of data
+  KeyboardInput.cpp
+c:\users\hitti\desktop\directx\collisions\collisions\keyboardinput.cpp(11): warning C4018: '<': signed/unsigned mismatch
+c:\users\hitti\desktop\directx\collisions\collisions\keyboardinput.cpp(37): warning C4018: '<': signed/unsigned mismatch
+  RenderCube.cpp
   Triangle.cpp
   winmain.cpp
   Generating Code...
-  collisions.vcxproj -> C:\Users\hitti\Desktop\DirectX\collisions\Debug\collisions.exe

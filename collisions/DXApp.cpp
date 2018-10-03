@@ -55,8 +55,8 @@ int DXApp::run()
 		}
 		else
 		{
-			update(0);
-			render(0);
+			update(getDeltaTime());
+			render(getDeltaTime());
 		}
 	}
 	return static_cast<int>(msg.wParam);
@@ -208,6 +208,13 @@ int DXApp::quitApp()
 	return 0;
 }
 
+float DXApp::getDeltaTime()
+{
+	float f = float(clock() - last_clock) / CLOCKS_PER_SEC;
+	last_clock = clock();
+	return f;
+}
+
 LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 {
 	switch (msg)
@@ -219,19 +226,10 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 		{
 			return quitApp();
 		}
-		if (w_param == 0x42)
-		{
-			setColour(2);
-		}
-		if (w_param == 0x47)
-		{
-			setColour(1);
-		}
-		if (w_param == 0x52)
-		{
-			setColour(0);
-		}
 		input.keyDown(w_param);
+		break;
+	case WM_KEYUP:
+		input.keyUp(w_param);
 		break;
 	case WM_LBUTTONDOWN:	//click
 	default:
@@ -248,6 +246,11 @@ ID3D11Device * DXApp::getDevice()
 ID3D11DeviceContext * DXApp::getContext()
 {
 	return m_dev_con;
+}
+
+float DXApp::getWidthHeightRatio()
+{
+	return (float)m_client_width / m_client_height;
 }
 
 void DXApp::setColour(int colour_index)
