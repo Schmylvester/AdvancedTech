@@ -4,11 +4,19 @@
 class PhysicsCube
 {
 public:
-	PhysicsCube();
-	~PhysicsCube();
+	PhysicsCube(Vector3* pos);
 
-	void tick(Vector3& pos, Vector3 rot, float dt);
+	void tick(float dt);
+	void setGravity(float _gravity);
+	bool intersection(Vector3 other_pos);
+
+	Vector3 getPos();
+	void collide(PhysicsCube* col);
 private:
-	float m_gravity = 0.01f;
+	Vector3 m_speed = Vector3(0.0f, 0.0f, 0.0f);
+	float m_bounciness = 0.8f;
+	float m_gravity = 0.2f;
+
+	Vector3* m_position;
 };
 

@@ -11,11 +11,13 @@ class PhysicsCube;
 class Cube
 {
 public:
-	Cube(DXApp* app);
+	Cube(DXApp * app, float colour[4], Vector3 position);
 	~Cube();
 
 	void draw();
 	void tick(float dt);
+
+	PhysicsCube* getPhysics();
 private:
 	Vector3 m_position;
 	Vector3 m_rotation;
