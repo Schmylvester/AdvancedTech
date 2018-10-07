@@ -1,5 +1,6 @@
 #pragma once
 #include "DXApp.h"
+#include "CollisionDetection.h"
 
 class Cube;
 class Application : public DXApp
@@ -12,6 +13,8 @@ public:
 	void update(float dt) override;
 	void render(float dt) override;
 private:
-	Cube* m_cube;
+	CollisionDetection m_collision_detection;
+	Cube* m_fall_cube;
+	Cube* m_static_cube;
 };
 

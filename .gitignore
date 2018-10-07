@@ -5,6 +5,7 @@
 /.vs/collisions/v15/ipch/AutoPCH/1e1ef2e484ee5856/WINMAIN.ipch
 *.ipch
 *.opendb
-*.tlog
-*.db
-*.suo
+.tlog
+.db
+.suo
+.log

@@ -121,6 +121,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="PhysicsCube.cpp" />
     <ClCompile Include="RenderCube.cpp" />
@@ -133,6 +134,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="CollisionDetection.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="PhysicsCube.h" />
     <ClInclude Include="RenderCube.h" />
