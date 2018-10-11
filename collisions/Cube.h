@@ -1,6 +1,6 @@
 #pragma once
 #include "Geometry.h"
-#include <SimpleMath.h>
+#include "Transform.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -11,7 +11,7 @@ class PhysicsCube;
 class Cube
 {
 public:
-	Cube(DXApp * app, float colour[4], Vector3 position);
+	Cube(DXApp * app, float colour[4], Transform transform);
 	~Cube();
 
 	void draw();
@@ -19,9 +19,7 @@ public:
 
 	PhysicsCube* getPhysics();
 private:
-	Vector3 m_position;
-	Vector3 m_rotation;
-	Vector3 m_scale;
+	Transform m_transform;
 
 	Vector3 m_corners[8];
 	RenderCube* m_render;

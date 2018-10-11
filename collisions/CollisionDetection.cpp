@@ -14,7 +14,7 @@ void CollisionDetection::checkCollisions()
 		{
 			if (m_cubes[i] && m_cubes[j])
 			{
-				if (m_cubes[i]->intersection(m_cubes[j]->getPos()))
+				if (m_cubes[i]->AABBintersection(m_cubes[j]->getTransform()))
 				{
 					m_cubes[i]->collide(m_cubes[j]);
 					m_cubes[j]->collide(m_cubes[i]);

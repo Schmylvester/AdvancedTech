@@ -4,19 +4,21 @@
 class PhysicsCube
 {
 public:
-	PhysicsCube(Vector3* pos);
+	PhysicsCube(Transform* object_transform);
 
 	void tick(float dt);
 	void setGravity(float _gravity);
-	bool intersection(Vector3 other_pos);
+	bool AABBintersection(Transform other_tfm);
 
-	Vector3 getPos();
+	Transform getTransform();
+	
 	void collide(PhysicsCube* col);
+	float getBounce();
 private:
 	Vector3 m_speed = Vector3(0.0f, 0.0f, 0.0f);
 	float m_bounciness = 0.8f;
-	float m_gravity = 0.2f;
+	float m_gravity = 0.02f;
 
-	Vector3* m_position;
+	Transform* m_transform;
 };
 

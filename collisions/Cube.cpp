@@ -3,24 +3,24 @@
 #include "PhysicsCube.h"
 #include "DXApp.h"
 
-Cube::Cube(DXApp* app, float colour[4], Vector3 position)
+Cube::Cube(DXApp * app, float colour[4], Transform transform)
 {
-	m_position = position;
+	m_transform = transform;
 	m_render = new RenderCube(app, colour);
-	m_physics = new PhysicsCube(&m_position);
+	m_physics = new PhysicsCube(&m_transform);
 	for (int i = 0; i < 8; i++)
 	{
 		m_corners[i].x = (i < 4) ? -1 : 1;
 		m_corners[i].x *= (0.05f / app->getWidthHeightRatio());
-		m_corners[i].x += position.x;
+		m_corners[i].x += m_transform.getPos().x;
 
 		m_corners[i].y = ((i / 2) % 2) == 0 ? -1 : 1;
 		m_corners[i].y *= 0.05f;
-		m_corners[i].y += position.y;
+		m_corners[i].y += m_transform.getPos().y;
 
 		m_corners[i].z = (i % 2 == 0) ? -1 : 1;
 		m_corners[i].z *= 0.05f;
-		m_corners[i].z += position.z;
+		m_corners[i].z += m_transform.getPos().z;
 
 		m_render->updateVertices(i, m_corners[i].x, m_corners[i].y, m_corners[i].z);
 		setRenderTriangles();
@@ -43,15 +43,13 @@ void Cube::draw()
 
 void Cube::tick(float dt)
 {
-	Vector3 old_pos = m_position;
+	Vector3 old_pos = m_transform.getPos();
 	m_physics->tick(dt);
-	if (old_pos != m_position)
+	if (old_pos != m_transform.getPos())
 	{
 		for (int i = 0; i < 8; i++)
 		{
-			m_corners[i].x += (m_position.x - old_pos.x);
-			m_corners[i].y += (m_position.y - old_pos.y);
-			m_corners[i].z += (m_position.z - old_pos.z);
+			m_corners[i] += (m_transform.getPos() - old_pos);
 		}
 	}
 }

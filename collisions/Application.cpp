@@ -23,11 +23,13 @@ bool Application::init()
 	}
 
 	float colour[4]{ 4,1 };
-	m_fall_cube = new Cube(this, colour, Vector3(0.01f, 0, 0));
+	Transform transform(0.01f);
+	m_fall_cube = new Cube(this, colour, transform);
 	m_collision_detection.addPhysicsObject(m_fall_cube->getPhysics());
 
 	colour[1] = 0;
-	m_static_cube = new Cube(this, colour, Vector3(0, -0.5f, 0.0f));
+	transform.setPos(Vector3(0, -0.5f, 0.0f));
+	m_static_cube = new Cube(this, colour, transform);
 	m_static_cube->getPhysics()->setGravity(0);
 	m_collision_detection.addPhysicsObject(m_static_cube->getPhysics());
 	return true;

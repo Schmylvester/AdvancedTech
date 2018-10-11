@@ -1,13 +1,2 @@
-﻿  Application.cpp
-  CollisionDetection.cpp
-c:\users\hitti\onedrive\documents\university work\thirdyear\advanced technologies\directx\collisions\collisions\collisiondetection.cpp(11): warning C4018: '<': signed/unsigned mismatch
-c:\users\hitti\onedrive\documents\university work\thirdyear\advanced technologies\directx\collisions\collisions\collisiondetection.cpp(13): warning C4018: '<': signed/unsigned mismatch
-  Cube.cpp
-c:\users\hitti\onedrive\documents\university work\thirdyear\advanced technologies\directx\collisions\collisions\cube.cpp(13): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\hitti\onedrive\documents\university work\thirdyear\advanced technologies\directx\collisions\collisions\cube.cpp(17): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-c:\users\hitti\onedrive\documents\university work\thirdyear\advanced technologies\directx\collisions\collisions\cube.cpp(21): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  PhysicsCube.cpp
-  RenderCube.cpp
-  Generating Code...
-  LINK : C:\Users\hitti\OneDrive\Documents\University Work\thirdYear\Advanced Technologies\DirectX\collisions\Debug\collisions.exe not found or not built by the last incremental link; performing full link
+﻿  PhysicsCube.cpp
   collisions.vcxproj -> C:\Users\hitti\OneDrive\Documents\University Work\thirdYear\Advanced Technologies\DirectX\collisions\Debug\collisions.exe
