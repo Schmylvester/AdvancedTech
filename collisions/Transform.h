@@ -8,7 +8,7 @@ class Transform
 public:
 	Transform(float p_x = 0, float p_y = 0, float p_z = 0,
 		float r_x = 0, float r_y = 0, float r_z = 0,
-		float s_x = 1, float s_y = 1, float s_z = 1);
+		float s_x = 0.05f, float s_y = 0.05f, float s_z = 0.05f);
 	~Transform();
 
 #pragma region GettersSetters

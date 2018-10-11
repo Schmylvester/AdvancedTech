@@ -5,9 +5,9 @@
 #include <time.h>
 #include "DXUtil.h"
 #include "KeyboardInput.h"
-
+#include <SimpleMath.h>
 class Debug;
-
+using namespace DirectX;
 class DXApp
 {
 public:

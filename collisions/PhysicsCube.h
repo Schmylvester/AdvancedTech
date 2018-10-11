@@ -17,7 +17,7 @@ public:
 private:
 	Vector3 m_speed = Vector3(0.0f, 0.0f, 0.0f);
 	float m_bounciness = 0.8f;
-	float m_gravity = 0.02f;
+	float m_gravity = 0.2f;
 
 	Transform* m_transform;
 };

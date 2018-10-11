@@ -3,7 +3,6 @@
 PhysicsCube::PhysicsCube(Transform* object_transform)
 {
 	m_transform = object_transform;
-	m_transform->setScl(m_transform->getScl() * 0.05f);
 	m_speed = Vector3(0, 0, 0);
 }
 
@@ -47,7 +46,8 @@ Transform PhysicsCube::getTransform()
 
 void PhysicsCube::collide(PhysicsCube * col)
 {
-	m_speed *= -(m_bounciness * col->getBounce());
+	if(m_speed.y < 0)
+		m_speed *= -(m_bounciness * col->getBounce());
 }
 
 float PhysicsCube::getBounce()
