@@ -1,59 +1,40 @@
 #include "Transform.h"
 
-Transform::Transform(float p_x, float p_y, float p_z,
-	float r_x, float r_y, float r_z, float s_x, float s_y, float s_z)
-{
-	position.x = p_x;
-	position.y = p_y;
-	position.z = p_z;
-	rotation.x = r_x;
-	rotation.y = r_y;
-	rotation.z = r_z;
-	scale.x = s_x;
-	scale.y = s_y;
-	scale.z = s_z;
-}
-
-Transform::~Transform()
-{
-}
-
-#pragma region Operators
-bool Transform::operator ==(Transform t)
-{
-	return position == t.position &&
-		rotation == t.rotation &&
-		scale == t.scale;
-}
-bool Transform::operator !=(Transform t)
-{
-	return !(*this == t);
-}
-#pragma endregion
-
 #pragma region GettersSetters
 Vector3 Transform::getPos()
 {
-	return position;
+	return position_matrix.r[3];
 }
-void Transform::setPos(Vector3 _position)
+void Transform::move(float x, float y, float z)
 {
-	position = _position;
+	position_matrix *= DirectX::XMMatrixTranslation(x, y, z);
 }
 Vector3 Transform::getRot()
 {
-	return rotation;
+	return Vector3();
 }
-void Transform::setRot(Vector3 _rotation)
+void Transform::rotate(char axis, float rot)
 {
-	rotation = _rotation;
+	switch (axis)
+	{
+	case 'x':
+		rotation_matrix *= DirectX::XMMatrixRotationX(rot);
+		break;
+	case 'y':
+		rotation_matrix *= DirectX::XMMatrixRotationY(rot);
+		break;
+	case 'z':
+		rotation_matrix *= DirectX::XMMatrixRotationZ(rot);
+		break;
+	}
 }
-Vector3 Transform::getScl()
+float Transform::getScl()
 {
 	return scale;
 }
-void Transform::setScl(Vector3 _scale)
-{
-	scale = _scale;
-}
 #pragma endregion
+void Transform::update()
+{
+	world_matrix = rotation_matrix;
+	world_matrix *= position_matrix;
+}

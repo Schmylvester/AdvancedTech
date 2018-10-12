@@ -1,7 +1,7 @@
 #include "CollisionDetection.h"
-#include "PhysicsCube.h"
+#include "Collider.h"
 
-void CollisionDetection::addPhysicsObject(PhysicsCube * _object)
+void CollisionDetection::addPhysicsObject(Collider * _object)
 {
 	m_cubes.push_back(_object);
 }
@@ -14,7 +14,7 @@ void CollisionDetection::checkCollisions()
 		{
 			if (m_cubes[i] && m_cubes[j])
 			{
-				if (m_cubes[i]->AABBintersection(m_cubes[j]->getTransform()))
+				if (m_cubes[i]->intersect(m_cubes[j]))
 				{
 					m_cubes[i]->collide(m_cubes[j]);
 					m_cubes[j]->collide(m_cubes[i]);

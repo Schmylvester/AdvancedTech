@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "PhysicsCube.h"
+#include "BoxCollider.h"
 
 Application::Application(HINSTANCE h_instance, Debug* _debug) : DXApp(h_instance, _debug)
 {
@@ -22,14 +22,12 @@ bool Application::init()
 		return false;
 	}
 
-	float colour[4]{ 4,1 };
-	Transform transform(0.01f);
-	m_fall_cube = new Cube(this, colour, transform);
+	float colour[4]{ 1,1,1,1 };
+	m_fall_cube = new Cube(this, colour);
 	m_collision_detection.addPhysicsObject(m_fall_cube->getPhysics());
 
-	colour[1] = 0;
-	transform.setPos(Vector3(0, -0.5f, 0.0f));
-	m_static_cube = new Cube(this, colour, transform);
+	m_static_cube = new Cube(this, colour);
+	m_static_cube->move(0, -0.5f, 0);
 	m_static_cube->getPhysics()->setGravity(0);
 	m_collision_detection.addPhysicsObject(m_static_cube->getPhysics());
 	return true;

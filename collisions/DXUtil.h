@@ -3,7 +3,9 @@
 #pragma comment(lib, "d3d11.lib")
 #include <D3Dcompiler.h>
 #pragma comment(lib, "D3DCompiler.lib")
+#include <SimpleMath.h>
 
+using namespace DirectX;
 namespace Memory
 {
 	template <class T> void SafeDelete(T& t)

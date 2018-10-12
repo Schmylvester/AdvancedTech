@@ -122,9 +122,10 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="PhysicsCube.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="RenderCube.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="DXApp.cpp" />
@@ -137,9 +138,10 @@
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionDetection.h" />
     <ClInclude Include="Cube.h" />
-    <ClInclude Include="PhysicsCube.h" />
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="RenderCube.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DXApp.h" />

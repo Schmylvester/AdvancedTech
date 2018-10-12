@@ -25,6 +25,12 @@
     <Filter Include="Header Files\Renderer">
       <UniqueIdentifier>{4676b730-5dfd-42a7-9312-e9ecdd6387aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Colliders">
+      <UniqueIdentifier>{a1a1f071-2181-45f2-8bd7-18c7fb3417dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Colliders">
+      <UniqueIdentifier>{d6553a69-a75b-4565-9601-0247770064be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -48,9 +54,6 @@
     <ClCompile Include="RenderCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsCube.cpp">
-      <Filter>Source Files\Cube</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionDetection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,6 +69,12 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Source Files\Cube</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -79,9 +88,6 @@
     </ClInclude>
     <ClInclude Include="Geometry.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsCube.h">
-      <Filter>Header Files\Cube</Filter>
     </ClInclude>
     <ClInclude Include="RenderCube.h">
       <Filter>Header Files\Cube</Filter>
@@ -106,6 +112,12 @@
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Header Files\Cube</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

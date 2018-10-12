@@ -7,8 +7,9 @@ Triangle::~Triangle()
 	Memory::SafeRelease(m_vtx_shader);
 }
 
-void Triangle::initPipeline(DXApp* app)
+void Triangle::initPipeline(DXApp* app, XMMATRIX* _world_matrix)
 {
+	m_world_matrix = _world_matrix;
 	m_app = app;
 	auto device = app->getDevice();
 	ID3D10Blob *VS, *PS;
@@ -57,14 +58,32 @@ void Triangle::draw()
 	context->Draw(3, 0);
 }
 
-void Triangle::setVertices(Vertex vertices[3])
+void Triangle::initVertices(Vertex _vertices[3])
 {
-	m_vertices[0] = vertices[0];
-	m_vertices[1] = vertices[1];
-	m_vertices[2] = vertices[2];
+	m_vertices[0] = _vertices[0];
+	m_vertices[1] = _vertices[1];
+	m_vertices[2] = _vertices[2];
 
 	D3D11_MAPPED_SUBRESOURCE ms;
 	m_app->getContext()->Map(m_vtx_buffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
 	memcpy(ms.pData, m_vertices, sizeof(m_vertices));
+	m_app->getContext()->Unmap(m_vtx_buffer, NULL);
+}
+
+void Triangle::setVertices(Vertex _vertices[3])
+{
+	Vertex render_vert[3];
+	for (int i = 0; i < 3; i++)
+	{
+		DirectX::XMFLOAT3 v_float = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z };
+		XMVECTOR vec = XMLoadFloat3(&v_float);
+		vec = XMVector3Transform(vec, *m_world_matrix);
+		XMStoreFloat3(&v_float, vec);
+		render_vert[i] = { v_float.x, v_float.y, v_float.z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };
+	}
+	
+	D3D11_MAPPED_SUBRESOURCE ms;
+	m_app->getContext()->Map(m_vtx_buffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
+	memcpy(ms.pData, render_vert, sizeof(render_vert));
 	m_app->getContext()->Unmap(m_vtx_buffer, NULL);
 }

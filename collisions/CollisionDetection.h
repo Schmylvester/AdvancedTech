@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
 
-class PhysicsCube;
+class Collider;
 class CollisionDetection
 {
 public:
-	void addPhysicsObject(PhysicsCube* _object);
+	void addPhysicsObject(Collider* _object);
 	void checkCollisions();
 private:
-	std::vector<PhysicsCube*> m_cubes;
+	std::vector<Collider*> m_cubes;
 };

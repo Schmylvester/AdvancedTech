@@ -6,28 +6,31 @@ using namespace DirectX::SimpleMath;
 class Transform
 {
 public:
-	Transform(float p_x = 0, float p_y = 0, float p_z = 0,
-		float r_x = 0, float r_y = 0, float r_z = 0,
-		float s_x = 0.05f, float s_y = 0.05f, float s_z = 0.05f);
-	~Transform();
+	Transform() = default;
+	~Transform() = default;
 
 #pragma region GettersSetters
 	Vector3 getPos();
-	void setPos(Vector3 _position);
+	void move(float x, float y, float z);
 
 	Vector3 getRot();
-	void setRot(Vector3 _rotation);
+	void rotate(char axis, float rot);
 
-	Vector3 getScl();
-	void setScl(Vector3 _scale);
+	float getScl();
+
+	DirectX::XMMATRIX* getMatrix()
+	{
+		return &world_matrix;
+	}
 #pragma endregion
-#pragma region Operators
-	bool operator ==(Transform t);
-	bool operator !=(Transform t);
-#pragma endregion
+	void update();
 
 private:
-	Vector3 position;
-	Vector3 rotation;
-	Vector3 scale;
+
+	DirectX::XMMATRIX position_matrix = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX rotation_matrix = DirectX::XMMatrixIdentity();
+
+	DirectX::XMMATRIX world_matrix = DirectX::XMMatrixIdentity();
+
+	float scale = 0.05f;
 };
