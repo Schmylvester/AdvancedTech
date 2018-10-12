@@ -18,7 +18,8 @@ public:
 protected:
 	virtual void collisionEnter(Collider* col);
 	virtual void collisionExit(Collider* col);
-	Vector3 m_speed = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 m_move_speed = Vector3(0.0f, 0.0f, 0.0f);
+	Vector3 m_rotate_speed = Vector3(0.0f, 0.0f, 0.0f);
 	float m_bounciness = 1;
 	float m_gravity = 0.2f;
 

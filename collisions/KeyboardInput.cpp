@@ -1,11 +1,11 @@
 #include "KeyboardInput.h"
 
-void KeyboardInput::keyDown(int key_id)
+void KeyboardInput::keyDown(KeyBind key_id)
 {
 	key_down.push_back(key_id);
 	key.push_back(key_id);
 }
-void KeyboardInput::keyUp(int key_id)
+void KeyboardInput::keyUp(KeyBind key_id)
 {
 	key_up.push_back(key_id);
 	for (int i = 0; i < key.size(); i++)
@@ -17,9 +17,9 @@ void KeyboardInput::keyUp(int key_id)
 	}
 }
 
-bool KeyboardInput::searchInputs(int key_id, KeyState type)
+bool KeyboardInput::searchInputs(KeyBind key_id, KeyState type)
 {
-	std::vector<int>* check = nullptr;
+	std::vector<KeyBind>* check = nullptr;
 	switch (type)
 	{
 	case KeyState::DOWN:

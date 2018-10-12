@@ -4,7 +4,6 @@
 BoxCollider::BoxCollider(Transform* object_transform)
 {
 	m_transform = object_transform;
-	m_speed = Vector3(0, 0, 0);
 }
 
 bool BoxCollider::intersect(Collider* col)

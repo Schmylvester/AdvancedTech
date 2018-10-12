@@ -78,12 +78,15 @@ void Triangle::setVertices(Vertex _vertices[3])
 	{
 		DirectX::XMFLOAT3 v_float = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z };
 		XMVECTOR vec = XMLoadFloat3(&v_float);
-		*m_world_matrix *= *m_view_matrix;
-		vec = XMVector3Transform(vec, *m_world_matrix);
+		XMMATRIX perspective_matrix = XMMatrixPerspectiveFovLH(1.1f, m_app->getRatio(), 0.001f, 10);
+		XMMATRIX new_matrix = *m_world_matrix * *m_view_matrix * perspective_matrix;
+		//new_matrix[3,2] = new_matrix[3, 2] < 0 ? 0 : new_matrix[3, 2];
+		//new_matrix[3,2] = new_matrix[3, 2] > 1 ? 1 : new_matrix[3, 2];
+		vec = XMVector3Transform(vec, new_matrix);
 		XMStoreFloat3(&v_float, vec);
 		render_vert[i] = { v_float.x, v_float.y, v_float.z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };
 	}
-	
+
 	D3D11_MAPPED_SUBRESOURCE ms;
 	m_app->getContext()->Map(m_vtx_buffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
 	memcpy(ms.pData, render_vert, sizeof(render_vert));

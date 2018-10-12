@@ -1,6 +1,13 @@
 #pragma once
 #include <vector>
 
+enum class KeyBind
+{
+	Esc = 27,
+	Space = 32,
+	A = 65, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+};
+
 enum class KeyState
 {
 	DOWN,
@@ -14,14 +21,14 @@ public:
 	KeyboardInput() = default;
 	~KeyboardInput() = default;
 
-	void keyDown(int key_id);
-	void keyUp(int key_id);
-	bool searchInputs(int key_id, KeyState type);
+	void keyDown(KeyBind key_id);
+	void keyUp(KeyBind key_id);
+	bool searchInputs(KeyBind key_id, KeyState type);
 	void tick();
 
 private:
-	std::vector<int> key_down;
-	std::vector<int> key;
-	std::vector<int> key_up;
+	std::vector<KeyBind> key_down;
+	std::vector<KeyBind> key;
+	std::vector<KeyBind> key_up;
 };
 

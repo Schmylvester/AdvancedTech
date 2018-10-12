@@ -13,7 +13,7 @@ class DXApp
 {
 public:
 	DXApp() = delete;
-	DXApp(HINSTANCE h_instance, Debug* _debug);
+	DXApp(HINSTANCE h_instance);
 	virtual ~DXApp();
 
 	//main application loop
@@ -26,10 +26,12 @@ public:
 
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getContext();
-	float getWidthHeightRatio();
+	float getRatio();
 
 	Camera* getCam();
 protected:
+	float fps;
+
 	void setColour(int colour_index);
 	bool initWindow();
 	bool initDirect3D();

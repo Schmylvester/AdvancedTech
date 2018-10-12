@@ -14,10 +14,9 @@ LRESULT CALLBACK MainWindProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_para
 	return DefWindowProc(hwnd, msg, w_param, l_param);
 }
 
-DXApp::DXApp(HINSTANCE h_instance, Debug * _debug)
+DXApp::DXApp(HINSTANCE h_instance)
+	: m_cam(&input)
 {
-	debugger = _debug;
-
 	m_h_app_instance = h_instance;
 	m_h_app_wnd = NULL;
 	m_app_title = "3D Collisions";
@@ -55,8 +54,9 @@ int DXApp::run()
 		}
 		else
 		{
-			update(getDeltaTime());
-			render(getDeltaTime());
+			float dt = getDeltaTime();
+			update(dt);
+			render(dt);
 		}
 	}
 	return static_cast<int>(msg.wParam);
@@ -211,6 +211,7 @@ int DXApp::quitApp()
 float DXApp::getDeltaTime()
 {
 	float f = float(clock() - last_clock) / CLOCKS_PER_SEC;
+	fps = 1 / f;
 	last_clock = clock();
 	return f;
 }
@@ -226,10 +227,10 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 		{
 			return quitApp();
 		}
-		input.keyDown(w_param);
+		input.keyDown((KeyBind)w_param);
 		break;
 	case WM_KEYUP:
-		input.keyUp(w_param);
+		input.keyUp((KeyBind)w_param);
 		break;
 	case WM_LBUTTONDOWN:	//click
 	default:
@@ -248,13 +249,13 @@ ID3D11DeviceContext * DXApp::getContext()
 	return m_dev_con;
 }
 
-float DXApp::getWidthHeightRatio()
+float DXApp::getRatio()
 {
 	return (float)m_client_width / m_client_height;
 }
 
 void DXApp::setColour(int colour_index)
-{	
+{
 	m_colour[colour_index] = m_colour[colour_index] >= 1 ? 0 : m_colour[colour_index] + 0.1f;
 }
 

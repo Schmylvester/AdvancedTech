@@ -41,9 +41,6 @@ void Cube::draw()
 void Cube::tick(float dt)
 {
 	m_physics->tick(dt);
-	rotate('x', 0.4f * dt);
-	rotate('y', 1.9f * dt);
-	rotate('z', 3.9f * dt);
 }
 
 void Cube::move(float x, float y, float z)
