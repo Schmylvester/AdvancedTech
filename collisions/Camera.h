@@ -1,10 +1,10 @@
-#include <DirectXMath.h>
-
+#include "Transform.h"
 class Camera
 {
 public:
 	Camera();
 	~Camera();
 
-	DirectX::XMMATRIX matrix;	//hey it has a matrix
+	Transform transform;
+	void tick(float dt);
 };

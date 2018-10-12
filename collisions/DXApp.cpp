@@ -257,3 +257,8 @@ void DXApp::setColour(int colour_index)
 {	
 	m_colour[colour_index] = m_colour[colour_index] >= 1 ? 0 : m_colour[colour_index] + 0.1f;
 }
+
+Camera * DXApp::getCam()
+{
+	return &m_cam;
+}

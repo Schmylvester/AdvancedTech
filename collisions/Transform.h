@@ -16,7 +16,8 @@ public:
 	Vector3 getRot();
 	void rotate(char axis, float rot);
 
-	float getScl();
+	void setScl(float x, float y, float z);
+	Vector3 getScl();
 
 	DirectX::XMMATRIX* getMatrix()
 	{
@@ -32,5 +33,5 @@ private:
 
 	DirectX::XMMATRIX world_matrix = DirectX::XMMatrixIdentity();
 
-	float scale = 0.05f;
+	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
 };

@@ -1,7 +1,7 @@
 #include "RenderCube.h"
 #include "DXApp.h"
 
-RenderCube::RenderCube(DXApp* app, float colour[4], XMMATRIX* _world_matrix)
+RenderCube::RenderCube(DXApp* app, float colour[4], DirectX::XMMATRIX* _world_matrix)
 {
 	m_app = app;
 
@@ -36,7 +36,7 @@ void RenderCube::updateVertices(int i, float x, float y, float z)
 	m_vertices[i].Z = z;
 }
 
-void RenderCube::createTriangle(XMMATRIX* _world_matrix)
+void RenderCube::createTriangle(DirectX::XMMATRIX* _world_matrix)
 {
 	Triangle* t = new Triangle();
 	t->initPipeline(m_app, _world_matrix);

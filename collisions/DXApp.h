@@ -4,8 +4,9 @@
 #include <string>
 #include <time.h>
 #include "DXUtil.h"
-#include "KeyboardInput.h"
 #include <SimpleMath.h>
+#include "Camera.h"
+#include "KeyboardInput.h"
 class Debug;
 using namespace DirectX;
 class DXApp
@@ -26,6 +27,8 @@ public:
 	ID3D11Device* getDevice();
 	ID3D11DeviceContext* getContext();
 	float getWidthHeightRatio();
+
+	Camera* getCam();
 protected:
 	void setColour(int colour_index);
 	bool initWindow();
@@ -33,6 +36,7 @@ protected:
 	int quitApp();
 	float getDeltaTime();
 
+	Camera m_cam;
 	float m_colour[4];
 
 	HWND m_h_app_wnd;

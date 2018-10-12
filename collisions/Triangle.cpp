@@ -7,9 +7,10 @@ Triangle::~Triangle()
 	Memory::SafeRelease(m_vtx_shader);
 }
 
-void Triangle::initPipeline(DXApp* app, XMMATRIX* _world_matrix)
+void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix)
 {
 	m_world_matrix = _world_matrix;
+	m_view_matrix = app->getCam()->transform.getMatrix();
 	m_app = app;
 	auto device = app->getDevice();
 	ID3D10Blob *VS, *PS;
@@ -77,6 +78,7 @@ void Triangle::setVertices(Vertex _vertices[3])
 	{
 		DirectX::XMFLOAT3 v_float = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z };
 		XMVECTOR vec = XMLoadFloat3(&v_float);
+		*m_world_matrix *= *m_view_matrix;
 		vec = XMVector3Transform(vec, *m_world_matrix);
 		XMStoreFloat3(&v_float, vec);
 		render_vert[i] = { v_float.x, v_float.y, v_float.z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };

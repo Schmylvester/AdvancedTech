@@ -20,6 +20,8 @@ public:
 	void move(float x, float y, float z);
 	void rotate(char axis, float rot);
 
+	void setScl(float x, float y, float z);
+
 	BoxCollider* getPhysics();
 private:
 	Transform* m_transform;

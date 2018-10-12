@@ -14,18 +14,19 @@ public:
 	Triangle() = default;
 	~Triangle();
 
-	void initPipeline(DXApp* app, XMMATRIX* _world_matrix);
+	void initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix);
 	void draw();
 	void initVertices(Vertex _vertices[3]);
 	void setVertices(Vertex _vertices[3]);
 private:
-	DXApp* m_app;
+	DXApp * m_app;
 	ID3D11VertexShader* m_vtx_shader;
 	ID3D11PixelShader* m_pxl_shader;
 	ID3D11Buffer* m_vtx_buffer;
 	ID3D11InputLayout* m_input_layout;
 
 	DirectX::XMMATRIX* m_world_matrix;
+	DirectX::XMMATRIX* m_view_matrix;
 
 	Vertex m_vertices[3];
 };

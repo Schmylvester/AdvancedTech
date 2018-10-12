@@ -15,6 +15,8 @@ public:
 private:
 	CollisionDetection m_collision_detection;
 	Cube* m_fall_cube;
-	Cube* m_static_cube;
+	Cube* m_plane;
+
+	bool play = false;
 };
 

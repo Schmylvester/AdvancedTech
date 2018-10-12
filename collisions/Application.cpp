@@ -12,7 +12,7 @@ Application::Application(HINSTANCE h_instance, Debug* _debug) : DXApp(h_instance
 Application::~Application()
 {
 	Memory::SafeDelete(m_fall_cube);
-	Memory::SafeDelete(m_static_cube);
+	Memory::SafeDelete(m_plane);
 }
 
 bool Application::init()
@@ -26,19 +26,27 @@ bool Application::init()
 	m_fall_cube = new Cube(this, colour);
 	m_collision_detection.addPhysicsObject(m_fall_cube->getPhysics());
 
-	m_static_cube = new Cube(this, colour);
-	m_static_cube->move(0, -0.5f, 0);
-	m_static_cube->getPhysics()->setGravity(0);
-	m_collision_detection.addPhysicsObject(m_static_cube->getPhysics());
+	m_plane = new Cube(this, colour);
+	m_plane->move(0, -0.7f, 0);
+	m_plane->getPhysics()->setGravity(0);
+	m_collision_detection.addPhysicsObject(m_plane->getPhysics());
 	return true;
 }
 
 void Application::update(float dt)
 {
+	if (input.searchInputs(32, KeyState::DOWN))
+	{
+		play = true;
+	}
 	input.tick();
-	m_fall_cube->tick(dt);
-	m_static_cube->tick(dt);
-	m_collision_detection.checkCollisions();
+	if (play)
+	{
+		m_cam.tick(dt);
+		m_fall_cube->tick(dt);
+		m_plane->tick(dt);
+		m_collision_detection.checkCollisions();
+	}
 }
 
 void Application::render(float dt)
@@ -57,7 +65,7 @@ void Application::render(float dt)
 	m_dev_con->ClearRenderTargetView(m_render_target_view, m_colour);
 
 	m_fall_cube->draw();
-	m_static_cube->draw();
+	m_plane->draw();
 
 	m_swap_chain->Present(0, 0);
 }

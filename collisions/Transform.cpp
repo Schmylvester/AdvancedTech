@@ -28,7 +28,11 @@ void Transform::rotate(char axis, float rot)
 		break;
 	}
 }
-float Transform::getScl()
+void Transform::setScl(float x, float y, float z)
+{
+	scale = Vector3(x, y, z);
+}
+Vector3 Transform::getScl()
 {
 	return scale;
 }
