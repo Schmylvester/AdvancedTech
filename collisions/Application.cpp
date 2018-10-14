@@ -25,7 +25,7 @@ void Application::initObjects()
 			for (int z = -2; z < 2; z++)
 			{
 				m_cubes.push_back(new Cube(this, colour));
-				m_cubes.back()->move(x * 0.11f, y * 0.11f, z * 0.11f);
+				m_cubes.back()->move(x * 0.25f, y * 0.25f, z * 0.25f);
 				m_collision_detection.addPhysicsObject(m_cubes.back()->getPhysics());
 				colour[rand() % 3] = (1 - (0.5f + (float)x / 4)) * (1 - (0.5f + (float)y / 4)) * (1 - (0.5f + (float)z / 4));
 			}
@@ -50,7 +50,7 @@ void Application::update(float dt)
 		play = !play;
 	}
 	input.tick();
-	m_cam.tick(dt);
+	m_cam->tick(dt);
 	if (play)
 	{
 		for (Cube* cube : m_cubes)

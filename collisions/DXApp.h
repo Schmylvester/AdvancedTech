@@ -38,7 +38,7 @@ protected:
 	int quitApp();
 	float getDeltaTime();
 
-	Camera m_cam;
+	std::unique_ptr<Camera> m_cam = nullptr;
 	float m_colour[4];
 
 	HWND m_h_app_wnd;

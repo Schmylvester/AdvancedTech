@@ -51,7 +51,9 @@ void Collider::collide(Collider * col)
 
 void Collider::collisionEnter(Collider * col)
 {
-
+	float numbers[5] = { -0.7f, -0.3f, 0, 0.3f, 0.7f };
+	m_move_speed.x = numbers[rand() % 5];
+	m_move_speed.y = numbers[rand() % 5];
 }
 
 void Collider::collisionExit(Collider * col)

@@ -19,10 +19,8 @@ public:
 	void setScl(float x, float y, float z);
 	Vector3 getScl();
 
-	DirectX::XMMATRIX* getMatrix()
-	{
-		return &world_matrix;
-	}
+	DirectX::XMMATRIX* getMatrix();
+	void setMatrix(DirectX::XMMATRIX new_matrix);
 #pragma endregion
 	void update();
 

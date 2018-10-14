@@ -15,7 +15,6 @@ LRESULT CALLBACK MainWindProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_para
 }
 
 DXApp::DXApp(HINSTANCE h_instance)
-	: m_cam(&input)
 {
 	m_h_app_instance = h_instance;
 	m_h_app_wnd = NULL;
@@ -73,6 +72,7 @@ bool DXApp::init()
 		return false;
 	}
 
+	m_cam = std::make_unique<Camera>(&input, this);
 	return true;
 }
 
@@ -262,5 +262,5 @@ void DXApp::setColour(int colour_index)
 
 Camera * DXApp::getCam()
 {
-	return &m_cam;
+	return m_cam.get();
 }
