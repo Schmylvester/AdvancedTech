@@ -3,6 +3,13 @@
 void KeyboardInput::keyDown(KeyBind key_id)
 {
 	key_down.push_back(key_id);
+	for (int i = 0; i < key.size(); i++)
+	{
+		if (key[i] == key_id)
+		{
+			return;
+		}
+	}
 	key.push_back(key_id);
 }
 void KeyboardInput::keyUp(KeyBind key_id)

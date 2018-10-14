@@ -38,7 +38,7 @@ protected:
 	int quitApp();
 	float getDeltaTime();
 
-	Camera m_cam;
+	std::unique_ptr<Camera> m_cam;
 	float m_colour[4];
 
 	HWND m_h_app_wnd;
@@ -48,6 +48,8 @@ protected:
 	std::string m_app_title;
 	DWORD m_wnd_style;
 
+	ID3D11DepthStencilView* m_depth_stncl_view;
+	ID3D11Texture2D* m_depth_txt = nullptr;
 	ID3D11Device* m_dev = nullptr;
 	ID3D11DeviceContext* m_dev_con = nullptr;
 	IDXGISwapChain* m_swap_chain = nullptr;

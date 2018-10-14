@@ -1,2 +1,4 @@
-﻿  Triangle.cpp
+﻿  CollisionDetection.cpp
+c:\users\hitti\onedrive\documents\university work\thirdyear\advanced technologies\directx\collisions\collisions\collisiondetection.cpp(11): warning C4018: '<': signed/unsigned mismatch
+c:\users\hitti\onedrive\documents\university work\thirdyear\advanced technologies\directx\collisions\collisions\collisiondetection.cpp(13): warning C4018: '<': signed/unsigned mismatch
   collisions.vcxproj -> C:\Users\hitti\OneDrive\Documents\University Work\thirdYear\Advanced Technologies\DirectX\collisions\Debug\collisions.exe

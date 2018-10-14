@@ -29,7 +29,7 @@ bool BoxCollider::intersect(Collider* col)
 	return r_val;
 }
 
-void BoxCollider::collide(Collider * col)
+void BoxCollider::collide(CollisionData col)
 {
 	Collider::collide(col);
 }

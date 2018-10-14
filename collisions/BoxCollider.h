@@ -8,7 +8,7 @@ public:
 	BoxCollider(Transform* object_transform);
 
 	virtual bool intersect(Collider* col) override;
-	virtual void collide(Collider* col) override;
+	virtual void collide(CollisionData col) override;
 private:
 };
 

@@ -14,10 +14,17 @@ void CollisionDetection::checkCollisions()
 		{
 			if (m_cubes[i] && m_cubes[j])
 			{
-				if (m_cubes[i]->intersect(m_cubes[j]))
+				if(m_cubes[i] != m_cubes[j])
 				{
-					m_cubes[i]->collide(m_cubes[j]);
-					m_cubes[j]->collide(m_cubes[i]);
+					if (m_cubes[i]->intersect(m_cubes[j]))
+					{
+						CollisionData cd;
+						cd.direction = Vector3(0, 0, 0);
+						cd.other_collider = m_cubes[i];
+						m_cubes[j]->collide(cd);
+						cd.other_collider = m_cubes[j];
+						m_cubes[i]->collide(cd);
+					}
 				}
 			}
 		}

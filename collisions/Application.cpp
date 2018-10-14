@@ -25,7 +25,7 @@ void Application::initObjects()
 			for (int z = -2; z < 2; z++)
 			{
 				m_cubes.push_back(new Cube(this, colour));
-				m_cubes.back()->move(x * 0.11f, y * 0.11f, z * 0.11f);
+				m_cubes.back()->move(x * 0.25f, y * 0.25f, z * 0.25f);
 				m_collision_detection.addPhysicsObject(m_cubes.back()->getPhysics());
 				colour[rand() % 3] = (1 - (0.5f + (float)x / 4)) * (1 - (0.5f + (float)y / 4)) * (1 - (0.5f + (float)z / 4));
 			}
@@ -50,7 +50,7 @@ void Application::update(float dt)
 		play = !play;
 	}
 	input.tick();
-	m_cam.tick(dt);
+	m_cam->tick(dt);
 	if (play)
 	{
 		for (Cube* cube : m_cubes)
@@ -75,7 +75,7 @@ void Application::render(float dt)
 	m_dev_con->OMSetRenderTargets(1, &m_render_target_view, NULL);
 
 	m_dev_con->ClearRenderTargetView(m_render_target_view, m_colour);
-
+	m_dev_con->ClearDepthStencilView(m_depth_stncl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
 	for (Cube* cube : m_cubes)
 	{
 		cube->draw();

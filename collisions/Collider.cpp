@@ -2,7 +2,7 @@
 
 Collider::Collider()
 {
-	float numbers[5] = {-0.7f, -0.3f, 0, 0.3f, 0.7f };
+	float numbers[5] = {-0.3f, -0.1f, 0, 0.1f, 0.3f };
 	m_move_speed.x = numbers[rand() % 5];
 	m_move_speed.y = numbers[rand() % 5];
 	m_rotate_speed.x = numbers[rand() % 5];
@@ -16,22 +16,22 @@ Collider::~Collider()
 
 void Collider::tick(float dt)
 {
-	for (Collider* lt_col : m_last_tick_col)
+	for (CollisionData lt_col : m_last_tick_col)
 	{
-		if (!seachList(lt_col, &m_this_tick_col))
+		if (!seachList(lt_col.other_collider, &m_this_tick_col))
 		{
 			collisionExit(lt_col);
 		}
 	}
-	for (Collider* tt_col : m_this_tick_col)
+	for (CollisionData tt_col : m_this_tick_col)
 	{
-		if (!seachList(tt_col, &m_last_tick_col))
+		if (!seachList(tt_col.other_collider, &m_last_tick_col))
 		{
 			collisionEnter(tt_col);
 		}
 	}
 	m_last_tick_col.clear();
-	for (Collider* col : m_this_tick_col)
+	for (CollisionData col : m_this_tick_col)
 	{
 		m_last_tick_col.push_back(col);
 	}
@@ -44,17 +44,17 @@ void Collider::tick(float dt)
 	m_transform->rotate('z', m_rotate_speed.z * dt);
 }
 
-void Collider::collide(Collider * col)
+void Collider::collide(CollisionData col)
 {
 	m_this_tick_col.push_back(col);
 }
 
-void Collider::collisionEnter(Collider * col)
+void Collider::collisionEnter(CollisionData col)
 {
-
+	m_move_speed *= -1;
 }
 
-void Collider::collisionExit(Collider * col)
+void Collider::collisionExit(CollisionData col)
 {
 }
 
@@ -73,11 +73,11 @@ Transform Collider::getTransform()
 	return *m_transform;
 }
 
-bool Collider::seachList(Collider* col, std::vector<Collider*>* list)
+bool Collider::seachList(Collider* col, std::vector<CollisionData>* list)
 {
-	for (Collider* col_chk : *list)
+	for (CollisionData col_chk : *list)
 	{
-		if (col_chk == col)
+		if (col_chk.other_collider == col)
 		{
 			return false;
 		}
