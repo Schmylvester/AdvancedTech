@@ -7,14 +7,12 @@ class Camera
 {
 public:
 	Camera() = delete;
-	Camera(KeyboardInput* input, DXApp* _app);
+	Camera(KeyboardInput* input, DXApp* _app, DirectX::XMVECTOR look_at);
 	~Camera();
-
 	Transform m_transform;
 	void tick(float dt);
 
 private:
-	DXApp * m_app;
-
 	KeyboardInput * m_input;
+	DXApp* m_app;
 };

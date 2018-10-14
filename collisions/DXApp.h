@@ -7,7 +7,8 @@
 #include <SimpleMath.h>
 #include "Camera.h"
 #include "KeyboardInput.h"
-class Debug;
+#include "TriangleLoader.h"
+
 using namespace DirectX;
 class DXApp
 {
@@ -29,8 +30,10 @@ public:
 	float getRatio();
 
 	Camera* getCam();
+	TriangleLoader* getLoader();
 protected:
 	float fps;
+	TriangleLoader triangle_loader;
 
 	void setColour(int colour_index);
 	bool initWindow();
@@ -38,7 +41,7 @@ protected:
 	int quitApp();
 	float getDeltaTime();
 
-	std::unique_ptr<Camera> m_cam = nullptr;
+	std::unique_ptr<Camera> m_cam;
 	float m_colour[4];
 
 	HWND m_h_app_wnd;
@@ -48,6 +51,8 @@ protected:
 	std::string m_app_title;
 	DWORD m_wnd_style;
 
+	ID3D11DepthStencilView* m_depth_stncl_view;
+	ID3D11Texture2D* m_depth_txt = nullptr;
 	ID3D11Device* m_dev = nullptr;
 	ID3D11DeviceContext* m_dev_con = nullptr;
 	IDXGISwapChain* m_swap_chain = nullptr;
@@ -56,7 +61,6 @@ protected:
 	D3D_FEATURE_LEVEL m_feature_level;
 	D3D11_VIEWPORT m_viewport;
 
-	Debug* debugger;
 	KeyboardInput input;
 	clock_t last_clock = clock();
 };

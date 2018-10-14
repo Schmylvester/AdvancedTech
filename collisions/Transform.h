@@ -20,7 +20,7 @@ public:
 	Vector3 getScl();
 
 	DirectX::XMMATRIX* getMatrix();
-	void setMatrix(DirectX::XMMATRIX new_matrix);
+	void setViewMatrix(DirectX::XMMATRIX new_matrix);
 #pragma endregion
 	void update();
 
@@ -30,6 +30,7 @@ private:
 	DirectX::XMMATRIX rotation_matrix = DirectX::XMMatrixIdentity();
 
 	DirectX::XMMATRIX world_matrix = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX view_matrix = DirectX::XMMatrixIdentity();
 
 	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
 };

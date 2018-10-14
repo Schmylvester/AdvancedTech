@@ -72,7 +72,7 @@ bool DXApp::init()
 		return false;
 	}
 
-	m_cam = std::make_unique<Camera>(&input, this);
+	m_cam = std::make_unique<Camera>(&input, this, XMVectorSet(0, 0, 1, 1));
 	return true;
 }
 
@@ -199,6 +199,30 @@ bool DXApp::initDirect3D()
 
 	m_dev_con->RSSetViewports(1, &viewport);
 
+	D3D11_TEXTURE2D_DESC depth_stencil_desc;
+	D3D11_TEXTURE2D_DESC back_buffer_desc;
+	mp_back_buffer_txt->GetDesc(&back_buffer_desc);
+	depth_stencil_desc.Width = back_buffer_desc.Width;
+	depth_stencil_desc.Height = back_buffer_desc.Height;
+	depth_stencil_desc.MipLevels = 1;
+	depth_stencil_desc.ArraySize = 1;
+	depth_stencil_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depth_stencil_desc.SampleDesc.Count = 1;
+	depth_stencil_desc.SampleDesc.Quality = 0;
+	depth_stencil_desc.Usage = D3D11_USAGE_DEFAULT;
+	depth_stencil_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depth_stencil_desc.CPUAccessFlags = 0;
+	depth_stencil_desc.MiscFlags = 0;
+
+	m_dev->CreateTexture2D(&depth_stencil_desc, NULL, &m_depth_txt);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depth_view_desc = {};
+	depth_view_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depth_view_desc.Format = depth_stencil_desc.Format;
+	depth_view_desc.Texture2D.MipSlice = 0;
+
+	m_dev->CreateDepthStencilView(m_depth_txt, &depth_view_desc, &m_depth_stncl_view);
+
 	return true;
 }
 
@@ -222,8 +246,8 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 	{
 	case WM_DESTROY:
 		return quitApp();
-	case WM_KEYDOWN:
-		if (w_param == (int)KeyBind::Esc)
+	case WM_KEYDOWN:		//key
+		if (w_param == (int)KeyBind::Esc)	//probably enumerated or defined somewhere, but this is esc
 		{
 			return quitApp();
 		}
@@ -233,7 +257,6 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 		input.keyUp((KeyBind)w_param);
 		break;
 	case WM_LBUTTONDOWN:	//click
-	case WM_MOUSEMOVE:		//move
 	default:
 		break;
 	}
@@ -263,4 +286,9 @@ void DXApp::setColour(int colour_index)
 Camera * DXApp::getCam()
 {
 	return m_cam.get();
+}
+
+TriangleLoader * DXApp::getLoader()
+{
+	return &triangle_loader;
 }

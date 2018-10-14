@@ -1,8 +1,9 @@
 #include "Collider.h"
 
-Collider::Collider()
+Collider::Collider(RenderCube* _renderer)
 {
-	float numbers[5] = {-0.7f, -0.3f, 0, 0.3f, 0.7f };
+	m_renderer = _renderer;
+	float numbers[5] = {-0.3f, -0.1f, 0, 0.1f, 0.3f };
 	m_move_speed.x = numbers[rand() % 5];
 	m_move_speed.y = numbers[rand() % 5];
 	m_rotate_speed.x = numbers[rand() % 5];
@@ -44,19 +45,23 @@ void Collider::tick(float dt)
 	m_transform->rotate('z', m_rotate_speed.z * dt);
 }
 
-void Collider::collide(Collider * col)
+void Collider::collide(Collider* col)
 {
+	for (Collider* already : m_this_tick_col)
+	{
+		if (col == already)
+			return;
+	}
 	m_this_tick_col.push_back(col);
 }
 
-void Collider::collisionEnter(Collider * col)
+void Collider::collisionEnter(Collider* col)
 {
-	float numbers[5] = { -0.7f, -0.3f, 0, 0.3f, 0.7f };
-	m_move_speed.x = numbers[rand() % 5];
-	m_move_speed.y = numbers[rand() % 5];
+	m_renderer->changeColour();
+	m_move_speed *= -(m_bounciness * col->getBounce());
 }
 
-void Collider::collisionExit(Collider * col)
+void Collider::collisionExit(Collider* col)
 {
 }
 
@@ -81,8 +86,8 @@ bool Collider::seachList(Collider* col, std::vector<Collider*>* list)
 	{
 		if (col_chk == col)
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }

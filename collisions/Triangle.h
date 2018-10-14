@@ -8,13 +8,14 @@ struct Vertex
 };
 
 class DXApp;
+class TriangleLoader;
 class Triangle
 {
 public:
 	Triangle() = default;
 	~Triangle();
 
-	void initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix);
+	void initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader);
 	void draw();
 	void initVertices(Vertex _vertices[3]);
 	void setVertices(Vertex _vertices[3]);

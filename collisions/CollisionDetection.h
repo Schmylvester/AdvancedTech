@@ -8,5 +8,5 @@ public:
 	void addPhysicsObject(Collider* _object);
 	void checkCollisions();
 private:
-	std::vector<Collider*> m_cubes;
+	std::vector<Collider*> m_colliders;
 };

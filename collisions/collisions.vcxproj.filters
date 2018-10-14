@@ -51,9 +51,6 @@
     <ClCompile Include="RenderCube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionDetection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
@@ -69,8 +66,17 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Source Files\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="TriangleLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Source Files\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionDetection.cpp">
+      <Filter>Source Files\Colliders</Filter>
+    </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
-      <Filter>Source Files\Cube</Filter>
+      <Filter>Source Files\Colliders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +95,6 @@
     <ClInclude Include="Cube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionDetection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DXApp.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
@@ -107,10 +110,22 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCollider.h">
-      <Filter>Header Files\Cube</Filter>
-    </ClInclude>
     <ClInclude Include="Collider.h">
+      <Filter>Header Files\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangleLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionDetection.h">
+      <Filter>Header Files\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Header Files\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Header Files\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderIncludes.h">
       <Filter>Header Files\Colliders</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,16 +1,15 @@
 #include "Camera.h"
 #include "DXApp.h"
 
-Camera::Camera(KeyboardInput * input, DXApp* _app)
+Camera::Camera(KeyboardInput * input, DXApp* _app, DirectX::XMVECTOR look_at)
 {
 	m_app = _app;
 	m_input = input;
-	using namespace DirectX;
-	m_transform.setMatrix(
-		XMMatrixLookAtLH(m_transform.getPos(), XMVectorAdd(m_transform.getPos(), XMVectorSet(0, 0, 1, 1)), XMVectorSet(0, 1, 0, 1))
-		* XMMatrixPerspectiveFovLH(XMConvertToRadians(45), _app->getRatio(), 0.1f, 100.0f));
 
-	//m_transform.move(-0.5f, 0.5f, 0);
+	using namespace DirectX;
+	m_transform.setViewMatrix(
+		XMMatrixLookAtLH(m_transform.getPos(), XMVectorAdd(m_transform.getPos(), look_at), XMVectorSet(0, 1, 0, 1))
+		* XMMatrixPerspectiveFovLH(XMConvertToRadians(75), _app->getRatio(), 0.1f, 100.0f));
 }
 
 Camera::~Camera()
@@ -20,16 +19,25 @@ Camera::~Camera()
 void Camera::tick(float dt)
 {
 	if (m_input->searchInputs(KeyBind::W, KeyState::HELD))
-		m_transform.move(0, 0, dt);
+		m_transform.move(0, dt, 0);
 	if (m_input->searchInputs(KeyBind::S, KeyState::HELD))
-		m_transform.move(0, 0, -dt);
+		m_transform.move(0, -dt, 0);
 	if (m_input->searchInputs(KeyBind::A, KeyState::HELD))
-		m_transform.move(-dt, 0, 0);;
+		m_transform.move(-dt, 0, 0);
 	if (m_input->searchInputs(KeyBind::D, KeyState::HELD))
 		m_transform.move(dt, 0, 0);
-	if (m_input->searchInputs(KeyBind::Q, KeyState::HELD))
-		m_transform.move(0, dt, 0);
-	if (m_input->searchInputs(KeyBind::E, KeyState::HELD))
-		m_transform.move(0, -dt, 0);
+	if (m_input->searchInputs(KeyBind::U, KeyState::HELD))
+		m_transform.rotate('x', dt);
+	if (m_input->searchInputs(KeyBind::J, KeyState::HELD))
+		m_transform.rotate('x', -dt);
+	if (m_input->searchInputs(KeyBind::I, KeyState::HELD))
+		m_transform.rotate('y', dt);
+	if (m_input->searchInputs(KeyBind::K, KeyState::HELD))
+		m_transform.rotate('y', -dt);
+	if (m_input->searchInputs(KeyBind::Y, KeyState::HELD))
+		m_transform.rotate('z', dt);
+	if (m_input->searchInputs(KeyBind::H, KeyState::HELD))
+		m_transform.rotate('z', -dt);
+
 	m_transform.update();
 }

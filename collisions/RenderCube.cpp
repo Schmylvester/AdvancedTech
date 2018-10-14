@@ -1,13 +1,13 @@
 #include "RenderCube.h"
 #include "DXApp.h"
 
-RenderCube::RenderCube(DXApp* app, float colour[4], DirectX::XMMATRIX* _world_matrix)
+RenderCube::RenderCube(DXApp* app, float colour[4], DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader)
 {
 	m_app = app;
 
 	for (int i = 0; i < 12; i++)
 	{
-		createTriangle(_world_matrix);
+		createTriangle(_world_matrix, loader);
 	}
 	for (int i = 0; i < 4; i++)
 		m_colour[i] = colour[i];
@@ -29,6 +29,34 @@ RenderCube::~RenderCube()
 {
 }
 
+void RenderCube::changeColour()
+{
+	for (int i = 0; i < 8; i++)
+	{
+		switch (rand() % 6)
+		{
+		case 0:
+			m_vertices[i].R = 1.0f;
+			break;
+		case 1:
+			m_vertices[i].G = 1.0f;
+			break;
+		case 2:
+			m_vertices[i].R = 0.0f;
+			break;
+		case 3:
+			m_vertices[i].B = 1.0f;
+			break;
+		case 4:
+			m_vertices[i].G = 0.0f;
+			break;
+		case 5:
+			m_vertices[i].B = 0.0f;
+			break;
+		}
+	}
+}
+
 void RenderCube::updateVertices(int i, float x, float y, float z)
 {
 	m_vertices[i].X = x;
@@ -36,10 +64,10 @@ void RenderCube::updateVertices(int i, float x, float y, float z)
 	m_vertices[i].Z = z;
 }
 
-void RenderCube::createTriangle(DirectX::XMMATRIX* _world_matrix)
+void RenderCube::createTriangle(DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader)
 {
 	Triangle* t = new Triangle();
-	t->initPipeline(m_app, _world_matrix);
+	t->initPipeline(m_app, _world_matrix, loader);
 	m_polygons.push_back(t);
 }
 

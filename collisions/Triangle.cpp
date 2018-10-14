@@ -1,5 +1,6 @@
 #include "Triangle.h"
 #include "DXApp.h"
+#include "TriangleLoader.h"
 
 Triangle::~Triangle()
 {
@@ -7,18 +8,15 @@ Triangle::~Triangle()
 	Memory::SafeRelease(m_vtx_shader);
 }
 
-void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix)
+void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader)
 {
 	m_world_matrix = _world_matrix;
 	m_view_matrix = app->getCam()->m_transform.getMatrix();
 	m_app = app;
 	auto device = app->getDevice();
-	ID3D10Blob *VS, *PS;
-	D3DCompileFromFile(L"shaders.shader", 0, 0, "VShader", "vs_4_0", 0, 0, &VS, 0);
-	D3DCompileFromFile(L"shaders.shader", 0, 0, "PShader", "ps_4_0", 0, 0, &PS, 0);
-
-	device->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &m_vtx_shader);
-	device->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &m_pxl_shader);
+	
+	device->CreateVertexShader(loader->VS->GetBufferPointer(), loader->VS->GetBufferSize(), NULL, &m_vtx_shader);
+	device->CreatePixelShader(loader->PS->GetBufferPointer(), loader->PS->GetBufferSize(), NULL, &m_pxl_shader);
 
 	auto context = app->getContext();
 	context->VSSetShader(m_vtx_shader, 0, 0);
@@ -45,7 +43,7 @@ void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix)
 	{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	device->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &m_input_layout);
+	device->CreateInputLayout(ied, 2, loader->VS->GetBufferPointer(), loader->VS->GetBufferSize(), &m_input_layout);
 	context->IASetInputLayout(m_input_layout);
 }
 
@@ -79,8 +77,6 @@ void Triangle::setVertices(Vertex _vertices[3])
 		DirectX::XMFLOAT3 v_float = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z };
 		XMVECTOR vec = XMLoadFloat3(&v_float);
 		XMMATRIX new_matrix = *m_world_matrix * *m_view_matrix;
-		//new_matrix[3,2] = new_matrix[3, 2] < 0 ? 0 : new_matrix[3, 2];
-		//new_matrix[3,2] = new_matrix[3, 2] > 1 ? 1 : new_matrix[3, 2];
 		vec = XMVector3Transform(vec, new_matrix);
 		XMStoreFloat3(&v_float, vec);
 		render_vert[i] = { v_float.x, v_float.y, v_float.z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };

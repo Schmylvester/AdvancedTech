@@ -36,16 +36,18 @@ Vector3 Transform::getScl()
 {
 	return scale;
 }
-DirectX::XMMATRIX * Transform::getMatrix()
+DirectX::XMMATRIX* Transform::getMatrix()
 {
 	return &world_matrix;
 }
-void Transform::setMatrix(DirectX::XMMATRIX new_matrix)
+void Transform::setViewMatrix(DirectX::XMMATRIX new_matrix)
 {
-	position_matrix = new_matrix;
+	view_matrix = new_matrix;
 }
 #pragma endregion
 void Transform::update()
 {
-	world_matrix = rotation_matrix * position_matrix;
+	world_matrix = position_matrix;
+	world_matrix *= rotation_matrix;
+	world_matrix *= view_matrix;
 }
