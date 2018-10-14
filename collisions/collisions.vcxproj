@@ -130,14 +130,17 @@
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="KeyboardInput.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="TriangleLoader.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderIncludes.h" />
     <ClInclude Include="CollisionDetection.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="BoxCollider.h" />
@@ -146,8 +149,10 @@
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="KeyboardInput.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="TriangleLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

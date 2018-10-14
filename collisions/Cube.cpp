@@ -1,13 +1,16 @@
 #include "Cube.h"
 #include "RenderCube.h"
-#include "BoxCollider.h"
 #include "DXApp.h"
+#include "ColliderIncludes.h"
 
 Cube::Cube(DXApp * app, float colour[4])
 {
 	m_transform = new Transform();
-	m_render = new RenderCube(app, colour, m_transform->getMatrix());
-	m_physics = new BoxCollider(m_transform);
+	m_render = new RenderCube(app, colour, m_transform->getMatrix(), app->getLoader());
+	//if (rand() % 2 == 0)
+	//	m_physics = new BoxCollider(m_transform);
+	//else
+		m_physics = new SphereCollider(m_transform, m_render);
 	for (int i = 0; i < 8; i++)
 	{
 		m_corners[i].x = (i < 4) ? -1 : 1;
@@ -59,7 +62,7 @@ void Cube::setScl(float x, float y, float z)
 	m_transform->setScl(x, y, z);
 }
 
-BoxCollider * Cube::getPhysics()
+Collider * Cube::getPhysics()
 {
 	return m_physics;
 }

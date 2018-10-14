@@ -6,7 +6,7 @@ using namespace DirectX::SimpleMath;
 
 class DXApp;
 class RenderCube;
-class BoxCollider;
+class Collider;
 
 class Cube
 {
@@ -22,13 +22,13 @@ public:
 
 	void setScl(float x, float y, float z);
 
-	BoxCollider* getPhysics();
+	Collider* getPhysics();
 private:
 	Transform* m_transform;
 
 	Vector3 m_corners[8];
 	RenderCube* m_render;
-	BoxCollider* m_physics;
+	Collider* m_physics;
 	void setRenderTriangles(bool init);
 };
 

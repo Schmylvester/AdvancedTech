@@ -11,7 +11,7 @@ Application::Application(HINSTANCE h_instance) : DXApp(h_instance)
 
 Application::~Application()
 {
-	for (Cube* cube : m_cubes)
+	for (Cube* cube : m_gameobjects)
 	{
 		Memory::SafeDelete(cube);
 	}
@@ -19,16 +19,22 @@ Application::~Application()
 
 void Application::initObjects()
 {
-	float colour[4] = { 1,1,1,1 };
-	for (int x = -2; x < 2; x++)
-		for (int y = -2; y < 2; y++)
-			for (int z = -2; z < 2; z++)
+	int i[3];
+	for (i[0] = -2; i[0] < 2; i[0]++)
+		for (i[1] = -2; i[1] < 2; i[1]++)
+			for (i[2] = -2; i[2] < 2; i[2]++)
 			{
-				m_cubes.push_back(new Cube(this, colour));
-				m_cubes.back()->move(x * 0.25f, y * 0.25f, z * 0.25f);
-				m_collision_detection.addPhysicsObject(m_cubes.back()->getPhysics());
-				colour[rand() % 3] = (1 - (0.5f + (float)x / 4)) * (1 - (0.5f + (float)y / 4)) * (1 - (0.5f + (float)z / 4));
+				float x_pos = i[0] * (0.11f * (1 + rand() % 2));
+				float y_pos = i[1] * (0.11f * (1 + rand() % 2));
+				float z_pos = i[2] * (0.11f * (1 + rand() % 2));
+
+				float colour[4] = { 1,1,1,1 };
+				colour[rand() % 3] = (1 - (0.5f + (float)i[0] / 4)) * (1 - (0.5f + (float)i[1] / 4)) * (1 - (0.5f + (float)i[2] / 4));
+				m_gameobjects.push_back(new Cube(this, colour));
+				m_gameobjects.back()->move(x_pos, y_pos, z_pos);
+				m_collision_detection.addPhysicsObject(m_gameobjects.back()->getPhysics());
 			}
+	return;
 }
 
 bool Application::init()
@@ -53,7 +59,7 @@ void Application::update(float dt)
 	m_cam->tick(dt);
 	if (play)
 	{
-		for (Cube* cube : m_cubes)
+		for (Cube* cube : m_gameobjects)
 		{
 			cube->tick(dt);
 		}
@@ -76,7 +82,7 @@ void Application::render(float dt)
 
 	m_dev_con->ClearRenderTargetView(m_render_target_view, m_colour);
 	m_dev_con->ClearDepthStencilView(m_depth_stncl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0.0f);
-	for (Cube* cube : m_cubes)
+	for (Cube* cube : m_gameobjects)
 	{
 		cube->draw();
 	}

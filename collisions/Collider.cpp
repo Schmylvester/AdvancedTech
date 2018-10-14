@@ -1,7 +1,8 @@
 #include "Collider.h"
 
-Collider::Collider()
+Collider::Collider(RenderCube* _renderer)
 {
+	m_renderer = _renderer;
 	float numbers[5] = {-0.3f, -0.1f, 0, 0.1f, 0.3f };
 	m_move_speed.x = numbers[rand() % 5];
 	m_move_speed.y = numbers[rand() % 5];
@@ -16,22 +17,22 @@ Collider::~Collider()
 
 void Collider::tick(float dt)
 {
-	for (CollisionData lt_col : m_last_tick_col)
+	for (Collider* lt_col : m_last_tick_col)
 	{
-		if (!seachList(lt_col.other_collider, &m_this_tick_col))
+		if (!seachList(lt_col, &m_this_tick_col))
 		{
 			collisionExit(lt_col);
 		}
 	}
-	for (CollisionData tt_col : m_this_tick_col)
+	for (Collider* tt_col : m_this_tick_col)
 	{
-		if (!seachList(tt_col.other_collider, &m_last_tick_col))
+		if (!seachList(tt_col, &m_last_tick_col))
 		{
 			collisionEnter(tt_col);
 		}
 	}
 	m_last_tick_col.clear();
-	for (CollisionData col : m_this_tick_col)
+	for (Collider* col : m_this_tick_col)
 	{
 		m_last_tick_col.push_back(col);
 	}
@@ -44,17 +45,23 @@ void Collider::tick(float dt)
 	m_transform->rotate('z', m_rotate_speed.z * dt);
 }
 
-void Collider::collide(CollisionData col)
+void Collider::collide(Collider* col)
 {
+	for (Collider* already : m_this_tick_col)
+	{
+		if (col == already)
+			return;
+	}
 	m_this_tick_col.push_back(col);
 }
 
-void Collider::collisionEnter(CollisionData col)
+void Collider::collisionEnter(Collider* col)
 {
-	m_move_speed *= -1;
+	m_renderer->changeColour();
+	m_move_speed *= -(m_bounciness * col->getBounce());
 }
 
-void Collider::collisionExit(CollisionData col)
+void Collider::collisionExit(Collider* col)
 {
 }
 
@@ -73,14 +80,14 @@ Transform Collider::getTransform()
 	return *m_transform;
 }
 
-bool Collider::seachList(Collider* col, std::vector<CollisionData>* list)
+bool Collider::seachList(Collider* col, std::vector<Collider*>* list)
 {
-	for (CollisionData col_chk : *list)
+	for (Collider* col_chk : *list)
 	{
-		if (col_chk.other_collider == col)
+		if (col_chk == col)
 		{
-			return false;
+			return true;
 		}
 	}
-	return true;
+	return false;
 }

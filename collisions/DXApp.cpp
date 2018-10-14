@@ -72,7 +72,7 @@ bool DXApp::init()
 		return false;
 	}
 
-	m_cam = std::make_unique<Camera>(&input, this);
+	m_cam = std::make_unique<Camera>(&input, this, XMVectorSet(0, 0, 1, 1));
 	return true;
 }
 
@@ -286,4 +286,9 @@ void DXApp::setColour(int colour_index)
 Camera * DXApp::getCam()
 {
 	return m_cam.get();
+}
+
+TriangleLoader * DXApp::getLoader()
+{
+	return &triangle_loader;
 }

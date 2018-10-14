@@ -2,8 +2,6 @@
 #include "DXApp.h"
 #include "CollisionDetection.h"
 
-#include <thread>
-
 class Cube;
 class Application : public DXApp
 {
@@ -17,8 +15,7 @@ public:
 private:
 	void initObjects();
 	CollisionDetection m_collision_detection;
-	std::vector<Cube*> m_cubes;
-	std::thread object_thread;
+	std::vector<Cube*> m_gameobjects;
 	bool play = false;
 };
 

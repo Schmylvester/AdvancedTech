@@ -6,9 +6,9 @@ BoxCollider::BoxCollider(Transform* object_transform)
 	m_transform = object_transform;
 }
 
-bool BoxCollider::intersect(Collider* col)
+bool BoxCollider::intersect(BoxCollider* col)
 {
-	Transform other_tfm = static_cast<BoxCollider*>(col)->getTransform();
+	Transform other_tfm = col->getTransform();
 	Vector3 lowest = Vector3(m_transform->getPos().x - m_transform->getScl().x,
 		m_transform->getPos().y - m_transform->getScl().y,
 		m_transform->getPos().z - m_transform->getScl().z);
@@ -29,7 +29,12 @@ bool BoxCollider::intersect(Collider* col)
 	return r_val;
 }
 
-void BoxCollider::collide(CollisionData col)
+bool BoxCollider::intersect(SphereCollider * col)
+{
+	return false;
+}
+
+void BoxCollider::collide(Collider* col)
 {
 	Collider::collide(col);
 }

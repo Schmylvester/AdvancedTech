@@ -20,7 +20,7 @@ public:
 	Vector3 getScl();
 
 	DirectX::XMMATRIX* getMatrix();
-	void setMatrix(DirectX::XMMATRIX new_matrix);
+	void setViewMatrix(DirectX::XMMATRIX new_matrix);
 #pragma endregion
 	void update();
 

@@ -40,7 +40,7 @@ DirectX::XMMATRIX* Transform::getMatrix()
 {
 	return &world_matrix;
 }
-void Transform::setMatrix(DirectX::XMMATRIX new_matrix)
+void Transform::setViewMatrix(DirectX::XMMATRIX new_matrix)
 {
 	view_matrix = new_matrix;
 }

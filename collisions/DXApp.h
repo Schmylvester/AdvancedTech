@@ -7,7 +7,8 @@
 #include <SimpleMath.h>
 #include "Camera.h"
 #include "KeyboardInput.h"
-class Debug;
+#include "TriangleLoader.h"
+
 using namespace DirectX;
 class DXApp
 {
@@ -29,8 +30,10 @@ public:
 	float getRatio();
 
 	Camera* getCam();
+	TriangleLoader* getLoader();
 protected:
 	float fps;
+	TriangleLoader triangle_loader;
 
 	void setColour(int colour_index);
 	bool initWindow();
@@ -58,7 +61,6 @@ protected:
 	D3D_FEATURE_LEVEL m_feature_level;
 	D3D11_VIEWPORT m_viewport;
 
-	Debug* debugger;
 	KeyboardInput input;
 	clock_t last_clock = clock();
 };

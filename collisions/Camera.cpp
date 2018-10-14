@@ -1,14 +1,14 @@
 #include "Camera.h"
 #include "DXApp.h"
 
-Camera::Camera(KeyboardInput * input, DXApp* _app)
+Camera::Camera(KeyboardInput * input, DXApp* _app, DirectX::XMVECTOR look_at)
 {
 	m_app = _app;
 	m_input = input;
 
 	using namespace DirectX;
-	m_transform.setMatrix(
-		XMMatrixLookAtLH(m_transform.getPos(), XMVectorAdd(m_transform.getPos(), XMVectorSet(0, 0, 1, 1)), XMVectorSet(0, 1, 0, 1))
+	m_transform.setViewMatrix(
+		XMMatrixLookAtLH(m_transform.getPos(), XMVectorAdd(m_transform.getPos(), look_at), XMVectorSet(0, 1, 0, 1))
 		* XMMatrixPerspectiveFovLH(XMConvertToRadians(75), _app->getRatio(), 0.1f, 100.0f));
 }
 
@@ -30,10 +30,14 @@ void Camera::tick(float dt)
 		m_transform.rotate('x', dt);
 	if (m_input->searchInputs(KeyBind::J, KeyState::HELD))
 		m_transform.rotate('x', -dt);
-	if (m_input->searchInputs(KeyBind::K, KeyState::HELD))
+	if (m_input->searchInputs(KeyBind::I, KeyState::HELD))
 		m_transform.rotate('y', dt);
-	if (m_input->searchInputs(KeyBind::H, KeyState::HELD))
+	if (m_input->searchInputs(KeyBind::K, KeyState::HELD))
 		m_transform.rotate('y', -dt);
+	if (m_input->searchInputs(KeyBind::Y, KeyState::HELD))
+		m_transform.rotate('z', dt);
+	if (m_input->searchInputs(KeyBind::H, KeyState::HELD))
+		m_transform.rotate('z', -dt);
 
 	m_transform.update();
 }
