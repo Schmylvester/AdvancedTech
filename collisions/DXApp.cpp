@@ -222,8 +222,8 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 	{
 	case WM_DESTROY:
 		return quitApp();
-	case WM_KEYDOWN:		//key
-		if (w_param == 27)	//probably enumerated or defined somewhere, but this is esc
+	case WM_KEYDOWN:
+		if (w_param == (int)KeyBind::Esc)
 		{
 			return quitApp();
 		}
@@ -233,6 +233,7 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 		input.keyUp((KeyBind)w_param);
 		break;
 	case WM_LBUTTONDOWN:	//click
+	case WM_MOUSEMOVE:		//move
 	default:
 		break;
 	}

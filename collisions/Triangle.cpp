@@ -78,7 +78,7 @@ void Triangle::setVertices(Vertex _vertices[3])
 	{
 		DirectX::XMFLOAT3 v_float = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z };
 		XMVECTOR vec = XMLoadFloat3(&v_float);
-		XMMATRIX perspective_matrix = XMMatrixPerspectiveFovLH(1.1f, m_app->getRatio(), 0.001f, 10);
+		XMMATRIX perspective_matrix = XMMatrixPerspectiveFovLH(1.1f, m_app->getRatio(), 0.1f, 5);
 		XMMATRIX new_matrix = *m_world_matrix * *m_view_matrix * perspective_matrix;
 		//new_matrix[3,2] = new_matrix[3, 2] < 0 ? 0 : new_matrix[3, 2];
 		//new_matrix[3,2] = new_matrix[3, 2] > 1 ? 1 : new_matrix[3, 2];

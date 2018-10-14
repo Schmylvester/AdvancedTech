@@ -12,9 +12,9 @@ Camera::~Camera()
 void Camera::tick(float dt)
 {
 	if (m_input->searchInputs(KeyBind::W, KeyState::HELD))
-		transform.move(0, dt, 0);
+		transform.move(0, 0, dt);
 	if (m_input->searchInputs(KeyBind::S, KeyState::HELD))
-		transform.move(0, -dt, 0);
+		transform.move(0, 0, -dt);
 	if (m_input->searchInputs(KeyBind::A, KeyState::HELD))
 		transform.move(-dt, 0, 0);
 	if (m_input->searchInputs(KeyBind::D, KeyState::HELD))
