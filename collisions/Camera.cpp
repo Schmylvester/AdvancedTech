@@ -24,7 +24,7 @@ void Camera::tick(float dt)
 	if (m_input->searchInputs(KeyBind::S, KeyState::HELD))
 		m_transform.move(0, 0, -dt);
 	if (m_input->searchInputs(KeyBind::A, KeyState::HELD))
-		m_transform.move(-dt, 0, 0);
+		m_transform.move(-dt, 0, 0);;
 	if (m_input->searchInputs(KeyBind::D, KeyState::HELD))
 		m_transform.move(dt, 0, 0);
 	if (m_input->searchInputs(KeyBind::Q, KeyState::HELD))
