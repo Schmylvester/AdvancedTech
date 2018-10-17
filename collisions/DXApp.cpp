@@ -18,7 +18,7 @@ DXApp::DXApp(HINSTANCE h_instance)
 {
 	m_h_app_instance = h_instance;
 	m_h_app_wnd = NULL;
-	m_app_title = "3D Collisions";
+	m_app_title = "UWE Bad Movies society is best society.";
 	m_wnd_style = WS_OVERLAPPEDWINDOW;
 	gp_app = this;
 
@@ -71,8 +71,9 @@ bool DXApp::init()
 	{
 		return false;
 	}
+	m_cam = std::make_unique<Camera>(&input, this);
+	triangle_loader = TriangleLoader(m_cam.get());
 
-	m_cam = std::make_unique<Camera>(&input, this, XMVectorSet(0, 0, 1, 1));
 	return true;
 }
 
@@ -242,6 +243,8 @@ float DXApp::getDeltaTime()
 
 LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 {
+	int mouse_x = LOWORD(l_param);
+	int mouse_y = HIWORD(l_param);
 	switch (msg)
 	{
 	case WM_DESTROY:
@@ -251,12 +254,15 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 		{
 			return quitApp();
 		}
-		input.keyDown((KeyBind)w_param);
+		input.keyboard.keyDown((KeyBind)w_param);
 		break;
 	case WM_KEYUP:
-		input.keyUp((KeyBind)w_param);
+		input.keyboard.keyUp((KeyBind)w_param);
 		break;
 	case WM_LBUTTONDOWN:	//click
+	case WM_MOUSEMOVE:
+		input.mouse.move(mouse_x, mouse_y);
+		break;
 	default:
 		break;
 	}

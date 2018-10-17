@@ -20,9 +20,9 @@ Application::~Application()
 void Application::initObjects()
 {
 	int i[3];
-	for (i[0] = -2; i[0] < 2; i[0]++)
-		for (i[1] = -2; i[1] < 2; i[1]++)
-			for (i[2] = -2; i[2] < 2; i[2]++)
+	for (i[0] = -1; i[0] < 1; i[0]++) {
+		for (i[1] = -1; i[1] < 1; i[1]++) {
+			for (i[2] = -1; i[2] < 1; i[2]++)
 			{
 				float x_pos = i[0] * (0.11f * (1 + rand() % 2));
 				float y_pos = i[1] * (0.11f * (1 + rand() % 2));
@@ -34,6 +34,8 @@ void Application::initObjects()
 				m_gameobjects.back()->move(x_pos, y_pos, z_pos);
 				m_collision_detection.addPhysicsObject(m_gameobjects.back()->getPhysics());
 			}
+		}
+	}
 	return;
 }
 
@@ -51,11 +53,10 @@ bool Application::init()
 
 void Application::update(float dt)
 {
-	if (input.searchInputs(KeyBind::Space, KeyState::DOWN))
+	if (input.keyboard.searchInputs(KeyBind::Space, KeyState::DOWN))
 	{
 		play = !play;
 	}
-	input.tick();
 	m_cam->tick(dt);
 	if (play)
 	{
@@ -65,6 +66,8 @@ void Application::update(float dt)
 		}
 		m_collision_detection.checkCollisions();
 	}
+	input.keyboard.tick();
+	input.mouse.tick();
 }
 
 void Application::render(float dt)

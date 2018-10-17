@@ -23,6 +23,7 @@ public:
 	void setScl(float x, float y, float z);
 
 	Collider* getPhysics();
+	Transform* getTransform() { return m_transform; }
 private:
 	Transform* m_transform;
 

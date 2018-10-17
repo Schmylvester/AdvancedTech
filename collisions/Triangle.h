@@ -27,7 +27,8 @@ private:
 	ID3D11InputLayout* m_input_layout;
 
 	DirectX::XMMATRIX* m_world_matrix;
-	DirectX::XMMATRIX* m_view_matrix;
+
+	TriangleLoader* m_triangle_loader;
 
 	Vertex m_vertices[3];
 };

@@ -3,7 +3,7 @@
 SphereCollider::SphereCollider(Transform* _transform, RenderCube* _renderer) : Collider(_renderer)
 {
 	m_transform = _transform;
-	radius = m_transform->getScl().x;
+	radius = m_transform->getScale().x;
 }
 
 bool SphereCollider::intersect(BoxCollider * col)

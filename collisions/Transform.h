@@ -1,8 +1,7 @@
 #pragma once
-#include <d3d11.h>
+#include "DXUtil.h"
 #include <SimpleMath.h>
 
-using namespace DirectX::SimpleMath;
 class Transform
 {
 public:
@@ -10,27 +9,25 @@ public:
 	~Transform() = default;
 
 #pragma region GettersSetters
-	Vector3 getPos();
+	SimpleMath::Vector3 getPos();
 	void move(float x, float y, float z);
 
-	Vector3 getRot();
+	DirectX::XMMATRIX* getRotMatrix() { return &rotation_matrix; }
 	void rotate(char axis, float rot);
 
 	void setScl(float x, float y, float z);
-	Vector3 getScl();
+
+	SimpleMath::Vector3 getScale();
 
 	DirectX::XMMATRIX* getMatrix();
-	void setViewMatrix(DirectX::XMMATRIX new_matrix);
 #pragma endregion
 	void update();
 
 private:
+	XMMATRIX position_matrix = XMMatrixIdentity();
+	XMMATRIX rotation_matrix = XMMatrixIdentity();
+	SimpleMath::Vector3 scale_matrix = SimpleMath::Vector3(0.05f, 0.05f, 0.05f);
 
-	DirectX::XMMATRIX position_matrix = DirectX::XMMatrixIdentity();
-	DirectX::XMMATRIX rotation_matrix = DirectX::XMMatrixIdentity();
+	XMMATRIX world_matrix = XMMatrixIdentity();
 
-	DirectX::XMMATRIX world_matrix = DirectX::XMMatrixIdentity();
-	DirectX::XMMATRIX view_matrix = DirectX::XMMatrixIdentity();
-
-	Vector3 scale = Vector3(0.05f, 0.05f, 0.05f);
 };

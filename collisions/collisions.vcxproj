@@ -126,6 +126,8 @@
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="Input.h" />
+    <ClCompile Include="MouseInput.cpp" />
     <ClCompile Include="RenderCube.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Geometry.cpp" />
@@ -144,6 +146,7 @@
     <ClInclude Include="CollisionDetection.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="MouseInput.h" />
     <ClInclude Include="RenderCube.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXUtil.h" />

@@ -11,7 +11,7 @@ Triangle::~Triangle()
 void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader)
 {
 	m_world_matrix = _world_matrix;
-	m_view_matrix = app->getCam()->m_transform.getMatrix();
+	m_triangle_loader = loader;
 	m_app = app;
 	auto device = app->getDevice();
 	
@@ -76,7 +76,9 @@ void Triangle::setVertices(Vertex _vertices[3])
 	{
 		DirectX::XMFLOAT3 v_float = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z };
 		XMVECTOR vec = XMLoadFloat3(&v_float);
-		XMMATRIX new_matrix = *m_world_matrix * *m_view_matrix;
+		XMMATRIX new_matrix = *m_world_matrix * m_triangle_loader->getCamView();
+		new_matrix *= m_triangle_loader->getCamPerspective();
+
 		vec = XMVector3Transform(vec, new_matrix);
 		XMStoreFloat3(&v_float, vec);
 		render_vert[i] = { v_float.x, v_float.y, v_float.z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };

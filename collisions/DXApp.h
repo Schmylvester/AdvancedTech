@@ -61,6 +61,6 @@ protected:
 	D3D_FEATURE_LEVEL m_feature_level;
 	D3D11_VIEWPORT m_viewport;
 
-	KeyboardInput input;
+	Input input;
 	clock_t last_clock = clock();
 };

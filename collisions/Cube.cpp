@@ -14,11 +14,11 @@ Cube::Cube(DXApp * app, float colour[4])
 	for (int i = 0; i < 8; i++)
 	{
 		m_corners[i].x = (i < 4) ? -1 : 1;
-		m_corners[i].x *= m_transform->getScl().x;
+		m_corners[i].x *= m_transform->getScale().x;
 		m_corners[i].y = ((i / 2) % 2) == 0 ? -1 : 1;
-		m_corners[i].y *= m_transform->getScl().y;
+		m_corners[i].y *= m_transform->getScale().y;
 		m_corners[i].z = (i % 2 == 0) ? -1 : 1;
-		m_corners[i].z *= m_transform->getScl().z;
+		m_corners[i].z *= m_transform->getScale().z;
 
 		m_render->updateVertices(i, m_corners[i].x, m_corners[i].y, m_corners[i].z);
 		setRenderTriangles(true);
