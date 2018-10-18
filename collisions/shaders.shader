@@ -1,3 +1,11 @@
+// constant buffer
+cbuffer perframe
+{
+	matrix world;
+	matrix viewprojection;
+};
+
+
 struct VOut
 {
 	float4 position : SV_POSITION;
@@ -8,7 +16,8 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR)
 {
 	VOut output;
 
-	output.position = position;
+	output.position = mul(position, world);
+	output.position = mul(output.position, viewprojection);
 	output.color = color;
 
 	return output;
@@ -17,5 +26,5 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR)
 
 float4 PShader(float4 position : SV_POSITION, float4 color : COLOR) : SV_TARGET
 {
-	return color;
+	return float4(color.rgb, 1.0);
 }

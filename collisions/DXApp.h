@@ -10,6 +10,13 @@
 #include "TriangleLoader.h"
 
 using namespace DirectX;
+
+struct VS_CONSTANT_BUFFER
+{
+	XMFLOAT4X4 m_world_matrix;
+	XMFLOAT4X4 m_view_matrix;
+};
+
 class DXApp
 {
 public:
@@ -31,6 +38,7 @@ public:
 
 	Camera* getCam();
 	TriangleLoader* getLoader();
+	void updateConstantBuffer(XMMATRIX world, XMMATRIX view);
 protected:
 	float fps;
 	TriangleLoader triangle_loader;
@@ -38,6 +46,7 @@ protected:
 	void setColour(int colour_index);
 	bool initWindow();
 	bool initDirect3D();
+	bool initConstantBuffer();
 	int quitApp();
 	float getDeltaTime();
 
@@ -60,6 +69,8 @@ protected:
 	D3D_DRIVER_TYPE m_driver_type;
 	D3D_FEATURE_LEVEL m_feature_level;
 	D3D11_VIEWPORT m_viewport;
+	ID3D11Buffer* m_constant_buffer = nullptr;
+	VS_CONSTANT_BUFFER m_const_data;
 
 	Input input;
 	clock_t last_clock = clock();

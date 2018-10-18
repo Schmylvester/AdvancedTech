@@ -101,9 +101,6 @@
     <ClInclude Include="Cube.h">
       <Filter>Header Files\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="DXApp.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
     <ClInclude Include="DXUtil.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
@@ -135,6 +132,9 @@
       <Filter>Header Files\Colliders</Filter>
     </ClInclude>
     <ClInclude Include="MouseInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

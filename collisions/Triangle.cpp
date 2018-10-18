@@ -74,14 +74,8 @@ void Triangle::setVertices(Vertex _vertices[3])
 	Vertex render_vert[3];
 	for (int i = 0; i < 3; i++)
 	{
-		DirectX::XMFLOAT3 v_float = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z };
-		XMVECTOR vec = XMLoadFloat3(&v_float);
-		XMMATRIX new_matrix = *m_world_matrix * m_triangle_loader->getCamView();
-		new_matrix *= m_triangle_loader->getCamPerspective();
-
-		vec = XMVector3Transform(vec, new_matrix);
-		XMStoreFloat3(&v_float, vec);
-		render_vert[i] = { v_float.x, v_float.y, v_float.z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };
+		m_app->updateConstantBuffer(*m_world_matrix, m_app->getCam()->getView());
+		render_vert[i] = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };
 	}
 
 	D3D11_MAPPED_SUBRESOURCE ms;

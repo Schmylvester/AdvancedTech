@@ -224,6 +224,40 @@ bool DXApp::initDirect3D()
 
 	m_dev->CreateDepthStencilView(m_depth_txt, &depth_view_desc, &m_depth_stncl_view);
 
+	if (!initConstantBuffer())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool DXApp::initConstantBuffer()
+{
+	XMStoreFloat4x4(&m_const_data.m_world_matrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_const_data.m_view_matrix, XMMatrixIdentity());
+
+	D3D11_BUFFER_DESC cb_desc;
+	cb_desc.ByteWidth = sizeof(VS_CONSTANT_BUFFER);
+	cb_desc.Usage = D3D11_USAGE_DYNAMIC;
+	cb_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cb_desc.MiscFlags = 0;
+	cb_desc.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA init_data;
+	init_data.pSysMem = &m_const_data;
+	init_data.SysMemPitch = 0;
+	init_data.SysMemSlicePitch = 0;
+
+	auto hr = m_dev->CreateBuffer(&cb_desc, &init_data, &m_constant_buffer);
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	m_dev_con->VSSetConstantBuffers(0, 1, &m_constant_buffer);
+
 	return true;
 }
 
@@ -297,4 +331,22 @@ Camera * DXApp::getCam()
 TriangleLoader * DXApp::getLoader()
 {
 	return &triangle_loader;
+}
+
+void DXApp::updateConstantBuffer(XMMATRIX world, XMMATRIX view)
+{
+	world = XMMatrixTranspose(world);
+	view = XMMatrixTranspose(view);
+	XMStoreFloat4x4(&m_const_data.m_world_matrix, world);
+	XMStoreFloat4x4(&m_const_data.m_view_matrix, view);
+
+	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
+	memset(&mappedSubResource, 0, sizeof(mappedSubResource));
+
+	HRESULT hr = m_dev_con->Map(m_constant_buffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedSubResource);
+	//VS_CONSTANT_BUFFER* cbData = (VS_CONSTANT_BUFFER*)&mappedSubResource.pData;
+	memcpy(mappedSubResource.pData, &m_const_data, sizeof(VS_CONSTANT_BUFFER));
+	m_dev_con->Unmap(m_constant_buffer, 0);
+
+	m_dev_con->VSSetConstantBuffers(0, 1, &m_constant_buffer);
 }

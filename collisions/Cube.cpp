@@ -58,7 +58,6 @@ void Cube::rotate(char axis, float rot)
 
 void Cube::setScl(float x, float y, float z)
 {
-
 	m_transform->setScl(x, y, z);
 }
 
