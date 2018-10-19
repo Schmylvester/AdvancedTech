@@ -17,13 +17,3 @@ bool SphereCollider::intersect(SphereCollider * col)
 	distance = sqrt(pow(distance, 2) + pow(getPos().z - col->getPos().z, 2));
 	return distance < radius + col->getRadius();
 }
-
-float SphereCollider::getRadius()
-{
-	return radius;
-}
-
-Vector3 SphereCollider::getPos()
-{
-	return m_transform->getPos();
-}

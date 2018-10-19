@@ -1,15 +1,15 @@
 #pragma once
 #include "Transform.h"
-#include "Input.h"
 #include "DXUtil.h"
 
+class Input;
 class DXApp;
 class Camera
 {
 public:
 	Camera() = delete;
 	Camera(Input* input, DXApp* _app);
-	~Camera();
+	~Camera() = default;
 	Transform m_transform;
 	void tick(float dt);
 

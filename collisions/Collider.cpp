@@ -65,21 +65,6 @@ void Collider::collisionExit(Collider* col)
 {
 }
 
-float Collider::getBounce()
-{
-	return m_bounciness;
-}
-
-void Collider::setGravity(float _gravity)
-{
-	m_gravity = _gravity;
-}
-
-Transform Collider::getTransform()
-{
-	return *m_transform;
-}
-
 bool Collider::seachList(Collider* col, std::vector<Collider*>* list)
 {
 	for (Collider* col_chk : *list)

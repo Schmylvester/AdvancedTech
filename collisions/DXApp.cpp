@@ -39,6 +39,7 @@ DXApp::~DXApp()
 	Memory::SafeRelease(m_swap_chain);
 	Memory::SafeRelease(m_dev_con);
 	Memory::SafeRelease(m_dev);
+	Memory::SafeRelease(m_constant_buffer);
 }
 
 int DXApp::run()
@@ -303,34 +304,9 @@ LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 	return DefWindowProc(hwnd, msg, w_param, l_param);
 }
 
-ID3D11Device * DXApp::getDevice()
-{
-	return m_dev;
-}
-
-ID3D11DeviceContext * DXApp::getContext()
-{
-	return m_dev_con;
-}
-
-float DXApp::getRatio()
-{
-	return (float)m_client_width / m_client_height;
-}
-
 void DXApp::setColour(int colour_index)
 {
 	m_colour[colour_index] = m_colour[colour_index] >= 1 ? 0 : m_colour[colour_index] + 0.1f;
-}
-
-Camera * DXApp::getCam()
-{
-	return m_cam.get();
-}
-
-TriangleLoader * DXApp::getLoader()
-{
-	return &triangle_loader;
 }
 
 void DXApp::updateConstantBuffer(XMMATRIX world, XMMATRIX view)
@@ -344,7 +320,6 @@ void DXApp::updateConstantBuffer(XMMATRIX world, XMMATRIX view)
 	memset(&mappedSubResource, 0, sizeof(mappedSubResource));
 
 	HRESULT hr = m_dev_con->Map(m_constant_buffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedSubResource);
-	//VS_CONSTANT_BUFFER* cbData = (VS_CONSTANT_BUFFER*)&mappedSubResource.pData;
 	memcpy(mappedSubResource.pData, &m_const_data, sizeof(VS_CONSTANT_BUFFER));
 	m_dev_con->Unmap(m_constant_buffer, 0);
 

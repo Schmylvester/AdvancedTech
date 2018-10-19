@@ -9,9 +9,8 @@ public:
 	virtual bool intersect(BoxCollider* col) override;
 	virtual bool intersect(SphereCollider* col) override;
 
-	float getRadius();
-	Vector3 getPos();
+	float getRadius() { return radius; }
+	Vector3 getPos() { return m_transform->getPos(); }
 private:
 	float radius;
 };
-
