@@ -19,9 +19,9 @@ public:
 	void tick(float dt);
 	virtual void collide(Collider* col);
 
-	void setGravity(float _gravity);
-	Transform getTransform();
-	float getBounce();
+	void setGravity(float _gravity) { m_gravity = _gravity; }
+	Transform getTransform() { return *m_transform; }
+	float getBounce() { return m_bounciness; }
 protected:
 	virtual void collisionEnter(Collider* col);
 	virtual void collisionExit(Collider* col);

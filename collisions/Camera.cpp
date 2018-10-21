@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "DXApp.h"
+#include "Input.h"
 
 Camera::Camera(Input * input, DXApp* _app)
 {
@@ -11,10 +12,6 @@ Camera::Camera(Input * input, DXApp* _app)
 	m_perspective_matrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(70), _app->getRatio(), 0.1f, 100.0f);
 
 	m_view_matrix = m_view_matrix * m_perspective_matrix;
-}
-
-Camera::~Camera()
-{
 }
 
 void Camera::tick(float dt)

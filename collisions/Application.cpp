@@ -87,6 +87,7 @@ void Application::render(float dt)
 
 	for (Cube* cube : m_gameobjects)
 	{
+		updateConstantBuffer(*(cube->getTransform()->getMatrix()), m_cam->getView());
 		cube->draw();
 	}
 

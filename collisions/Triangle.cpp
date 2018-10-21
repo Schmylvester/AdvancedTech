@@ -74,7 +74,6 @@ void Triangle::setVertices(Vertex _vertices[3])
 	Vertex render_vert[3];
 	for (int i = 0; i < 3; i++)
 	{
-		m_app->updateConstantBuffer(*m_world_matrix, m_app->getCam()->getView());
 		render_vert[i] = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };
 	}
 

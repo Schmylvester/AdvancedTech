@@ -10,10 +10,6 @@ public:
 	TriangleLoader(Camera * _cam);
 	~TriangleLoader();
 
-	XMMATRIX getCamView();
-
-	XMMATRIX getCamPerspective();
-
 	ID3D10Blob *VS, *PS;
 private:
 	Camera* m_cam;

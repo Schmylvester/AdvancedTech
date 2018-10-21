@@ -32,12 +32,12 @@ public:
 	virtual void render(float dt) = 0;
 	virtual LRESULT msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 
-	ID3D11Device* getDevice();
-	ID3D11DeviceContext* getContext();
-	float getRatio();
+	ID3D11Device* getDevice() { return m_dev; }
+	ID3D11DeviceContext* getContext() { return m_dev_con; }
+	float getRatio() { return (float)m_client_width / m_client_height; }
 
-	Camera* getCam();
-	TriangleLoader* getLoader();
+	Camera* getCam() { return m_cam.get(); }
+	TriangleLoader* getLoader() { return &triangle_loader; }
 	void updateConstantBuffer(XMMATRIX world, XMMATRIX view);
 protected:
 	float fps;
