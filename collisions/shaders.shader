@@ -18,6 +18,7 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR)
 
 	output.position = mul(position, world);
 	output.position = mul(output.position, viewprojection);
+	
 	output.color = color;
 
 	return output;
@@ -26,5 +27,5 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR)
 
 float4 PShader(float4 position : SV_POSITION, float4 color : COLOR) : SV_TARGET
 {
-	return float4(color.rgb, 1.0);
+	return color;
 }

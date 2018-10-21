@@ -1,6 +1,5 @@
 #include "Camera.h"
 #include "DXApp.h"
-#include "Input.h"
 
 Camera::Camera(Input * input, DXApp* _app)
 {
@@ -17,7 +16,7 @@ Camera::Camera(Input * input, DXApp* _app)
 void Camera::tick(float dt)
 {
 	XMFLOAT3 axis = XMFLOAT3(0, 1, 0);
-	rotate(axis, dt * m_input->mouse.getMouseMove().x * 150);
+	rotate(axis, dt * 15);
 
 	m_view_matrix = XMMatrixLookAtLH(m_transform.getPos(),
 		XMLoadFloat3(&m_target), XMLoadFloat3(&m_up)) * m_perspective_matrix;

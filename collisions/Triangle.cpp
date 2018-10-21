@@ -14,7 +14,7 @@ void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix, Triang
 	m_triangle_loader = loader;
 	m_app = app;
 	auto device = app->getDevice();
-	
+
 	device->CreateVertexShader(loader->VS->GetBufferPointer(), loader->VS->GetBufferSize(), NULL, &m_vtx_shader);
 	device->CreatePixelShader(loader->PS->GetBufferPointer(), loader->PS->GetBufferSize(), NULL, &m_pxl_shader);
 
@@ -74,7 +74,15 @@ void Triangle::setVertices(Vertex _vertices[3])
 	Vertex render_vert[3];
 	for (int i = 0; i < 3; i++)
 	{
-		render_vert[i] = { m_vertices[i].X, m_vertices[i].Y, m_vertices[i].Z, _vertices[i].R,_vertices[i].G,_vertices[i].B,_vertices[i].A };
+		render_vert[i] = {
+			m_vertices[i].X,
+			m_vertices[i].Y,
+			m_vertices[i].Z,
+			_vertices[i].R,
+			_vertices[i].G,
+			_vertices[i].B,
+			_vertices[i].A
+		};
 	}
 
 	D3D11_MAPPED_SUBRESOURCE ms;

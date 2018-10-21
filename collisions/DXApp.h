@@ -6,7 +6,7 @@
 #include "DXUtil.h"
 #include <SimpleMath.h>
 #include "Camera.h"
-#include "KeyboardInput.h"
+#include "Input.h"
 #include "TriangleLoader.h"
 
 using namespace DirectX;

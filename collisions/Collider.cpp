@@ -1,6 +1,6 @@
 #include "Collider.h"
 
-Collider::Collider(RenderCube* _renderer)
+Collider::Collider(ObjectRenderer* _renderer)
 {
 	m_renderer = _renderer;
 	float numbers[5] = {-0.3f, -0.1f, 0, 0.1f, 0.3f };

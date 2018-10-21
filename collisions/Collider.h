@@ -1,6 +1,6 @@
 #pragma once
 #include "Transform.h"
-#include "RenderCube.h"
+#include "ObjectRenderer.h"
 #include <vector>
 
 class Collider;
@@ -11,7 +11,7 @@ class Collider
 {
 public:
 	Collider() = default;
-	Collider(RenderCube * _renderer);
+	Collider(ObjectRenderer * _renderer);
 	~Collider();
 
 	virtual bool intersect(BoxCollider* col) = 0;
@@ -36,6 +36,6 @@ protected:
 	std::vector<Collider*> m_last_tick_col;
 	bool seachList(Collider * col, std::vector<Collider*>* list);
 
-	RenderCube* m_renderer;
+	ObjectRenderer* m_renderer;
 };
 

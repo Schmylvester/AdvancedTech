@@ -4,13 +4,13 @@
 #include "Cube.h"
 
 class TriangleLoader;
-class RenderCube :
+class ObjectRenderer :
 	public Geometry
 {
 public:
-	RenderCube() = default;
-	RenderCube(DXApp * app, float colour[4], DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader);
-	~RenderCube();
+	ObjectRenderer() = default;
+	ObjectRenderer(DXApp * app, float colour[4], DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader);
+	~ObjectRenderer();
 	void changeColour();
 	void updateVertices(int i, float x, float y, float z);
 	void setTriangleValues(int triangle_index, int a, int b, int c, bool init);

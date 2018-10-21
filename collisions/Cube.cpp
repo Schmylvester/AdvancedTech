@@ -1,12 +1,12 @@
 #include "Cube.h"
-#include "RenderCube.h"
+#include "ObjectRenderer.h"
 #include "DXApp.h"
 #include "ColliderIncludes.h"
 
 Cube::Cube(DXApp * app, float colour[4])
 {
 	m_transform = new Transform();
-	m_render = new RenderCube(app, colour, m_transform->getMatrix(), app->getLoader());
+	m_render = new ObjectRenderer(app, colour, m_transform->getMatrix(), app->getLoader());
 	//if (rand() % 2 == 0)
 	//	m_physics = new BoxCollider(m_transform);
 	//else

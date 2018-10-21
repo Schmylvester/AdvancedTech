@@ -20,16 +20,17 @@ Application::~Application()
 void Application::initObjects()
 {
 	int i[3];
-	for (i[0] = -2; i[0] < 2; i[0]++) {
-		for (i[1] = -2; i[1] < 2; i[1]++) {
-			for (i[2] = 7; i[2] < 9; i[2]++)
+	for (i[0] = -1; i[0] < 3; i[0]++) {
+		for (i[1] = -1; i[1] < 3; i[1]++) {
+			for (i[2] = -1; i[2] < 3; i[2]++)
 			{
-				float x_pos = i[0] * (0.15f * (1 + rand() % 2));
-				float y_pos = i[1] * (0.15f * (1 + rand() % 2));
-				float z_pos = i[2] * (0.15f * (1 + rand() % 2));
+				float x_pos = i[0] * ((1 + rand() % 2));
+				float y_pos = i[1] * ((1 + rand() % 2));
+				float z_pos = i[2] * ((1 + rand() % 2));
 
-				float colour[4] = { 1,1,1,1 };
-				//colour[rand() % 3] = (1 - (0.5f + (float)i[0] / 4)) * (1 - (0.5f + (float)i[1] / 4)) * (1 - (0.5f + (float)i[2] / 4));
+				float colour[4] = { 1, 1, 1, 1 };
+				colour[rand() % 3] = 0.3f;
+				colour[rand() % 3] = 0.3f;
 				m_gameobjects.push_back(new Cube(this, colour));
 				m_gameobjects.back()->move(x_pos, y_pos, z_pos);
 				m_collision_detection.addPhysicsObject(m_gameobjects.back()->getPhysics());

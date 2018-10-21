@@ -5,7 +5,7 @@
 using namespace DirectX::SimpleMath;
 
 class DXApp;
-class RenderCube;
+class ObjectRenderer;
 class Collider;
 
 class Cube
@@ -28,7 +28,7 @@ private:
 	Transform* m_transform;
 
 	Vector3 m_corners[8];
-	RenderCube* m_render;
+	ObjectRenderer* m_render;
 	Collider* m_physics;
 	void setRenderTriangles(bool init);
 };

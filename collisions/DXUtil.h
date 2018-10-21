@@ -6,6 +6,7 @@
 #include <SimpleMath.h>
 
 using namespace DirectX;
+using namespace DirectX::SimpleMath;
 namespace Memory
 {
 	template <class T> void SafeDelete(T& t)

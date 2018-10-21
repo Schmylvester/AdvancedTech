@@ -1,6 +1,6 @@
 #include "ColliderIncludes.h"
 
-SphereCollider::SphereCollider(Transform* _transform, RenderCube* _renderer) : Collider(_renderer)
+SphereCollider::SphereCollider(Transform* _transform, ObjectRenderer* _renderer) : Collider(_renderer)
 {
 	m_transform = _transform;
 	radius = m_transform->getScale().x;

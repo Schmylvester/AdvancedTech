@@ -48,9 +48,6 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Source Files\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="RenderCube.cpp">
-      <Filter>Source Files\Cube</Filter>
-    </ClCompile>
     <ClCompile Include="Triangle.cpp">
       <Filter>Source Files\Renderer</Filter>
     </ClCompile>
@@ -84,6 +81,9 @@
     <ClCompile Include="Input.h">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectRenderer.cpp">
+      <Filter>Source Files\Cube</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -94,9 +94,6 @@
     </ClInclude>
     <ClInclude Include="Geometry.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderCube.h">
-      <Filter>Header Files\Cube</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
       <Filter>Header Files\Cube</Filter>
@@ -136,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="DXApp.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectRenderer.h">
+      <Filter>Header Files\Cube</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
