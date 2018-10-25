@@ -7,7 +7,7 @@ class TriangleLoader
 {
 public:
 	TriangleLoader() = default;
-	TriangleLoader(Camera * _cam);
+	TriangleLoader(DXApp * app, Camera * _cam);
 	~TriangleLoader();
 
 	ID3D10Blob *VS, *PS;

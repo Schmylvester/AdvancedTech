@@ -20,13 +20,15 @@ Application::~Application()
 void Application::initObjects()
 {
 	int i[3];
-	for (i[0] = -1; i[0] < 3; i[0]++) {
-		for (i[1] = -1; i[1] < 3; i[1]++) {
-			for (i[2] = -1; i[2] < 3; i[2]++)
+	for (i[0] = -2; i[0] < 2; i[0]++)
+	{
+		for (i[1] = -2; i[1] < 2; i[1]++)
+		{
+			for (i[2] = 0; i[2] < 1; i[2]++)
 			{
-				float x_pos = i[0] * ((1 + rand() % 2));
-				float y_pos = i[1] * ((1 + rand() % 2));
-				float z_pos = i[2] * ((1 + rand() % 2));
+				float x_pos = i[0] * 1.5f;
+				float y_pos = i[1] * 1.5f;
+				float z_pos = 10;
 
 				float colour[4] = { 1, 1, 1, 1 };
 				colour[rand() % 3] = 0.3f;

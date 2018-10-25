@@ -26,7 +26,7 @@ public:
 private:
 	XMMATRIX position_matrix = XMMatrixIdentity();
 	XMMATRIX rotation_matrix = XMMatrixIdentity();
-	SimpleMath::Vector3 scale_matrix = SimpleMath::Vector3(0.05f, 0.05f, 0.05f);
+	SimpleMath::Vector3 scale_matrix = SimpleMath::Vector3(0.5f, 0.5f, 0.5f);
 
 	XMMATRIX world_matrix = XMMatrixIdentity();
 

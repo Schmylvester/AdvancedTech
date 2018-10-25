@@ -11,8 +11,7 @@ void CollisionDetection::addPhysicsObject(Collider * _object)
 void CollisionDetection::checkCollisions()
 {
 	//find most extreme points
-	Vector3 min_point;
-	Vector3 max_point;
+	Vector3 min_point, max_point;
 	getMinMax(min_point, max_point);
 	//build boundaries
 	//for each in each boundary

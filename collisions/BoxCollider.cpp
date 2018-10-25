@@ -8,6 +8,15 @@ BoxCollider::BoxCollider(Transform* object_transform)
 
 bool BoxCollider::intersect(BoxCollider* col)
 {
+	//so like I project each object onto the axis perpendicular to this object
+	//then I like project them both onto the other object's axis
+	//after that I see if there's an overlap on all those?
+	//if there is, they're colliding I guess
+	//but if I'm projecting, I'll get a 2d shape, so I need to do it twice?
+
+	//like literally how the heck do I find the axis I need to project onto?
+	//XMPlaneDotNormal?
+
 	Transform other_tfm = col->getTransform();
 	Vector3 lowest = Vector3(m_transform->getPos().x - m_transform->getScale().x,
 		m_transform->getPos().y - m_transform->getScale().y,

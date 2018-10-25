@@ -39,10 +39,10 @@ void Collider::tick(float dt)
 	m_this_tick_col.clear();
 
 	//m_move_speed.y -= (m_gravity * dt);
-	m_transform->move((m_move_speed.x * dt), (m_move_speed.y * dt), (m_move_speed.z * dt));
 	m_transform->rotate('x', m_rotate_speed.x * dt);
 	m_transform->rotate('y', m_rotate_speed.y * dt);
 	m_transform->rotate('z', m_rotate_speed.z * dt);
+	m_transform->move((m_move_speed.x * dt), (m_move_speed.y * dt), (m_move_speed.z * dt));
 }
 
 void Collider::collide(Collider* col)

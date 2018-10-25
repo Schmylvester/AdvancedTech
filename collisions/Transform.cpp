@@ -42,6 +42,6 @@ DirectX::XMMATRIX* Transform::getMatrix()
 #pragma endregion
 void Transform::update()
 {
-	world_matrix = position_matrix;
-	world_matrix *= rotation_matrix;
+	world_matrix = rotation_matrix;
+	world_matrix *= position_matrix;
 }
