@@ -25,7 +25,7 @@ DXApp::DXApp(HINSTANCE h_instance)
 	m_dev = nullptr;
 	m_dev_con = nullptr;
 	m_swap_chain = nullptr;
-	m_render_target_view = nullptr;
+	m_render_target_view = nullptr;;
 }
 
 
@@ -73,7 +73,7 @@ bool DXApp::init()
 		return false;
 	}
 	m_cam = std::make_unique<Camera>(&input, this);
-	triangle_loader = TriangleLoader(this, m_cam.get());
+	triangle_loader = std::make_unique<TriangleLoader>(this, m_cam.get());
 
 	return true;
 }

@@ -37,11 +37,11 @@ public:
 	float getRatio() { return (float)m_client_width / m_client_height; }
 
 	Camera* getCam() { return m_cam.get(); }
-	TriangleLoader* getLoader() { return &triangle_loader; }
+	TriangleLoader* getLoader() { return triangle_loader.get(); }
 	void updateConstantBuffer(XMMATRIX world, XMMATRIX view);
 protected:
 	float fps;
-	TriangleLoader triangle_loader;
+	std::unique_ptr<TriangleLoader> triangle_loader = nullptr;
 
 	void setColour(int colour_index);
 	bool initWindow();
