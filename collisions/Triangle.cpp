@@ -4,8 +4,6 @@
 
 Triangle::~Triangle()
 {
-	Memory::SafeRelease(m_pxl_shader);
-	Memory::SafeRelease(m_vtx_shader);
 }
 
 void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix, TriangleLoader* loader)
@@ -13,14 +11,6 @@ void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix, Triang
 	m_world_matrix = _world_matrix;
 	m_triangle_loader = loader;
 	m_app = app;
-	auto device = app->getDevice();
-
-	device->CreateVertexShader(loader->VS->GetBufferPointer(), loader->VS->GetBufferSize(), NULL, &m_vtx_shader);
-	device->CreatePixelShader(loader->PS->GetBufferPointer(), loader->PS->GetBufferSize(), NULL, &m_pxl_shader);
-
-	auto context = app->getContext();
-	context->VSSetShader(m_vtx_shader, 0, 0);
-	context->PSSetShader(m_pxl_shader, 0, 0);
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -30,8 +20,10 @@ void Triangle::initPipeline(DXApp* app, DirectX::XMMATRIX* _world_matrix, Triang
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
+	auto device = app->getDevice();
 	device->CreateBuffer(&bd, NULL, &m_vtx_buffer);
 
+	auto context = app->getContext();
 	D3D11_MAPPED_SUBRESOURCE ms;
 	context->Map(m_vtx_buffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
 	memcpy(ms.pData, m_vertices, sizeof(m_vertices));

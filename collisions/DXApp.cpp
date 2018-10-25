@@ -73,7 +73,7 @@ bool DXApp::init()
 		return false;
 	}
 	m_cam = std::make_unique<Camera>(&input, this);
-	triangle_loader = TriangleLoader(m_cam.get());
+	triangle_loader = TriangleLoader(this, m_cam.get());
 
 	return true;
 }

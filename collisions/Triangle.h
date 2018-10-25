@@ -21,8 +21,6 @@ public:
 	void setVertices(Vertex _vertices[3]);
 private:
 	DXApp * m_app;
-	ID3D11VertexShader* m_vtx_shader;
-	ID3D11PixelShader* m_pxl_shader;
 	ID3D11Buffer* m_vtx_buffer;
 	ID3D11InputLayout* m_input_layout;
 

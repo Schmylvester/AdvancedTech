@@ -20,9 +20,9 @@ Application::~Application()
 void Application::initObjects()
 {
 	int i[3];
-	for (i[0] = -2; i[0] < 2; i[0]++)
+	for (i[0] = -20; i[0] < 20; i[0]++)
 	{
-		for (i[1] = -2; i[1] < 2; i[1]++)
+		for (i[1] = -20; i[1] < 20; i[1]++)
 		{
 			for (i[2] = 0; i[2] < 1; i[2]++)
 			{
