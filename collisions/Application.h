@@ -6,12 +6,10 @@ class Cube;
 class Application : public DXApp
 {
 public:
-	Application(HINSTANCE h_instance);
+	Application() = default;
 	~Application();
 
-	bool init() override;
-	void update(float dt) override;
-	void render(float dt) override;
+	bool init(HINSTANCE h_instance) override;
 private:
 	void initObjects();
 	CollisionDetection m_collision_detection;

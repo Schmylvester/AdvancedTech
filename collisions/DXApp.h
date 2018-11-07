@@ -20,38 +20,37 @@ struct VS_CONSTANT_BUFFER
 class DXApp
 {
 public:
-	DXApp() = delete;
+	DXApp() = default;
 	DXApp(HINSTANCE h_instance);
 	virtual ~DXApp();
 
 	//main application loop
 	int run();
 
-	virtual bool init();
-	virtual void update(float dt) = 0;
-	virtual void render(float dt) = 0;
+	virtual bool init(HINSTANCE h_instance);
+	bool initDirectX3D(HINSTANCE h_instance);
+	void releaseObjects();
+	void updateScene();
+	void drawScene();
+
 	virtual LRESULT msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 
-	ID3D11Device* getDevice() { return m_dev; }
-	ID3D11DeviceContext* getContext() { return m_dev_con; }
 	float getRatio() { return (float)m_client_width / m_client_height; }
 
 	Camera* getCam() { return m_cam.get(); }
 	TriangleLoader* getLoader() { return triangle_loader.get(); }
-	void updateConstantBuffer(XMMATRIX world, XMMATRIX view);
+
+	ID3D11Device* getDevice() { return m_device; }
+	ID3D11DeviceContext* getContext() { return m_device_context; }
 protected:
 	float fps;
 	std::unique_ptr<TriangleLoader> triangle_loader = nullptr;
 
-	void setColour(int colour_index);
 	bool initWindow();
-	bool initDirect3D();
-	bool initConstantBuffer();
 	int quitApp();
 	float getDeltaTime();
 
 	std::unique_ptr<Camera> m_cam;
-	float m_colour[4];
 
 	HWND m_h_app_wnd;
 	HINSTANCE m_h_app_instance;
@@ -60,17 +59,17 @@ protected:
 	std::string m_app_title;
 	DWORD m_wnd_style;
 
-	ID3D11DepthStencilView* m_depth_stncl_view;
-	ID3D11Texture2D* m_depth_txt = nullptr;
-	ID3D11Device* m_dev = nullptr;
-	ID3D11DeviceContext* m_dev_con = nullptr;
-	IDXGISwapChain* m_swap_chain = nullptr;
-	ID3D11RenderTargetView* m_render_target_view = nullptr;
-	D3D_DRIVER_TYPE m_driver_type;
-	D3D_FEATURE_LEVEL m_feature_level;
-	D3D11_VIEWPORT m_viewport;
-	ID3D11Buffer* m_constant_buffer = nullptr;
-	VS_CONSTANT_BUFFER m_const_data;
+	IDXGISwapChain* m_swap_chain;
+	ID3D11Device* m_device;
+	ID3D11DeviceContext* m_device_context;
+	ID3D11RenderTargetView* m_rt_view;
+
+	float red = 0.0f;
+	float green = 0.0f;
+	float blue = 0.0f;
+	int colourmodr = 1;
+	int colourmodg = 1;
+	int colourmodb = 1;
 
 	Input input;
 	clock_t last_clock = clock();
