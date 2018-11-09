@@ -1,27 +1,8 @@
 #include "DXApp.h"
 #include <DirectXColors.h>
 
-namespace
-{
-	DXApp* gp_app = nullptr;
-}
-
-LRESULT CALLBACK MainWindProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
-{
-	if (gp_app)
-	{
-		return gp_app->msgProc(hwnd, msg, w_param, l_param);
-	}
-	return DefWindowProc(hwnd, msg, w_param, l_param);
-}
-
 DXApp::DXApp(HINSTANCE h_instance)
 {
-	m_h_app_instance = h_instance;
-	m_h_app_wnd = NULL;
-	m_app_title = "UWE Bad Movies society is best society.";
-	m_wnd_style = WS_OVERLAPPEDWINDOW;
-	gp_app = this;
 }
 
 DXApp::~DXApp()
@@ -29,39 +10,42 @@ DXApp::~DXApp()
 
 }
 
-int DXApp::run()
+int DXApp::run(int n_cmd_show)
 {
-	MSG msg = { 0 };
-	while (msg.message != WM_QUIT)
+	MSG msg;
+	ZeroMemory(&msg, sizeof(MSG));
+	while (true)
 	{
-		if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
+			if (msg.message == WM_QUIT)
+				break;
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 		else
 		{
+			window.runWindow(n_cmd_show);
 			float dt = getDeltaTime();
 			updateScene();
 			drawScene();
 		}
 	}
-	return static_cast<int>(msg.wParam);
+	return msg.wParam;
 }
 
-bool DXApp::init(HINSTANCE h_instance)
+bool DXApp::init(HINSTANCE h_instance, int n_show_cmd)
 {
-	if (!initWindow())
+	if (!window.init(h_instance, n_show_cmd, m_client_width, m_client_height, true))
 	{
+		errorBox("Window Initialization - Failed");
 		return false;
 	}
 	if (!initDirectX3D(h_instance))
 	{
-		MessageBox(0, "Direct3D Initialisation - Failed", "Error", MB_OK);
+		errorBox("Direct3D Initialisation - Failed");
 		return false;
 	}
-	m_cam = std::make_unique<Camera>(&input, this);
-	triangle_loader = std::make_unique<TriangleLoader>(this, m_cam.get());
 
 	return true;
 }
@@ -89,7 +73,7 @@ bool DXApp::initDirectX3D(HINSTANCE h_instance)
 	swap_chain_desc.SampleDesc.Quality = 0;
 	swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swap_chain_desc.BufferCount = 1;
-	swap_chain_desc.OutputWindow = m_h_app_wnd;
+	swap_chain_desc.OutputWindow = *window.getAppWnd();
 	swap_chain_desc.Windowed = TRUE;
 	swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
@@ -109,7 +93,10 @@ bool DXApp::initDirectX3D(HINSTANCE h_instance)
 
 void DXApp::releaseObjects()
 {
-
+	Memory::SafeDelete(m_swap_chain);
+	Memory::SafeDelete(m_device_context);
+	Memory::SafeDelete(m_device);
+	Memory::SafeDelete(m_rt_view);
 }
 
 void DXApp::updateScene()
@@ -139,89 +126,10 @@ void DXApp::drawScene()
 	m_swap_chain->Present(0, 0);
 }
 
-bool DXApp::initWindow()
-{
-	WNDCLASSEX wcex;
-	ZeroMemory(&wcex, sizeof(WNDCLASSEX));
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.hInstance = m_h_app_instance;
-	wcex.lpfnWndProc = MainWindProc;
-	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = "DXAPPWNCLASS";
-	wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-
-	if (!RegisterClassEx(&wcex))
-	{
-		OutputDebugString("\nFailed to create window class\n");
-		return false;
-	}
-
-	RECT r = { 0, 0, m_client_width, m_client_height };
-	AdjustWindowRect(&r, m_wnd_style, FALSE);
-	UINT width = r.right - r.left;
-	UINT height = r.bottom - r.top;
-
-	UINT x = GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2;
-	UINT y = GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2;
-
-	m_h_app_wnd = CreateWindow("DXAPPWNCLASS", m_app_title.c_str(),
-		m_wnd_style, x, y, width, height, NULL, NULL, m_h_app_instance, NULL);
-
-	if (!m_h_app_wnd)
-	{
-		OutputDebugString("\nFailed to create window instance\n");
-		return false;
-	}
-
-	ShowWindow(m_h_app_wnd, SW_SHOW);
-
-	return true;
-}
-
-int DXApp::quitApp()
-{
-	PostQuitMessage(0);
-	return 0;
-}
-
 float DXApp::getDeltaTime()
 {
 	float f = float(clock() - last_clock) / CLOCKS_PER_SEC;
 	fps = 1 / f;
 	last_clock = clock();
 	return f;
-}
-
-LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
-{
-	int mouse_x = LOWORD(l_param);
-	int mouse_y = HIWORD(l_param);
-	switch (msg)
-	{
-	case WM_DESTROY:
-		return quitApp();
-	case WM_KEYDOWN:		//key
-		if (w_param == (int)KeyBind::Esc)
-		{
-			return quitApp();
-		}
-		input.keyboard.keyDown((KeyBind)w_param);
-		break;
-	case WM_KEYUP:
-		input.keyboard.keyUp((KeyBind)w_param);
-		break;
-	case WM_LBUTTONDOWN:	//click
-	case WM_MOUSEMOVE:
-		input.mouse.move(mouse_x, mouse_y);
-		break;
-	default:
-		break;
-	}
-	return DefWindowProc(hwnd, msg, w_param, l_param);
 }

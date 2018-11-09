@@ -1,39 +1,31 @@
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include "DXUtil.h"
 #include <string>
 #include <time.h>
-#include "DXUtil.h"
 #include <SimpleMath.h>
+
+#include "Window.h"
 #include "Camera.h"
-#include "Input.h"
 #include "TriangleLoader.h"
 
 using namespace DirectX;
-
-struct VS_CONSTANT_BUFFER
-{
-	XMFLOAT4X4 m_world_matrix;
-	XMFLOAT4X4 m_view_matrix;
-};
 
 class DXApp
 {
 public:
 	DXApp() = default;
 	DXApp(HINSTANCE h_instance);
-	virtual ~DXApp();
+	~DXApp();
 
 	//main application loop
-	int run();
+	int run(int n_cmd_show);
 
-	virtual bool init(HINSTANCE h_instance);
+	bool init(HINSTANCE h_instance, int n_show_cmd);
 	bool initDirectX3D(HINSTANCE h_instance);
 	void releaseObjects();
 	void updateScene();
 	void drawScene();
 
-	virtual LRESULT msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
 
 	float getRatio() { return (float)m_client_width / m_client_height; }
 
@@ -42,27 +34,23 @@ public:
 
 	ID3D11Device* getDevice() { return m_device; }
 	ID3D11DeviceContext* getContext() { return m_device_context; }
-protected:
+private:
 	float fps;
 	std::unique_ptr<TriangleLoader> triangle_loader = nullptr;
 
-	bool initWindow();
-	int quitApp();
 	float getDeltaTime();
 
 	std::unique_ptr<Camera> m_cam;
+	Window window;
 
-	HWND m_h_app_wnd;
 	HINSTANCE m_h_app_instance;
-	UINT m_client_width = 800;
-	UINT m_client_height = 600;
-	std::string m_app_title;
-	DWORD m_wnd_style;
-
-	IDXGISwapChain* m_swap_chain;
-	ID3D11Device* m_device;
-	ID3D11DeviceContext* m_device_context;
-	ID3D11RenderTargetView* m_rt_view;
+	const UINT m_client_width = 800;
+	const UINT m_client_height = 600;
+	
+	IDXGISwapChain* m_swap_chain = nullptr;
+	ID3D11Device* m_device = nullptr;
+	ID3D11DeviceContext* m_device_context = nullptr;
+	ID3D11RenderTargetView* m_rt_view = nullptr;
 
 	float red = 0.0f;
 	float green = 0.0f;
@@ -71,6 +59,5 @@ protected:
 	int colourmodg = 1;
 	int colourmodb = 1;
 
-	Input input;
 	clock_t last_clock = clock();
 };

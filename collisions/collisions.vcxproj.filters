@@ -13,46 +13,13 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Cube">
-      <UniqueIdentifier>{ccf121d1-1e50-4dcc-8911-1f70860c0d6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Cube">
-      <UniqueIdentifier>{8a8d88a0-3132-43b3-9cac-36274c64744c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Renderer">
-      <UniqueIdentifier>{b66fe05b-5482-4e12-bd12-4dbe12491fe8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Renderer">
-      <UniqueIdentifier>{4676b730-5dfd-42a7-9312-e9ecdd6387aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Colliders">
-      <UniqueIdentifier>{a1a1f071-2181-45f2-8bd7-18c7fb3417dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Colliders">
-      <UniqueIdentifier>{d6553a69-a75b-4565-9601-0247770064be}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="KeyboardInput.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Geometry.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Cube.cpp">
-      <Filter>Source Files\Cube</Filter>
-    </ClCompile>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>Source Files\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="DXApp.cpp">
-      <Filter>Source Files\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
@@ -60,20 +27,8 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Source Files\Colliders</Filter>
-    </ClCompile>
     <ClCompile Include="TriangleLoader.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SphereCollider.cpp">
-      <Filter>Source Files\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionDetection.cpp">
-      <Filter>Source Files\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
-      <Filter>Source Files\Colliders</Filter>
     </ClCompile>
     <ClCompile Include="MouseInput.cpp">
       <Filter>Source Files</Filter>
@@ -81,28 +36,16 @@
     <ClCompile Include="Input.h">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectRenderer.cpp">
-      <Filter>Source Files\Cube</Filter>
+    <ClCompile Include="DXApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="KeyboardInput.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Header Files\Cube</Filter>
-    </ClInclude>
-    <ClInclude Include="DXUtil.h">
-      <Filter>Header Files\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Header Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
@@ -110,23 +53,8 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Header Files\Colliders</Filter>
-    </ClInclude>
     <ClInclude Include="TriangleLoader.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionDetection.h">
-      <Filter>Header Files\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="SphereCollider.h">
-      <Filter>Header Files\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxCollider.h">
-      <Filter>Header Files\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="ColliderIncludes.h">
-      <Filter>Header Files\Colliders</Filter>
     </ClInclude>
     <ClInclude Include="MouseInput.h">
       <Filter>Header Files</Filter>
@@ -134,8 +62,11 @@
     <ClInclude Include="DXApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectRenderer.h">
-      <Filter>Header Files\Cube</Filter>
+    <ClInclude Include="DXUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
