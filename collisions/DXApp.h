@@ -3,10 +3,20 @@
 #include <string>
 #include <time.h>
 #include <SimpleMath.h>
+#include <functional>
 
 #include "Window.h"
 #include "Camera.h"
 #include "TriangleLoader.h"
+
+enum LoadType
+{
+	NEVER_MIND,
+
+	LOAD_TILE,
+	LOAD_OBJECT,
+	SAVE_TILE_DATA,
+};
 
 using namespace DirectX;
 
@@ -20,7 +30,7 @@ public:
 	//main application loop
 	int run(int n_cmd_show);
 
-	bool init(HINSTANCE h_instance, int n_show_cmd, int threaded_func());
+	bool init(HINSTANCE h_instance, int n_show_cmd, std::function<int(LoadType, std::string)> func);
 	bool initDirectX3D(HINSTANCE h_instance);
 	void releaseObjects();
 	void updateScene();
