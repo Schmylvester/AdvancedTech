@@ -34,8 +34,9 @@ int DXApp::run(int n_cmd_show)
 	return msg.wParam;
 }
 
-bool DXApp::init(HINSTANCE h_instance, int n_show_cmd)
+bool DXApp::init(HINSTANCE h_instance, int n_show_cmd, int threaded_func())
 {
+	threaded_func();
 	if (!window.init(h_instance, n_show_cmd, m_client_width, m_client_height, true))
 	{
 		errorBox("Window Initialization - Failed");
@@ -124,6 +125,10 @@ void DXApp::drawScene()
 	float bg_colour[4]{ red, green, blue, 1.0f };
 	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
 	m_swap_chain->Present(0, 0);
+}
+
+void DXApp::loadShtuff()
+{
 }
 
 float DXApp::getDeltaTime()

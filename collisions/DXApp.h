@@ -20,7 +20,7 @@ public:
 	//main application loop
 	int run(int n_cmd_show);
 
-	bool init(HINSTANCE h_instance, int n_show_cmd);
+	bool init(HINSTANCE h_instance, int n_show_cmd, int threaded_func());
 	bool initDirectX3D(HINSTANCE h_instance);
 	void releaseObjects();
 	void updateScene();
@@ -34,6 +34,8 @@ public:
 
 	ID3D11Device* getDevice() { return m_device; }
 	ID3D11DeviceContext* getContext() { return m_device_context; }
+
+	void loadShtuff();
 private:
 	float fps;
 	std::unique_ptr<TriangleLoader> triangle_loader = nullptr;
