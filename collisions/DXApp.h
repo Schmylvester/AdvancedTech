@@ -41,6 +41,12 @@ public:
 	ID3D11Device* getDevice() { return m_device; }
 	ID3D11DeviceContext* getContext() { return m_device_context; }
 private:
+	bool createDevice();
+	bool initScene();
+	bool createBuffers();
+	bool createInputLayout();
+	void createViewport();
+
 	float getDeltaTime();
 
 	Window window;
@@ -48,10 +54,16 @@ private:
 	const UINT m_client_width = 800;
 	const UINT m_client_height = 600;
 	
-	IDXGISwapChain* m_swap_chain = nullptr;
-	ID3D11Device* m_device = nullptr;
-	ID3D11DeviceContext* m_device_context = nullptr;
-	ID3D11RenderTargetView* m_rt_view = nullptr;
+	IDXGISwapChain* m_swap_chain			= nullptr;
+	ID3D11Device* m_device					= nullptr;
+	ID3D11DeviceContext* m_device_context	= nullptr;
+	ID3D11RenderTargetView* m_rt_view		= nullptr;
+	ID3D11Buffer* triangleVertBuffer		= nullptr;
+	ID3D11VertexShader* VS					= nullptr;
+	ID3D11PixelShader* PS					= nullptr;
+	ID3D10Blob* VS_Buffer					= nullptr;
+	ID3D10Blob* PS_Buffer					= nullptr;
+	ID3D11InputLayout* vertLayout			= nullptr;
 
 	std::thread loader_thread;
 

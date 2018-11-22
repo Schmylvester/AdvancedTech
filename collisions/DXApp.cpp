@@ -1,5 +1,5 @@
 #include "DXApp.h"
-#include <DirectXColors.h>
+#include "Vertex.h"
 
 DXApp::DXApp(HINSTANCE h_instance)
 {
@@ -57,6 +57,52 @@ bool DXApp::initDirectX3D(HINSTANCE h_instance)
 {
 	HRESULT hr;
 
+	createDevice();
+
+	ID3D11Texture2D* back_buffer;
+	hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&back_buffer);
+
+	hr = m_device->CreateRenderTargetView(back_buffer, NULL, &m_rt_view);
+	Memory::SafeRelease(back_buffer);
+
+	m_device_context->OMSetRenderTargets(1, &m_rt_view, NULL);
+
+	initScene();
+
+	return true;
+}
+
+void DXApp::releaseObjects()
+{
+	Memory::SafeRelease(m_swap_chain);
+	Memory::SafeRelease(m_device_context);
+	Memory::SafeRelease(m_device);
+	Memory::SafeRelease(m_rt_view);
+	Memory::SafeRelease(triangleVertBuffer);
+	Memory::SafeRelease(VS);
+	Memory::SafeRelease(PS);
+	Memory::SafeRelease(VS_Buffer);
+	Memory::SafeRelease(PS_Buffer);
+	Memory::SafeRelease(vertLayout);
+}
+
+void DXApp::updateScene()
+{
+
+}
+
+void DXApp::drawScene()
+{
+	float bg_colour[4]{ 0.9f, 0.6f, 1.0f, 1.0f };
+	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
+
+	m_device_context->Draw(3, 0);
+
+	m_swap_chain->Present(0, 0);
+}
+
+bool DXApp::createDevice()
+{
 	DXGI_MODE_DESC buffer_desc;
 	ZeroMemory(&buffer_desc, sizeof(DXGI_MODE_DESC));
 
@@ -80,38 +126,126 @@ bool DXApp::initDirectX3D(HINSTANCE h_instance)
 	swap_chain_desc.Windowed = TRUE;
 	swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-	hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION,
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION,
 		&swap_chain_desc, &m_swap_chain, &m_device, NULL, &m_device_context);
+	if (hr != S_OK)
+	{
+		errorBox("Device Initialisation - Failed");
+		return false;
+	}
+	return true;
+}
 
-	ID3D11Texture2D* back_buffer;
-	hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&back_buffer);
+bool DXApp::initScene()
+{
+	if (!createBuffers())
+	{
+		errorBox("Buffer creation failed");
+		return false;
+	}
 
-	hr = m_device->CreateRenderTargetView(back_buffer, NULL, &m_rt_view);
-	Memory::SafeRelease(back_buffer);
+	if (!createInputLayout())
+	{
+		errorBox("Failed to create input layout");
+		return false;
+	}
 
-	m_device_context->OMSetRenderTargets(1, &m_rt_view, NULL);
+	m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	createViewport();
 
 	return true;
 }
 
-void DXApp::releaseObjects()
+bool DXApp::createBuffers()
 {
-	Memory::SafeDelete(m_swap_chain);
-	Memory::SafeDelete(m_device_context);
-	Memory::SafeDelete(m_device);
-	Memory::SafeDelete(m_rt_view);
+	HRESULT hr;
+	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "VShader", "vs_5_0", NULL, NULL, &VS_Buffer, NULL);
+	if (hr != S_OK)
+	{
+		errorBox("The vertex shader didn't load right");
+		return false;
+	}
+	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "PShader", "ps_5_0", NULL, NULL, &PS_Buffer, NULL);
+	if (hr != S_OK)
+	{
+		errorBox("The pixel shader didn't load right");
+		return false;
+	}
+	hr = m_device->CreateVertexShader(VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), NULL, &VS);
+	if (hr != S_OK)
+	{
+		errorBox("The vertex shader couldn't be created");
+		return false;
+	}
+	hr = m_device->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
+	if (hr != S_OK)
+	{
+		errorBox("The pixel shader couldn't be created");
+		return false;
+	}
+
+	m_device_context->VSSetShader(VS, NULL, NULL);
+	m_device_context->PSSetShader(PS, NULL, NULL);
+
+	Vertex v[] =
+	{
+		Vertex(0.0f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
+		Vertex(0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
+		Vertex(-0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f),
+	};
+
+	D3D11_BUFFER_DESC vertex_buffer_desc;
+	ZeroMemory(&vertex_buffer_desc, sizeof(vertex_buffer_desc));
+
+	vertex_buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * 3;
+	vertex_buffer_desc.CPUAccessFlags = 0;
+	vertex_buffer_desc.MiscFlags = 0;
+	vertex_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA vertex_buffer_data;
+	ZeroMemory(&vertex_buffer_data, sizeof(vertex_buffer_data));
+	vertex_buffer_data.pSysMem = v;
+	hr = m_device->CreateBuffer(&vertex_buffer_desc, &vertex_buffer_data, &triangleVertBuffer);
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	m_device_context->IASetVertexBuffers(0, 1, &triangleVertBuffer, &stride, &offset);
+	return true;
 }
 
-void DXApp::updateScene()
+bool DXApp::createInputLayout()
 {
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
 
+	UINT num_elements = ARRAYSIZE(layout);
+
+	HRESULT hr = m_device->CreateInputLayout(layout, num_elements, VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), &vertLayout);
+	if (hr != S_OK)
+	{
+		return false;
+	}
+	m_device_context->IASetInputLayout(vertLayout);
+
+	return true;
 }
 
-void DXApp::drawScene()
+void DXApp::createViewport()
 {
-	float bg_colour[4]{ 0.9f, 0.6f, 1.0f, 1.0f };
-	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
-	m_swap_chain->Present(0, 0);
+	D3D11_VIEWPORT viewport;
+	ZeroMemory(&viewport, sizeof(viewport));
+
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = m_client_width;
+	viewport.Height = m_client_height;
+
+	m_device_context->RSSetViewports(1, &viewport);
 }
 
 float DXApp::getDeltaTime()

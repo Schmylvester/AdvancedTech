@@ -1,10 +1,3 @@
-// constant buffer
-cbuffer perframe
-{
-	matrix world;
-	matrix viewprojection;
-};
-
 
 struct VOut
 {
@@ -16,9 +9,7 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR)
 {
 	VOut output;
 
-	output.position = mul(position, world);
-	output.position = mul(output.position, viewprojection);
-	
+	output.position = position;	
 	output.color = color;
 
 	return output;
