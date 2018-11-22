@@ -5,15 +5,16 @@
 class Geometry
 {
 public:
-	Geometry();
-	~Geometry();
+	Geometry() = default;
+	virtual ~Geometry();
+	virtual void init() = 0;
 	int getVertCount()		{ return vertex_count; }
 	int getIndexCount()		{ return index_count; }
 	int getTriangleCount()	{ return triangle_count; }
 	Vertex* getVertices()	{ return vertices; }
 	DWORD* getIndices()		{ return indices; }
 
-private:
+protected:
 	int index_count;
 	int vertex_count;
 	int triangle_count;
