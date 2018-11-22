@@ -120,24 +120,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Input.h" />
-    <ClCompile Include="MouseInput.cpp" />
     <ClCompile Include="DXApp.cpp" />
-    <ClCompile Include="KeyboardInput.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="TriangleLoader.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="MouseInput.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXUtil.h" />
-    <ClInclude Include="KeyboardInput.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="TriangleLoader.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>

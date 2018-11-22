@@ -67,19 +67,16 @@ LRESULT Window::wndProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 		PostQuitMessage(0);
 		return 0;
 	case WM_KEYDOWN:
-		if (w_param == (int)KeyBind::Esc)
+		if (w_param == 27)
 		{
 			PostQuitMessage(0);
 			return 0;
 		}
-		input.keyboard.keyDown((KeyBind)w_param);
 		break;
 	case WM_KEYUP:
-		input.keyboard.keyUp((KeyBind)w_param);
 		break;
 	case WM_LBUTTONDOWN:
 	case WM_MOUSEMOVE:
-		input.mouse.move(mouse_x, mouse_y);
 		break;
 	default:
 		break;

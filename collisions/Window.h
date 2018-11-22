@@ -2,8 +2,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#include "Input.h"
-
 void errorBox(LPCSTR message);
 class Window
 {
@@ -20,6 +18,4 @@ private:
 	HWND m_h_app_wnd;
 	LPCTSTR m_wnd_class_name = "Window Class";
 
-	Input input;
 };
-

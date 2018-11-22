@@ -36,7 +36,9 @@ int DXApp::run(int n_cmd_show)
 
 bool DXApp::init(HINSTANCE h_instance, int n_show_cmd, std::function<int(LoadType, std::string)> func)
 {
-	func(LoadType::LOAD_OBJECT, "pop");
+	loader_thread = std::thread(func,LoadType::LOAD_OBJECT, "pop");
+	loader_thread.detach();
+
 	if (!window.init(h_instance, n_show_cmd, m_client_width, m_client_height, true))
 	{
 		errorBox("Window Initialization - Failed");
@@ -102,39 +104,19 @@ void DXApp::releaseObjects()
 
 void DXApp::updateScene()
 {
-	red += colourmodr * 0.00005f;
-	green += colourmodg * 0.00002f;
-	blue += colourmodb * 0.00001f;
 
-	if (red > 1 || red < 0)
-	{
-		colourmodr *= -1;
-	}
-	if (green > 1 || green < 0)
-	{
-		colourmodg *= -1;
-	}
-	if (blue > 1 || blue < 0)
-	{
-		colourmodb *= -1;
-	}
 }
 
 void DXApp::drawScene()
 {
-	float bg_colour[4]{ red, green, blue, 1.0f };
+	float bg_colour[4]{ 0.9f, 0.6f, 1.0f, 1.0f };
 	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
 	m_swap_chain->Present(0, 0);
-}
-
-void DXApp::loadShtuff()
-{
 }
 
 float DXApp::getDeltaTime()
 {
 	float f = float(clock() - last_clock) / CLOCKS_PER_SEC;
-	fps = 1 / f;
 	last_clock = clock();
 	return f;
 }
