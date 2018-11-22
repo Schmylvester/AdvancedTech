@@ -1,5 +1,4 @@
 #include "DXApp.h"
-#include "Vertex.h"
 
 DXApp::DXApp(HINSTANCE h_instance)
 {
@@ -36,7 +35,7 @@ int DXApp::run(int n_cmd_show)
 
 bool DXApp::init(HINSTANCE h_instance, int n_show_cmd, std::function<int(LoadType, std::string)> func)
 {
-	loader_thread = std::thread(func,LoadType::LOAD_OBJECT, "pop");
+	loader_thread = std::thread(func, LoadType::LOAD_OBJECT, "pop");
 	loader_thread.detach();
 
 	if (!window.init(h_instance, n_show_cmd, m_client_width, m_client_height, true))
@@ -78,12 +77,15 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_device_context);
 	Memory::SafeRelease(m_device);
 	Memory::SafeRelease(m_rt_view);
-	Memory::SafeRelease(triangleVertBuffer);
-	Memory::SafeRelease(VS);
-	Memory::SafeRelease(PS);
-	Memory::SafeRelease(VS_Buffer);
-	Memory::SafeRelease(PS_Buffer);
-	Memory::SafeRelease(vertLayout);
+	Memory::SafeRelease(m_geo_vert_buffer);
+	Memory::SafeRelease(m_geo_index_buffer);
+	Memory::SafeRelease(v_shader);
+	Memory::SafeRelease(p_shader);
+	Memory::SafeRelease(v_buffer);
+	Memory::SafeRelease(p_buffer);
+	Memory::SafeRelease(m_vertex_layout);
+	Memory::SafeRelease(m_depth_stcl_view);
+	Memory::SafeRelease(m_depth_stcl_buffer);
 }
 
 void DXApp::updateScene()
@@ -95,8 +97,9 @@ void DXApp::drawScene()
 {
 	float bg_colour[4]{ 0.9f, 0.6f, 1.0f, 1.0f };
 	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
+	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0F, 0);
 
-	m_device_context->Draw(3, 0);
+	m_device_context->DrawIndexed(geometry.getIndexCount(), 0, 0);
 
 	m_swap_chain->Present(0, 0);
 }
@@ -138,9 +141,15 @@ bool DXApp::createDevice()
 
 bool DXApp::initScene()
 {
-	if (!createBuffers())
+	if (!createVertexBuffer())
 	{
-		errorBox("Buffer creation failed");
+		errorBox("Vertex buffer creation failed");
+		return false;
+	}
+
+	if (!createPixelBuffer())
+	{
+		errorBox("Pixel buffer creation failed");
 		return false;
 	}
 
@@ -150,68 +159,103 @@ bool DXApp::initScene()
 		return false;
 	}
 
+	if (!createIndexBuffer())
+	{
+		errorBox("Failed to create index buffer");
+		return false;
+	}
+
 	m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	createViewport();
 
+	if (!createDepthStencil())
+	{
+		errorBox("Failed to create depth stencil");
+		return false;
+	}
+
 	return true;
 }
 
-bool DXApp::createBuffers()
+bool DXApp::createIndexBuffer()
+{
+	D3D11_BUFFER_DESC index_buffer_desc;
+	ZeroMemory(&index_buffer_desc, sizeof(index_buffer_desc));
+
+	index_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+	index_buffer_desc.ByteWidth = sizeof(DWORD) * 3 * geometry.getTriangleCount();
+	index_buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	index_buffer_desc.CPUAccessFlags = 0;
+	index_buffer_desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA init_data;
+	init_data.pSysMem = geometry.getIndices();
+	if (m_device->CreateBuffer(&index_buffer_desc, &init_data, &m_geo_index_buffer) != S_OK)
+	{
+		return false;
+	}
+	m_device_context->IASetIndexBuffer(m_geo_index_buffer, DXGI_FORMAT_R32_UINT, 0);
+
+	return true;
+}
+
+bool DXApp::createVertexBuffer()
 {
 	HRESULT hr;
-	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "VShader", "vs_5_0", NULL, NULL, &VS_Buffer, NULL);
+	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "VShader", "vs_5_0", NULL, NULL, &v_buffer, NULL);
 	if (hr != S_OK)
 	{
 		errorBox("The vertex shader didn't load right");
 		return false;
 	}
-	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "PShader", "ps_5_0", NULL, NULL, &PS_Buffer, NULL);
-	if (hr != S_OK)
-	{
-		errorBox("The pixel shader didn't load right");
-		return false;
-	}
-	hr = m_device->CreateVertexShader(VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), NULL, &VS);
+
+	hr = m_device->CreateVertexShader(v_buffer->GetBufferPointer(), v_buffer->GetBufferSize(), NULL, &v_shader);
 	if (hr != S_OK)
 	{
 		errorBox("The vertex shader couldn't be created");
 		return false;
 	}
-	hr = m_device->CreatePixelShader(PS_Buffer->GetBufferPointer(), PS_Buffer->GetBufferSize(), NULL, &PS);
-	if (hr != S_OK)
-	{
-		errorBox("The pixel shader couldn't be created");
-		return false;
-	}
 
-	m_device_context->VSSetShader(VS, NULL, NULL);
-	m_device_context->PSSetShader(PS, NULL, NULL);
-
-	Vertex v[] =
-	{
-		Vertex(0.0f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f),
-		Vertex(0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 1.0f),
-		Vertex(-0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f),
-	};
+	m_device_context->VSSetShader(v_shader, NULL, NULL);
 
 	D3D11_BUFFER_DESC vertex_buffer_desc;
 	ZeroMemory(&vertex_buffer_desc, sizeof(vertex_buffer_desc));
 
 	vertex_buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * 3;
+	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * geometry.getVertCount();
 	vertex_buffer_desc.CPUAccessFlags = 0;
 	vertex_buffer_desc.MiscFlags = 0;
 	vertex_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
 
 	D3D11_SUBRESOURCE_DATA vertex_buffer_data;
 	ZeroMemory(&vertex_buffer_data, sizeof(vertex_buffer_data));
-	vertex_buffer_data.pSysMem = v;
-	hr = m_device->CreateBuffer(&vertex_buffer_desc, &vertex_buffer_data, &triangleVertBuffer);
+	vertex_buffer_data.pSysMem = geometry.getVertices();
+	hr = m_device->CreateBuffer(&vertex_buffer_desc, &vertex_buffer_data, &m_geo_vert_buffer);
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
-	m_device_context->IASetVertexBuffers(0, 1, &triangleVertBuffer, &stride, &offset);
+	m_device_context->IASetVertexBuffers(0, 1, &m_geo_vert_buffer, &stride, &offset);
+	return true;
+}
+
+bool DXApp::createPixelBuffer()
+{
+	HRESULT hr;
+	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "PShader", "ps_5_0", NULL, NULL, &p_buffer, NULL);
+	if (hr != S_OK)
+	{
+		errorBox("The pixel shader didn't load right");
+		return false;
+	}
+	hr = m_device->CreatePixelShader(p_buffer->GetBufferPointer(), p_buffer->GetBufferSize(), NULL, &p_shader);
+	if (hr != S_OK)
+	{
+		errorBox("The pixel shader couldn't be created");
+		return false;
+	}
+
+	m_device_context->PSSetShader(p_shader, NULL, NULL);
 	return true;
 }
 
@@ -225,17 +269,17 @@ bool DXApp::createInputLayout()
 
 	UINT num_elements = ARRAYSIZE(layout);
 
-	HRESULT hr = m_device->CreateInputLayout(layout, num_elements, VS_Buffer->GetBufferPointer(), VS_Buffer->GetBufferSize(), &vertLayout);
+	HRESULT hr = m_device->CreateInputLayout(layout, num_elements, v_buffer->GetBufferPointer(), v_buffer->GetBufferSize(), &m_vertex_layout);
 	if (hr != S_OK)
 	{
 		return false;
 	}
-	m_device_context->IASetInputLayout(vertLayout);
+	m_device_context->IASetInputLayout(m_vertex_layout);
 
 	return true;
 }
 
-void DXApp::createViewport()
+bool DXApp::createViewport()
 {
 	D3D11_VIEWPORT viewport;
 	ZeroMemory(&viewport, sizeof(viewport));
@@ -244,8 +288,45 @@ void DXApp::createViewport()
 	viewport.TopLeftY = 0;
 	viewport.Width = m_client_width;
 	viewport.Height = m_client_height;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
 
 	m_device_context->RSSetViewports(1, &viewport);
+
+	return true;
+}
+
+bool DXApp::createDepthStencil()
+{
+	D3D11_TEXTURE2D_DESC depth_stcl_desc;
+	depth_stcl_desc.Width = m_client_width;
+	depth_stcl_desc.Height = m_client_height;
+	depth_stcl_desc.MipLevels = 1;
+	depth_stcl_desc.ArraySize = 1;
+	depth_stcl_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depth_stcl_desc.SampleDesc.Count = 1;
+	depth_stcl_desc.SampleDesc.Quality = 0;
+	depth_stcl_desc.Usage = D3D11_USAGE_DEFAULT;
+	depth_stcl_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depth_stcl_desc.CPUAccessFlags = 0;
+	depth_stcl_desc.MiscFlags = 0;
+
+	HRESULT hr = m_device->CreateTexture2D(&depth_stcl_desc, NULL, &m_depth_stcl_buffer);
+	if (hr != S_OK)
+	{
+		errorBox("Failed to create Texture2D");
+		return false;
+	}
+	hr = m_device->CreateDepthStencilView(m_depth_stcl_buffer, NULL, &m_depth_stcl_view);
+	if (hr != S_OK)
+	{
+		errorBox("Failed to create depth stencil view");
+		return false;
+	}
+	m_device_context->OMSetRenderTargets(1, &m_rt_view, m_depth_stcl_view);
+
+
+	return true;
 }
 
 float DXApp::getDeltaTime()

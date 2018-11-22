@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "Window.h"
+#include "Geometry.h"
 
 enum LoadType
 {
@@ -43,27 +44,34 @@ public:
 private:
 	bool createDevice();
 	bool initScene();
-	bool createBuffers();
+	bool createIndexBuffer();
+	bool createVertexBuffer();
+	bool createPixelBuffer();
 	bool createInputLayout();
-	void createViewport();
+	bool createViewport();
+	bool createDepthStencil();
 
 	float getDeltaTime();
 
+	Geometry geometry;
 	Window window;
 	HINSTANCE m_h_app_instance;
 	const UINT m_client_width = 800;
 	const UINT m_client_height = 600;
 	
-	IDXGISwapChain* m_swap_chain			= nullptr;
-	ID3D11Device* m_device					= nullptr;
-	ID3D11DeviceContext* m_device_context	= nullptr;
-	ID3D11RenderTargetView* m_rt_view		= nullptr;
-	ID3D11Buffer* triangleVertBuffer		= nullptr;
-	ID3D11VertexShader* VS					= nullptr;
-	ID3D11PixelShader* PS					= nullptr;
-	ID3D10Blob* VS_Buffer					= nullptr;
-	ID3D10Blob* PS_Buffer					= nullptr;
-	ID3D11InputLayout* vertLayout			= nullptr;
+	IDXGISwapChain* m_swap_chain = nullptr;
+	ID3D11Device* m_device = nullptr;
+	ID3D11DeviceContext* m_device_context = nullptr;
+	ID3D11RenderTargetView* m_rt_view = nullptr;
+	ID3D11VertexShader* v_shader = nullptr;
+	ID3D11PixelShader* p_shader = nullptr;
+	ID3D10Blob* v_buffer = nullptr;
+	ID3D10Blob* p_buffer = nullptr;
+	ID3D11InputLayout* m_vertex_layout = nullptr;
+	ID3D11Buffer* m_geo_vert_buffer = nullptr;
+	ID3D11Buffer* m_geo_index_buffer = nullptr;
+	ID3D11DepthStencilView* m_depth_stcl_view = nullptr;
+	ID3D11Texture2D* m_depth_stcl_buffer = nullptr;
 
 	std::thread loader_thread;
 
