@@ -148,12 +148,15 @@ bool DXApp::createConstBuffer()
 		return false;
 	}
 
+	const_buffer_desc.ByteWidth = sizeof(m_frame_cb);
+	hr = m_device->CreateBuffer(&const_buffer_desc, NULL, &m_cb_per_frame);
+	if (hr != S_OK)
+	{
+		return false;
+	}
+
 	return true;
 }
-
-
-
-
 
 #pragma endregion
 
@@ -243,20 +246,6 @@ void DXApp::releaseObjects()
 	{
 		Memory::SafeRelease(vb.buffer);
 	}
-}
-
-void DXApp::drawScene(float dt)
-{
-	float bg_colour[4]{ 0.0f, 0.0f, 0.0f, 1.0f };
-	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
-	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	for (Geometry* g : geometry)
-	{
-		g->draw();
-	}
-
-	m_swap_chain->Present(0, 0);
 }
 
 bool DXApp::initScene()

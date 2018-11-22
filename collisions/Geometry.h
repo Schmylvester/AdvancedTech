@@ -38,6 +38,6 @@ private:
 	CBPerObject* m_cb = nullptr;
 	Camera* m_cam = nullptr;
 	ID3D11DeviceContext* m_dev_con = nullptr;
-	ID3D11Buffer* m_c_buff = nullptr;
+	ID3D11Buffer* m_obj_buff = nullptr;
 };
 

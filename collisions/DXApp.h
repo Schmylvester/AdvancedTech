@@ -56,8 +56,8 @@ public:
 protected:
 	virtual void updateScene(float dt) = 0;
 	virtual void initObjects() = 0;
+	virtual void drawScene(float dt) = 0;
 
-	void drawScene(float dt);
 	float getRatio() { return (float)m_client_width / m_client_height; }
 
 	bool initScene();
@@ -106,6 +106,7 @@ protected:
 	std::vector<VertexBuffer> m_vertex_buffers;
 
 	CBPerObject m_object_cb;
+	CBPerFrame m_frame_cb;
 
 	std::thread loader_thread;
 

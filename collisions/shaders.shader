@@ -1,26 +1,47 @@
 cbuffer cbPerObject
 {
 	float4x4 WVP;
+	float4x4 World;
+};
+
+struct Light
+{
+	float3 dir;
+	float4 ambient;
+	float4 diffuse;
+};
+
+cbuffer cbPerFrame
+{
+	Light light;
 };
 
 struct VOut
 {
 	float4 position : SV_POSITION;
 	float4 color : COLOR;
+	float3 normal : NORMAL;
 };
 
-VOut VShader(float4 position : POSITION, float4 color : COLOR)
+VOut VShader(float4 position : POSITION, float4 color : COLOR, float3 normal : NORMAL)
 {
 	VOut output;
 
 	output.position = mul(position, WVP);
+	output.normal = mul(normal, World);
 	output.color = color;
 
 	return output;
 }
 
 
-float4 PShader(float4 position : SV_POSITION, float4 color : COLOR) : SV_TARGET
+float4 PShader(float4 position : SV_POSITION, float4 color : COLOR, float3 normal : NORMAL) : SV_TARGET
 {
-	return color;
+	normal = normalize(normal);
+	float4 ret_colour;
+
+	ret_colour = color * light.ambient;
+	ret_colour += saturate(dot(light.dir, normal) * light.diffuse * color);
+
+	return ret_colour;
 }
