@@ -6,47 +6,71 @@ void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContex
 {
 	triangle_count = 12;
 	index_count = triangle_count * 3;
-	vertex_count = 8;
+	vertex_count = 24;
 
-	indices = new DWORD[index_count]{
-		// front face
-		0, 1, 2,
-		0, 2, 3,
-
-		// back face
-		4, 6, 5,
-		4, 7, 6,
-
-		// left face
-		4, 5, 1,
-		4, 1, 0,
-
-		// right face
-		3, 2, 6,
-		3, 6, 7,
-
-		// top face
-		1, 5, 6,
-		1, 6, 2,
-
-		// bottom face
-		4, 0, 3,
-		4, 3, 7
-	};
-	vertices = new Vertex[vertex_count];
-
-	for (int i = 0; i < vertex_count; i++)
+	indices = new DWORD[index_count]
 	{
-		float x = ((i / 2) % 2) == 0 ? -1 : 1;
-		float y = (((i + 1) / 2) % 2 == 0) ? -1 : 1;
-		float z = (i < 4) ? -1 : 1;
+		// Front Face
+		0,  1,  2,
+		0,  2,  3,
 
-		float r = float(rand() % 100) / 100;
-		float g = float(rand() % 100) / 100;
-		float b = float(rand() % 100) / 100;
+		// Back Face
+		4,  5,  6,
+		4,  6,  7,
 
-		vertices[i] = Vertex(x, y, z, r, g, b, 1.0f);
-	}
+		// Top Face
+		8,  9, 10,
+		8, 10, 11,
+
+		// Bottom Face
+		12, 13, 14,
+		12, 14, 15,
+
+		// Left Face
+		16, 17, 18,
+		16, 18, 19,
+
+		// Right Face
+		20, 21, 22,
+		20, 22, 23
+	};
+
+	vertices = new Vertex[vertex_count];
+	// Front Face
+	vertices[0] = Vertex(-1.0f, -1.0f, -1.0f, 0.5f, 0.0f, 0.0f, 1.0f, -1.0f, -1.0f, -1.0f);
+	vertices[1] = Vertex(-1.0f, 1.0f, -1.0f, 0.0f, 0.5f, 0.0f, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[2] = Vertex(1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 1.0f, -1.0f);
+	vertices[3] = Vertex(1.0f, -1.0f, -1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, -1.0f, -1.0f);
+
+	// Back Face
+	vertices[4] = Vertex(-1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+	vertices[5] = Vertex(1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f, 1.0f);
+	vertices[6] = Vertex(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[7] = Vertex(-1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, 1.0f);
+
+	// Top Face
+	vertices[8] = Vertex(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[9] = Vertex(-1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[10] = Vertex(1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[11] = Vertex(1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f);
+
+	// Bottom Face
+	vertices[12] = Vertex(-1.0f, -1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, -1.0f, -1.0f, -1.0f);
+	vertices[13] = Vertex(1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f);
+	vertices[14] = Vertex(1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f);
+	vertices[15] = Vertex(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+
+	// Left Face
+	vertices[16] = Vertex(-1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 1.0f);
+	vertices[17] = Vertex(-1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[18] = Vertex(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[19] = Vertex(-1.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, -1.0f, -1.0f, -1.0f);
+
+	// Right Face
+	vertices[20] = Vertex(1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f);
+	vertices[21] = Vertex(1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f);
+	vertices[22] = Vertex(1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[23] = Vertex(1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 1.0f);
 
 	Geometry::init(_app, _cb, cam, dev_con, c_buff);
 }

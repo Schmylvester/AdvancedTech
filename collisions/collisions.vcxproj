@@ -124,6 +124,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="winmain.cpp" />
@@ -135,6 +136,8 @@
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="Geometry.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />

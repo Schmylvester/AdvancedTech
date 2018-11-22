@@ -39,7 +39,6 @@ class DXApp
 {
 public:
 	DXApp() = default;
-	DXApp(HINSTANCE h_instance);
 	~DXApp();
 
 	//main application loop
@@ -54,24 +53,27 @@ public:
 
 	ID3D11Buffer* getIndexBuffer(Geometry* geo);
 	ID3D11Buffer* getVertexBuffer(Geometry* geo);
-private:
-	void updateScene(float dt);
+protected:
+	virtual void updateScene(float dt) = 0;
+	virtual void initObjects() = 0;
+
 	void drawScene(float dt);
 	float getRatio() { return (float)m_client_width / m_client_height; }
 
 	bool initScene();
-	void initObjects();
 	bool createDevice();
 	bool createPixelBuffer();
 	bool createInputLayout();
 	bool createViewport();
 	bool createDepthStencil();
 	bool createConstBuffer();
+	bool initRasteriserStates();
 
-	void setWireframe();
+	void toggleWireframe();
 
 	float getDeltaTime();
 
+	Light m_light;
 	Camera m_cam;
 	std::vector<Geometry*> geometry;
 	Window window;
@@ -91,6 +93,13 @@ private:
 	ID3D11DepthStencilView* m_depth_stcl_view = nullptr;
 	ID3D11Texture2D* m_depth_stcl_buffer = nullptr;
 	ID3D11Buffer* m_cb_per_object = nullptr;
+	ID3D11Buffer* m_cb_per_frame = nullptr;
+	ID3D11ShaderResourceView* m_cube_texture = nullptr;
+	ID3D11SamplerState* m_cubes_text_sampler_state = nullptr;
+	ID3D11Resource* m_texture = nullptr;
+
+	bool wireframe_active = false;
+	ID3D11RasterizerState* m_solid = nullptr;
 	ID3D11RasterizerState* m_wireframe = nullptr;
 
 	std::vector<IndexBuffer> m_geo_index_buffers;
