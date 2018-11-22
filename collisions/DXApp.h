@@ -5,6 +5,7 @@
 #include <SimpleMath.h>
 #include <functional>
 #include <thread>
+#include <vector>
 
 #include "Window.h"
 #include "ConstantBuffers.h"
@@ -57,7 +58,8 @@ private:
 	float getDeltaTime();
 
 	Camera m_cam;
-	Geometry* geometry;
+	Geometry* geometry_a;
+	Geometry* geometry_b;
 	Window window;
 	HINSTANCE m_h_app_instance;
 	const UINT m_client_width = 800;
@@ -79,8 +81,6 @@ private:
 	ID3D11Buffer* m_cb_per_object = nullptr;
 
 	CBPerObject m_object_cb;
-
-	XMMATRIX m_world_matrix = XMMatrixIdentity();
 
 	std::thread loader_thread;
 

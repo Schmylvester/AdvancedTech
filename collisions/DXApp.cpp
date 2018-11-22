@@ -92,25 +92,27 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_depth_stcl_view);
 	Memory::SafeRelease(m_depth_stcl_buffer);
 	Memory::SafeRelease(m_cb_per_object);
-	Memory::SafeDelete(geometry);
+	Memory::SafeDelete(geometry_a);
+	Memory::SafeDelete(geometry_b);
 }
 
 void DXApp::updateScene(float dt)
 {
 	m_cam.update(dt);
+
+	geometry_a->getTransform()->translate(dt, 0, 0);
+	geometry_a->getTransform()->scale(0, 0, dt);
+	geometry_b->getTransform()->rotate(XMVectorSet(0, 0, -1, 0), dt);
 }
 
 void DXApp::drawScene(float dt)
 {
-	m_object_cb.WVP = XMMatrixTranspose(m_cam.getWVPMatrix(m_world_matrix));
-	m_device_context->UpdateSubresource(m_cb_per_object, 0, NULL, &m_object_cb, 0, 0);
-	m_device_context->VSSetConstantBuffers(0, 1, &m_cb_per_object);
-
 	float bg_colour[4]{ 0.9f, 0.6f, 1.0f, 1.0f };
 	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
 	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	m_device_context->DrawIndexed(geometry->getIndexCount(), 0, 0);
+	geometry_a->draw(&m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	geometry_b->draw(&m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 
 	m_swap_chain->Present(0, 0);
 }
@@ -119,8 +121,12 @@ void DXApp::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	geometry = new Cube();
-	geometry->init();
+	geometry_a = new Cube();
+	geometry_a->init();
+
+	geometry_b = new Cube();
+	geometry_b->init();
+	geometry_b->getTransform()->translate(-3.5f, 0, 0);
 }
 
 bool DXApp::createDevice()
@@ -211,13 +217,13 @@ bool DXApp::createIndexBuffer()
 	ZeroMemory(&index_buffer_desc, sizeof(index_buffer_desc));
 
 	index_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	index_buffer_desc.ByteWidth = sizeof(DWORD) * 3 * geometry->getTriangleCount();
+	index_buffer_desc.ByteWidth = sizeof(DWORD) * 3 * geometry_a->getTriangleCount();
 	index_buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	index_buffer_desc.CPUAccessFlags = 0;
 	index_buffer_desc.MiscFlags = 0;
 
 	D3D11_SUBRESOURCE_DATA init_data;
-	init_data.pSysMem = geometry->getIndices();
+	init_data.pSysMem = geometry_a->getIndices();
 	if (m_device->CreateBuffer(&index_buffer_desc, &init_data, &m_geo_index_buffer) != S_OK)
 	{
 		return false;
@@ -250,14 +256,14 @@ bool DXApp::createVertexBuffer()
 	ZeroMemory(&vertex_buffer_desc, sizeof(vertex_buffer_desc));
 
 	vertex_buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * geometry->getVertCount();
+	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * geometry_a->getVertCount();
 	vertex_buffer_desc.CPUAccessFlags = 0;
 	vertex_buffer_desc.MiscFlags = 0;
 	vertex_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
 
 	D3D11_SUBRESOURCE_DATA vertex_buffer_data;
 	ZeroMemory(&vertex_buffer_data, sizeof(vertex_buffer_data));
-	vertex_buffer_data.pSysMem = geometry->getVertices();
+	vertex_buffer_data.pSysMem = geometry_a->getVertices();
 	hr = m_device->CreateBuffer(&vertex_buffer_desc, &vertex_buffer_data, &m_geo_vert_buffer);
 
 	UINT stride = sizeof(Vertex);
