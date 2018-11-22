@@ -7,5 +7,5 @@ public:
 	Cube() = default;
 	virtual ~Cube() = default;
 
-	virtual void init() override;
+	virtual void init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff) override;
 };

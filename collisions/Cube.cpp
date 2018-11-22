@@ -1,6 +1,8 @@
 #include "Cube.h"
+#include "DXApp.h"
+#include "Camera.h"
 
-void Cube::init()
+void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
 {
 	triangle_count = 12;
 	index_count = triangle_count * 3;
@@ -45,4 +47,6 @@ void Cube::init()
 
 		vertices[i] = Vertex(x, y, z, r, g, b, 1.0f);
 	}
+
+	Geometry::init(_app, _cb, cam, dev_con, c_buff);
 }

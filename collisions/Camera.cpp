@@ -2,7 +2,7 @@
 
 Camera::Camera(float ratio)
 {
-	cam_pos = XMVectorSet(0.0f, 0.0f, -8.0f, 0.0f);
+	cam_pos = XMVectorSet(0.0f, 0.0f, z, 0.0f);
 	cam_up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 	cam_target = XMVectorSet(0.0f, 0.0f, 0.5f, 0.0f);
 
@@ -17,5 +17,7 @@ XMMATRIX Camera::getWVPMatrix(XMMATRIX world_matrix)
 
 void Camera::update(float dt)
 {
-
+	z -= dt;
+	cam_pos = XMVectorSet(0.0f, 0.0f, z, 0.0f);
+	cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
 }

@@ -11,6 +11,8 @@ public:
 	XMMATRIX getWVPMatrix(XMMATRIX world_matrix);
 	void update(float dt);
 private:
+	float z = -8.0f;
+
 	XMMATRIX cam_view;
 	XMMATRIX cam_projection;
 

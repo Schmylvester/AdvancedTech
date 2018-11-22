@@ -20,6 +20,18 @@ enum LoadType
 	SAVE_TILE_DATA,
 };
 
+struct VertexBuffer
+{
+	int vertices;
+	ID3D11Buffer* buffer;
+};
+struct IndexBuffer
+{
+	int triangles;
+	int vertices;
+	ID3D11Buffer* buffer;
+};
+
 using namespace DirectX;
 
 class Geometry;
@@ -39,6 +51,9 @@ public:
 
 	ID3D11Device* getDevice() { return m_device; }
 	ID3D11DeviceContext* getContext() { return m_device_context; }
+
+	ID3D11Buffer* getIndexBuffer(Geometry* geo);
+	ID3D11Buffer* getVertexBuffer(Geometry* geo);
 private:
 	void updateScene(float dt);
 	void drawScene(float dt);
@@ -47,19 +62,18 @@ private:
 	bool initScene();
 	void initObjects();
 	bool createDevice();
-	bool createIndexBuffer();
-	bool createVertexBuffer();
 	bool createPixelBuffer();
 	bool createInputLayout();
 	bool createViewport();
 	bool createDepthStencil();
 	bool createConstBuffer();
 
+	void setWireframe();
+
 	float getDeltaTime();
 
 	Camera m_cam;
-	Geometry* geometry_a;
-	Geometry* geometry_b;
+	std::vector<Geometry*> geometry;
 	Window window;
 	HINSTANCE m_h_app_instance;
 	const UINT m_client_width = 800;
@@ -74,11 +88,13 @@ private:
 	ID3D10Blob* m_v_buffer = nullptr;
 	ID3D10Blob* m_p_buffer = nullptr;
 	ID3D11InputLayout* m_vertex_layout = nullptr;
-	ID3D11Buffer* m_geo_vert_buffer = nullptr;
-	ID3D11Buffer* m_geo_index_buffer = nullptr;
 	ID3D11DepthStencilView* m_depth_stcl_view = nullptr;
 	ID3D11Texture2D* m_depth_stcl_buffer = nullptr;
 	ID3D11Buffer* m_cb_per_object = nullptr;
+	ID3D11RasterizerState* m_wireframe = nullptr;
+
+	std::vector<IndexBuffer> m_geo_index_buffers;
+	std::vector<VertexBuffer> m_vertex_buffers;
 
 	CBPerObject m_object_cb;
 

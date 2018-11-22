@@ -82,8 +82,6 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_device_context);
 	Memory::SafeRelease(m_device);
 	Memory::SafeRelease(m_rt_view);
-	Memory::SafeRelease(m_geo_vert_buffer);
-	Memory::SafeRelease(m_geo_index_buffer);
 	Memory::SafeRelease(m_v_shader);
 	Memory::SafeRelease(m_p_shader);
 	Memory::SafeRelease(m_v_buffer);
@@ -92,17 +90,30 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_depth_stcl_view);
 	Memory::SafeRelease(m_depth_stcl_buffer);
 	Memory::SafeRelease(m_cb_per_object);
-	Memory::SafeDelete(geometry_a);
-	Memory::SafeDelete(geometry_b);
+	Memory::SafeRelease(m_wireframe);
+
+	for (Geometry* g : geometry)
+	{
+		Memory::SafeDelete(g);
+	}
+	for (IndexBuffer& ib : m_geo_index_buffers)
+	{
+		Memory::SafeRelease(ib.buffer);
+	}
+	for (VertexBuffer& vb : m_vertex_buffers)
+	{
+		Memory::SafeRelease(vb.buffer);
+	}
 }
 
 void DXApp::updateScene(float dt)
 {
 	m_cam.update(dt);
 
-	geometry_a->getTransform()->translate(dt, 0, 0);
-	geometry_a->getTransform()->scale(0, 0, dt);
-	geometry_b->getTransform()->rotate(XMVectorSet(0, 0, -1, 0), dt);
+	for (Geometry* geo : geometry)
+	{
+		geo->getTransform()->rotate(XMVectorSet(0, 0, -1, 0), dt);
+	}
 }
 
 void DXApp::drawScene(float dt)
@@ -111,8 +122,10 @@ void DXApp::drawScene(float dt)
 	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
 	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	geometry_a->draw(&m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	geometry_b->draw(&m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	for (Geometry* g : geometry)
+	{
+		g->draw();
+	}
 
 	m_swap_chain->Present(0, 0);
 }
@@ -121,12 +134,18 @@ void DXApp::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	geometry_a = new Cube();
-	geometry_a->init();
-
-	geometry_b = new Cube();
-	geometry_b->init();
-	geometry_b->getTransform()->translate(-3.5f, 0, 0);
+	for (int x = -5; x < 6; x++)
+	{
+		for (int y = -5; y < 6; y++)
+		{
+			for (int z = 1; z < 11; z++)
+			{
+				geometry.push_back(new Cube());
+				geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+				geometry.back()->getTransform()->translate(x * 3, y * 3, z * 3);
+			}
+		}
+	}
 }
 
 bool DXApp::createDevice()
@@ -166,13 +185,13 @@ bool DXApp::createDevice()
 
 bool DXApp::initScene()
 {
-	initObjects();
-
-	if (!createVertexBuffer())
+	if (!createConstBuffer())
 	{
-		errorBox("Vertex buffer creation failed");
+		errorBox("Failed to create per object constant buffer");
 		return false;
 	}
+
+	initObjects();
 
 	if (!createPixelBuffer())
 	{
@@ -186,12 +205,6 @@ bool DXApp::initScene()
 		return false;
 	}
 
-	if (!createIndexBuffer())
-	{
-		errorBox("Failed to create index buffer");
-		return false;
-	}
-
 	m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	createViewport();
@@ -202,73 +215,6 @@ bool DXApp::initScene()
 		return false;
 	}
 
-	if (!createConstBuffer())
-	{
-		errorBox("Failed to create per object constant buffer");
-		return false;
-	}
-
-	return true;
-}
-
-bool DXApp::createIndexBuffer()
-{
-	D3D11_BUFFER_DESC index_buffer_desc;
-	ZeroMemory(&index_buffer_desc, sizeof(index_buffer_desc));
-
-	index_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-	index_buffer_desc.ByteWidth = sizeof(DWORD) * 3 * geometry_a->getTriangleCount();
-	index_buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	index_buffer_desc.CPUAccessFlags = 0;
-	index_buffer_desc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA init_data;
-	init_data.pSysMem = geometry_a->getIndices();
-	if (m_device->CreateBuffer(&index_buffer_desc, &init_data, &m_geo_index_buffer) != S_OK)
-	{
-		return false;
-	}
-	m_device_context->IASetIndexBuffer(m_geo_index_buffer, DXGI_FORMAT_R32_UINT, 0);
-
-	return true;
-}
-
-bool DXApp::createVertexBuffer()
-{
-	HRESULT hr;
-	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "VShader", "vs_5_0", NULL, NULL, &m_v_buffer, NULL);
-	if (hr != S_OK)
-	{
-		errorBox("The vertex shader didn't load right");
-		return false;
-	}
-
-	hr = m_device->CreateVertexShader(m_v_buffer->GetBufferPointer(), m_v_buffer->GetBufferSize(), NULL, &m_v_shader);
-	if (hr != S_OK)
-	{
-		errorBox("The vertex shader couldn't be created");
-		return false;
-	}
-
-	m_device_context->VSSetShader(m_v_shader, NULL, NULL);
-
-	D3D11_BUFFER_DESC vertex_buffer_desc;
-	ZeroMemory(&vertex_buffer_desc, sizeof(vertex_buffer_desc));
-
-	vertex_buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * geometry_a->getVertCount();
-	vertex_buffer_desc.CPUAccessFlags = 0;
-	vertex_buffer_desc.MiscFlags = 0;
-	vertex_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-
-	D3D11_SUBRESOURCE_DATA vertex_buffer_data;
-	ZeroMemory(&vertex_buffer_data, sizeof(vertex_buffer_data));
-	vertex_buffer_data.pSysMem = geometry_a->getVertices();
-	hr = m_device->CreateBuffer(&vertex_buffer_desc, &vertex_buffer_data, &m_geo_vert_buffer);
-
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-	m_device_context->IASetVertexBuffers(0, 1, &m_geo_vert_buffer, &stride, &offset);
 	return true;
 }
 
@@ -382,9 +328,97 @@ bool DXApp::createConstBuffer()
 	return true;
 }
 
+void DXApp::setWireframe()
+{
+}
+
 float DXApp::getDeltaTime()
 {
 	float f = float(clock() - last_clock) / CLOCKS_PER_SEC;
 	last_clock = clock();
 	return f;
+}
+
+ID3D11Buffer* DXApp::getIndexBuffer(Geometry* geo)
+{
+	for (IndexBuffer& ib : m_geo_index_buffers)
+	{
+		if (ib.triangles == geo->getTriangleCount() && ib.vertices == geo->getVertCount())
+		{
+			return ib.buffer;
+		}
+	}
+
+	IndexBuffer new_buffer;
+	new_buffer.triangles = geo->getTriangleCount();
+	new_buffer.vertices = geo->getVertCount();
+
+	D3D11_BUFFER_DESC index_buffer_desc;
+	ZeroMemory(&index_buffer_desc, sizeof(index_buffer_desc));
+
+	index_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+	index_buffer_desc.ByteWidth = sizeof(DWORD) * 3 * geo->getTriangleCount();
+	index_buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	index_buffer_desc.CPUAccessFlags = 0;
+	index_buffer_desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA init_data;
+	init_data.pSysMem = geo->getIndices();
+	if (m_device->CreateBuffer(&index_buffer_desc, &init_data, &new_buffer.buffer) != S_OK)
+	{
+		errorBox("Index buffer not created");
+	}
+
+	m_geo_index_buffers.push_back(new_buffer);
+
+	return m_geo_index_buffers.back().buffer;
+}
+
+ID3D11Buffer * DXApp::getVertexBuffer(Geometry * geo)
+{
+	for (VertexBuffer& vb : m_vertex_buffers)
+	{
+		if (vb.vertices == geo->getVertCount())
+		{
+			return vb.buffer;
+		}
+	}
+
+	VertexBuffer vb;
+	vb.vertices = geo->getVertCount();
+
+	HRESULT hr;
+	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "VShader", "vs_5_0", NULL, NULL, &m_v_buffer, NULL);
+	if (hr != S_OK)
+	{
+		errorBox("The vertex shader didn't load right");
+		return false;
+	}
+
+	hr = m_device->CreateVertexShader(m_v_buffer->GetBufferPointer(), m_v_buffer->GetBufferSize(), NULL, &m_v_shader);
+	if (hr != S_OK)
+	{
+		errorBox("The vertex shader couldn't be created");
+		return false;
+	}
+
+	m_device_context->VSSetShader(m_v_shader, NULL, NULL);
+
+	D3D11_BUFFER_DESC vertex_buffer_desc;
+	ZeroMemory(&vertex_buffer_desc, sizeof(vertex_buffer_desc));
+
+	vertex_buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * geo->getVertCount();
+	vertex_buffer_desc.CPUAccessFlags = 0;
+	vertex_buffer_desc.MiscFlags = 0;
+	vertex_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA vertex_buffer_data;
+	ZeroMemory(&vertex_buffer_data, sizeof(vertex_buffer_data));
+	vertex_buffer_data.pSysMem = geo->getVertices();
+	hr = m_device->CreateBuffer(&vertex_buffer_desc, &vertex_buffer_data, &vb.buffer);
+
+	m_vertex_buffers.push_back(vb);
+
+	return vb.buffer;
 }
