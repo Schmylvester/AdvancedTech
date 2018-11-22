@@ -34,9 +34,9 @@ int DXApp::run(int n_cmd_show)
 	return msg.wParam;
 }
 
-bool DXApp::init(HINSTANCE h_instance, int n_show_cmd, int threaded_func())
+bool DXApp::init(HINSTANCE h_instance, int n_show_cmd, std::function<int(LoadType, std::string)> func)
 {
-	threaded_func();
+	func(LoadType::LOAD_OBJECT, "pop");
 	if (!window.init(h_instance, n_show_cmd, m_client_width, m_client_height, true))
 	{
 		errorBox("Window Initialization - Failed");
