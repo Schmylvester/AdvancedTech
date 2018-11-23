@@ -25,7 +25,7 @@ void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
 
 void loadUnloadObjects()
 {
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10000; i++)
 	{
 		int delete_index = rand() % gp_geometry->size();
 		Memory::SafeDelete((*gp_geometry)[delete_index]);

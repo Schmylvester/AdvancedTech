@@ -232,7 +232,6 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_cube_texture);
 	Memory::SafeRelease(m_cubes_text_sampler_state);
 	Memory::SafeRelease(m_texture);
-
 	for (Geometry* g : external_geometry)
 	{
 		Memory::SafeDelete(g);
@@ -244,6 +243,11 @@ void DXApp::releaseObjects()
 	for (VertexBuffer& vb : m_vertex_buffers)
 	{
 		Memory::SafeRelease(vb.buffer);
+	}
+	while (loader_thread_active){}
+	if (loader_thread.joinable())
+	{
+		loader_thread.detach();
 	}
 }
 

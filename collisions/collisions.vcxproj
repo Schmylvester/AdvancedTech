@@ -124,6 +124,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -142,6 +143,7 @@
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="GeometryIncludes.h" />
+    <ClInclude Include="Plane.h" />
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Light.h" />

@@ -1,6 +1,7 @@
 #pragma once
 #include "DXApp.h"
 
+class PlaneObject;
 class Scene : public DXApp
 {
 public:
@@ -12,10 +13,12 @@ public:
 	virtual void initObjects() override;
 
 private:
-	long frame_idx = 0;
+	int frames_since_thread_sync = 0;
+
 	float last_dt = 0;
+	float max_dt = 0;
 	float player_speed = 6;
 	bool player_dir = false;
-	Geometry* plane;
+	PlaneObject* plane;
 	Geometry* player;
 };

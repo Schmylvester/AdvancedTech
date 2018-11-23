@@ -13,9 +13,10 @@ void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
 void loadUnloadObjects();
 void Scene::updateScene(float dt)
 {
-	if (dt > last_dt)
+	if (dt > max_dt)
 	{
-		OutputDebugString((std::to_string(frame_idx) + ": \t" + std::to_string(last_dt) + " - " + std::to_string(dt)).c_str());
+		max_dt = dt;
+		OutputDebugString((std::to_string(frames_since_thread_sync) + ": \t" + std::to_string(last_dt) + " - " + std::to_string(dt)).c_str());
 		OutputDebugString("\n");
 	}
 	last_dt = dt;
@@ -54,14 +55,14 @@ void Scene::updateScene(float dt)
 	m_cam.update(dt);
 	m_light.update(dt);
 
-	frame_idx++;
+	frames_since_thread_sync++;
 }
 
 void Scene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	plane = (new Cube());
+	plane = (new PlaneObject());
 	plane->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	plane->getTransform()->translate(0, -8, 0);
 	plane->getTransform()->scale(300, 0.1f, 300);
@@ -70,7 +71,7 @@ void Scene::initObjects()
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(4.8f, 0, 0);
 
-	for (int i = 0; i < 600; i++)
+	for (int i = 0; i < 1000; i++)
 	{
 		visible_geometry.push_back(new Cube());
 		visible_geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
@@ -86,7 +87,7 @@ void Scene::initObjects()
 		visible_geometry.back()->getTransform()->translate(x, -6, z);
 	}
 
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 10000; i++)
 	{
 		external_geometry.push_back(new Pyramid());
 		external_geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
@@ -124,6 +125,7 @@ void Scene::drawScene(float dt)
 	if (loader_thread.joinable() && !loader_thread_active)
 	{
 		loader_thread.join();
+		frames_since_thread_sync = 0;
 	}
 	if (!loader_thread_active)
 	{

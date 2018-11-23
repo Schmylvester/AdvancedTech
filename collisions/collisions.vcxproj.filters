@@ -57,6 +57,9 @@
     <ClCompile Include="ThreadedLoader.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Plane.cpp">
+      <Filter>Source Files\Geometry</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXApp.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="GeometryIncludes.h">
+      <Filter>Header Files\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
       <Filter>Header Files\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
