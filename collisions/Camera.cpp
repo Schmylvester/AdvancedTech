@@ -17,7 +17,7 @@ XMMATRIX Camera::getWVPMatrix(XMMATRIX world_matrix)
 
 void Camera::update(float dt)
 {
-	z -= dt;
-	cam_pos = XMVectorSet(0.0f, 0.0f, z, 0.0f);
-	cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	//z -= dt;
+	//cam_pos = XMVectorSet(0.0f, 0.0f, z, 0.0f);
+	//cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
 }

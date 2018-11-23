@@ -124,6 +124,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />

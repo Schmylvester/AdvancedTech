@@ -4,33 +4,23 @@
 void Scene::updateScene(float dt)
 {
 	m_cam.update(dt);
-	
-	for (Geometry* geo : geometry)
-	{
-		int rot_spd = rand() % 10;
-		geo->getTransform()->rotate(XMVectorSet(0, 0, -1, 0), rot_spd * dt);
-	}
+	m_light.update(dt);
 }
 
 void Scene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	m_light.dir = XMFLOAT3(0.25f, 0.5f, -1.0f);
-	m_light.ambient = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-	m_light.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	geometry.push_back(new Cube());
+	geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	geometry.back()->getTransform()->translate(0, -8, 0);
+	geometry.back()->getTransform()->scale(300, 0.1f, 300);
 
-	for (int x = -5; x < 6; x++)
+	for (int i = 0; i < 70; i++)
 	{
-		for (int y = -5; y < 6; y++)
-		{
-			for (int z = 1; z < 11; z++)
-			{
-				geometry.push_back(new Cube());
-				geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-				geometry.back()->getTransform()->translate(x * 3, y * 3, z * 3);
-			}
-		}
+		geometry.push_back(new Cube());
+		geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+		geometry.back()->getTransform()->translate(2 * ((rand() % 40) - 20), -6, 2 * (rand() % 40));
 	}
 }
 
