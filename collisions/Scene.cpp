@@ -13,11 +13,14 @@ void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
 void loadUnloadObjects();
 void Scene::updateScene(float dt)
 {
-	if (dt > max_dt)
+	if (frame_count > 1000)
 	{
-		max_dt = dt;
-		OutputDebugString((std::to_string(frames_since_thread_sync) + ": \t" + std::to_string(last_dt) + " - " + std::to_string(dt)).c_str());
-		OutputDebugString("\n");
+		if (dt > max_dt)
+		{
+			max_dt = dt;
+			OutputDebugString((std::to_string(frame_count) + ": \t" + std::to_string(last_dt) + " - " + std::to_string(dt)).c_str());
+			OutputDebugString("\n");
+		}
 	}
 	last_dt = dt;
 	float new_acc = player_acc - (player_speed * 0.4f);
@@ -57,7 +60,7 @@ void Scene::updateScene(float dt)
 	m_cam.update(dt);
 	m_light.update(dt);
 
-	frames_since_thread_sync++;
+	frame_count++;
 }
 
 void Scene::initObjects()
@@ -127,7 +130,6 @@ void Scene::drawScene(float dt)
 	if (loader_thread.joinable() && !loader_thread_active)
 	{
 		loader_thread.join();
-		frames_since_thread_sync = 0;
 	}
 	if (!loader_thread_active)
 	{

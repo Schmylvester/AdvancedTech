@@ -13,7 +13,7 @@ public:
 	virtual void initObjects() override;
 
 private:
-	int frames_since_thread_sync = 0;
+	int frame_count = 0;
 
 	float last_dt = 0;
 	float max_dt = 0;
