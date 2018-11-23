@@ -31,10 +31,10 @@ protected:
 
 	DWORD* indices = nullptr;
 	Vertex* vertices = nullptr;
-
-private:
 	ID3D11Buffer* m_vtx_buffer = nullptr;
 	ID3D11Buffer* m_idx_buffer = nullptr;
+
+private:
 	CBPerObject* m_cb = nullptr;
 	Camera* m_cam = nullptr;
 	ID3D11DeviceContext* m_dev_con = nullptr;

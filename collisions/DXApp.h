@@ -10,6 +10,7 @@
 #include "Window.h"
 #include "ConstantBuffers.h"
 #include "Camera.h"
+#include "BufferStructs.h"
 
 enum LoadType
 {
@@ -18,18 +19,6 @@ enum LoadType
 	LOAD_TILE,
 	LOAD_OBJECT,
 	SAVE_TILE_DATA,
-};
-
-struct VertexBuffer
-{
-	int vertices;
-	ID3D11Buffer* buffer;
-};
-struct IndexBuffer
-{
-	int triangles;
-	int vertices;
-	ID3D11Buffer* buffer;
 };
 
 using namespace DirectX;
@@ -51,8 +40,8 @@ public:
 	ID3D11Device* getDevice() { return m_device; }
 	ID3D11DeviceContext* getContext() { return m_device_context; }
 
-	ID3D11Buffer* getIndexBuffer(Geometry* geo);
-	ID3D11Buffer* getVertexBuffer(Geometry* geo);
+	ID3D11Buffer* getIndexBuffer(GeometryID id, Geometry* geo);
+	ID3D11Buffer* getVertexBuffer(GeometryID id, Geometry* geo);
 protected:
 	virtual void updateScene(float dt) = 0;
 	virtual void initObjects() = 0;

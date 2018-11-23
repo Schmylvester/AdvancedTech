@@ -11,8 +11,6 @@ Geometry::~Geometry()
 
 void Geometry::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
 {
-	m_vtx_buffer = _app->getVertexBuffer(this);
-	m_idx_buffer = _app->getIndexBuffer(this);
 	m_cb = _cb;
 	m_cam = cam;
 	m_dev_con = dev_con;

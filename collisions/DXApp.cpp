@@ -346,20 +346,19 @@ float DXApp::getDeltaTime()
 	return f;
 }
 
-ID3D11Buffer* DXApp::getIndexBuffer(Geometry* geo)
+ID3D11Buffer* DXApp::getIndexBuffer(GeometryID id, Geometry* geo)
 {
 	for (IndexBuffer& ib : m_geo_index_buffers)
 	{
-		if (ib.triangles == geo->getTriangleCount() && ib.vertices == geo->getVertCount())
+		if (ib.id == id)
 		{
 			return ib.buffer;
 		}
 	}
 
 	IndexBuffer new_buffer;
-	new_buffer.triangles = geo->getTriangleCount();
-	new_buffer.vertices = geo->getVertCount();
-
+	new_buffer.id = id;
+	
 	D3D11_BUFFER_DESC index_buffer_desc;
 	ZeroMemory(&index_buffer_desc, sizeof(index_buffer_desc));
 
@@ -381,18 +380,18 @@ ID3D11Buffer* DXApp::getIndexBuffer(Geometry* geo)
 	return m_geo_index_buffers.back().buffer;
 }
 
-ID3D11Buffer * DXApp::getVertexBuffer(Geometry * geo)
+ID3D11Buffer * DXApp::getVertexBuffer(GeometryID id, Geometry * geo)
 {
 	for (VertexBuffer& vb : m_vertex_buffers)
 	{
-		if (vb.vertices == geo->getVertCount())
+		if (vb.id == id)
 		{
 			return vb.buffer;
 		}
 	}
 
 	VertexBuffer vb;
-	vb.vertices = geo->getVertCount();
+	vb.id = id;
 
 	HRESULT hr;
 	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "VShader", "vs_5_0", NULL, NULL, &m_v_buffer, NULL);
