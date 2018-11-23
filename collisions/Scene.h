@@ -17,7 +17,8 @@ private:
 
 	float last_dt = 0;
 	float max_dt = 0;
-	float player_speed = 6;
+	float player_acc = 4.3f;
+	float player_speed = 0;
 	bool player_dir = false;
 	PlaneObject* plane;
 	Geometry* player;

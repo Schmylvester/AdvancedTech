@@ -20,10 +20,11 @@ void Scene::updateScene(float dt)
 		OutputDebugString("\n");
 	}
 	last_dt = dt;
+	float new_acc = player_acc - (player_speed * 0.4f);
 	if (player_dir)
 	{
-		player->getTransform()->translate(player_speed * dt, 0, 0);
-		if (player->getTransform()->getPos().x > 3)
+		player_speed += new_acc * dt;
+		if (player->getTransform()->getPos().x > 0)
 		{
 			player_dir = false;
 			DXApp::loader_thread_active = true;
@@ -32,12 +33,13 @@ void Scene::updateScene(float dt)
 	}
 	else
 	{
-		player->getTransform()->translate(-player_speed * dt, 0, 0);
-		if (player->getTransform()->getPos().x < -3)
+		player_speed -= new_acc * dt;
+		if (player->getTransform()->getPos().x < 0)
 		{
 			player_dir = true;
 		}
 	}
+	player->getTransform()->translate(player_speed * dt, 0, 0);
 
 	for (Geometry* geo : visible_geometry)
 	{
