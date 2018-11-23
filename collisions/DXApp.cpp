@@ -3,6 +3,8 @@
 
 #pragma region StuffICanLeaveAlove
 
+bool DXApp::loader_thread_active = false;
+
 bool DXApp::initDirectX3D(HINSTANCE h_instance)
 {
 	HRESULT hr;
@@ -189,11 +191,8 @@ int DXApp::run(int n_cmd_show)
 	return msg.wParam;
 }
 
-bool DXApp::init(HINSTANCE h_instance, int n_show_cmd, std::function<int(LoadType, std::string)> func)
+bool DXApp::init(HINSTANCE h_instance, int n_show_cmd)
 {
-	loader_thread = std::thread(func, LoadType::LOAD_OBJECT, "pop");
-	loader_thread.detach();
-
 	if (!window.init(h_instance, n_show_cmd, m_client_width, m_client_height, true))
 	{
 		errorBox("Window Initialization - Failed");
@@ -234,7 +233,7 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_cubes_text_sampler_state);
 	Memory::SafeRelease(m_texture);
 
-	for (Geometry* g : geometry)
+	for (Geometry* g : external_geometry)
 	{
 		Memory::SafeDelete(g);
 	}

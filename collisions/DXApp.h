@@ -33,7 +33,7 @@ public:
 	//main application loop
 	int run(int n_cmd_show);
 
-	bool init(HINSTANCE h_instance, int n_show_cmd, std::function<int(LoadType, std::string)> func);
+	bool init(HINSTANCE h_instance, int n_show_cmd);
 	bool initDirectX3D(HINSTANCE h_instance);
 	void releaseObjects();
 
@@ -42,6 +42,8 @@ public:
 
 	ID3D11Buffer* getIndexBuffer(GeometryID id, Geometry* geo);
 	ID3D11Buffer* getVertexBuffer(GeometryID id, Geometry* geo);
+
+	static bool loader_thread_active;
 protected:
 	virtual void updateScene(float dt) = 0;
 	virtual void initObjects() = 0;
@@ -64,7 +66,8 @@ protected:
 
 	Light m_light;
 	Camera m_cam;
-	std::vector<Geometry*> geometry;
+	std::vector<Geometry*> visible_geometry;
+	std::vector<Geometry*> external_geometry;
 	Window window;
 	HINSTANCE m_h_app_instance;
 	const UINT m_client_width = 800;

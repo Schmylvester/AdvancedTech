@@ -1,48 +1,31 @@
 #include "Scene.h"
-#include "Cube.h"
-#include "Pyramid.h"
-#include "Frustum.h"
+#include "GeometryIncludes.h"
 
 Scene::~Scene()
 {
 	Memory::SafeDelete(player);
 	Memory::SafeDelete(plane);
 }
-
+void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
+	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
+	ID3D11Buffer** _const_buffer, Camera* _cam);
+void loadUnloadObjects();
 void Scene::updateScene(float dt)
 {
-	float avg_dt = (last_dt[0] + last_dt[1] + last_dt[2]);
-	if (dt > avg_dt && last_dt[0] != 0)
+	if (dt > last_dt)
 	{
-		OutputDebugString((std::to_string(frame_idx) + ": \t" + std::to_string(last_dt[2]) + " - " + std::to_string(dt)).c_str());
+		OutputDebugString((std::to_string(frame_idx) + ": \t" + std::to_string(last_dt) + " - " + std::to_string(dt)).c_str());
 		OutputDebugString("\n");
 	}
-	last_dt[0] = last_dt[1];
-	last_dt[1] = last_dt[2];
-	last_dt[2] = dt;
+	last_dt = dt;
 	if (player_dir)
 	{
 		player_speed += player_accel * dt;
 		if (player->getTransform()->getPos().x > 0)
 		{
 			player_dir = false;
-			for (int i = 0; i < 1000; i++)
-			{
-				int delete_index = rand() % geometry.size();
-				Memory::SafeDelete(geometry[delete_index]);
-				geometry.erase(geometry.begin() + delete_index);
-				int shape = rand() % 3;
-				if(shape == 0)
-					geometry.push_back(new Frustum());
-				else if(shape == 1)
-					geometry.push_back(new Pyramid());
-				else
-					geometry.push_back(new Cube());
-
-				geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-				int dist = (rand() % 3) + 3;
-				geometry.back()->getTransform()->translate(dist * ((rand() % 40) - 20), -6, dist * (rand() % 40));
-			}
+			DXApp::loader_thread_active = true;
+			loader_thread = std::thread(loadUnloadObjects);
 		}
 	}
 	else
@@ -53,11 +36,14 @@ void Scene::updateScene(float dt)
 			player_dir = true;
 		}
 	}
-	for (Geometry* geo : geometry)
+	if (!loader_thread_active)
 	{
-		geo->getTransform()->rotate(XMVectorSet(1, 0, 0, 0), dt);
-		geo->getTransform()->rotate(XMVectorSet(0, 1, 0, 0), dt);
-		geo->getTransform()->rotate(XMVectorSet(0, 0, 1, 0), dt);
+		for (Geometry* geo : external_geometry)
+		{
+			geo->getTransform()->rotate(XMVectorSet(1, 0, 0, 0), dt);
+			geo->getTransform()->rotate(XMVectorSet(0, 1, 0, 0), dt);
+			geo->getTransform()->rotate(XMVectorSet(0, 0, 1, 0), dt);
+		}
 	}
 	player->getTransform()->translate(player_speed, 0, 0);
 	XMVECTOR rotate;
@@ -98,11 +84,19 @@ void Scene::initObjects()
 
 	for (int i = 0; i < 1000; i++)
 	{
-		geometry.push_back(new Cube());
-		geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-		int dist = (rand() % 3) + 3;
-		geometry.back()->getTransform()->translate(dist * ((rand() % 40) - 20), -6, dist * (rand() % 40));
+		external_geometry.push_back(new Cube());
+		external_geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+		float x, z;
+		x = 5 + (rand() % 5);
+		z = 5 + (rand() % 5);
+		if (rand() % 2)
+		{
+			x *= -1;
+		}
+		external_geometry.back()->getTransform()->translate(x, -6, z);
 	}
+
+	setPointers(&external_geometry, this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 }
 
 void Scene::drawScene(float dt)
@@ -117,10 +111,16 @@ void Scene::drawScene(float dt)
 
 	player->draw();
 	plane->draw();
-	for (Geometry* g : geometry)
+	if (loader_thread.joinable() && !loader_thread_active)
 	{
-		g->draw();
+		loader_thread.join();
 	}
-
+	if (!loader_thread_active)
+	{
+		for (Geometry* g : external_geometry)
+		{
+			g->draw();
+		}
+	}
 	m_swap_chain->Present(0, 0);
 }
