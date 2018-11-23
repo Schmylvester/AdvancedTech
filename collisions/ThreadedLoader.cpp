@@ -30,22 +30,22 @@ void loadUnloadObjects()
 		int delete_index = rand() % gp_geometry->size();
 		Memory::SafeDelete((*gp_geometry)[delete_index]);
 		gp_geometry->erase(gp_geometry->begin() + delete_index);
-		int shape = rand() % 3;
+		int shape = rand() % 2;
 		if (shape == 0)
 			gp_geometry->push_back(new Frustum());
 		else if (shape == 1)
 			gp_geometry->push_back(new Pyramid());
-		else
-			gp_geometry->push_back(new Cube());
 
 		gp_geometry->back()->init(gp_app, gp_cb, gp_cam, *gp_dev_con, *gp_const_buffer);
 		float x, z;
-		x = 5 + (rand() % 5);
-		z = 5 + (rand() % 5);
-		if (rand() % 2)
+		z = (float(rand() % 100) / 4);
+		x = sqrt(100 - pow(z, 2));
+		if (rand() % 2 == 0)
 		{
 			x *= -1;
 		}
+		z *= 5 + (rand() % 10);
+		x *= 5 + (rand() % 10);
 		gp_geometry->back()->getTransform()->translate(x, -6, z);
 	}
 	DXApp::loader_thread_active = false;

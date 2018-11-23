@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Scene.h"
 #include "GeometryIncludes.h"
 
@@ -20,8 +21,8 @@ void Scene::updateScene(float dt)
 	last_dt = dt;
 	if (player_dir)
 	{
-		player_speed += player_accel * dt;
-		if (player->getTransform()->getPos().x > 0)
+		player->getTransform()->translate(player_speed * dt, 0, 0);
+		if (player->getTransform()->getPos().x > 3)
 		{
 			player_dir = false;
 			DXApp::loader_thread_active = true;
@@ -30,38 +31,25 @@ void Scene::updateScene(float dt)
 	}
 	else
 	{
-		player_speed -= player_accel * dt;
-		if (player->getTransform()->getPos().x < 0)
+		player->getTransform()->translate(-player_speed * dt, 0, 0);
+		if (player->getTransform()->getPos().x < -3)
 		{
 			player_dir = true;
 		}
 	}
+
+	for (Geometry* geo : visible_geometry)
+	{
+		geo->getTransform()->rotate(XMVectorSet(0, 0, 1, 0), dt);
+	}
+
 	if (!loader_thread_active)
 	{
 		for (Geometry* geo : external_geometry)
 		{
-			geo->getTransform()->rotate(XMVectorSet(1, 0, 0, 0), dt);
 			geo->getTransform()->rotate(XMVectorSet(0, 1, 0, 0), dt);
-			geo->getTransform()->rotate(XMVectorSet(0, 0, 1, 0), dt);
 		}
 	}
-	player->getTransform()->translate(player_speed, 0, 0);
-	XMVECTOR rotate;
-	switch (rand() % 3)
-	{
-	case 0:
-		rotate = XMVectorSet(1, 0, 0, 0);
-		break;
-	case 1:
-		rotate = XMVectorSet(0, 1, 0, 0);
-		break;
-	case 2:
-		rotate = XMVectorSet(0, 0, 1, 0);
-		break;
-	default:
-		break;
-	}
-	player->getTransform()->rotate(rotate, dt);
 
 	m_cam.update(dt);
 	m_light.update(dt);
@@ -82,17 +70,35 @@ void Scene::initObjects()
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(4.8f, 0, 0);
 
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 600; i++)
 	{
-		external_geometry.push_back(new Cube());
-		external_geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+		visible_geometry.push_back(new Cube());
+		visible_geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 		float x, z;
-		x = 5 + (rand() % 5);
-		z = 5 + (rand() % 5);
-		if (rand() % 2)
+		z = (float(rand() % 100) / 4);
+		x = sqrt(100 - pow(z, 2));
+		if (rand() % 2 == 0)
 		{
 			x *= -1;
 		}
+		z *= 1 + (rand() % 10);
+		x *= 1 + (rand() % 10);
+		visible_geometry.back()->getTransform()->translate(x, -6, z);
+	}
+
+	for (int i = 0; i < 1000; i++)
+	{
+		external_geometry.push_back(new Pyramid());
+		external_geometry.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+		float x, z;
+		z = (float(rand() % 100) / 4);
+		x = sqrt(100 - pow(z, 2));
+		if (rand() % 2 == 0)
+		{
+			x *= -1;
+		}
+		z *= 5 + (rand() % 10);
+		x *= 5 + (rand() % 10);
 		external_geometry.back()->getTransform()->translate(x, -6, z);
 	}
 
@@ -111,6 +117,10 @@ void Scene::drawScene(float dt)
 
 	player->draw();
 	plane->draw();
+	for (Geometry* g : visible_geometry)
+	{
+		g->draw();
+	}
 	if (loader_thread.joinable() && !loader_thread_active)
 	{
 		loader_thread.join();
