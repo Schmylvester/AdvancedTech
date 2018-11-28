@@ -14,9 +14,16 @@ Light::Light()
 
 void Light::update(float dt)
 {
-	//rotation += dt;
-	//z = sin(rotation);
-	//y = cos(rotation);
+	if (y > 0)
+	{
+		rotation += dt;
+	}
+	else
+	{
+		rotation += 0.3f * dt;
+	}
+	z = sin(rotation);
+	y = cos(rotation);
 
-	//dir = XMFLOAT3(x, y, z);
+	dir = XMFLOAT3(x, y, z);
 }

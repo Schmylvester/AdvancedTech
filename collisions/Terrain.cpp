@@ -99,8 +99,8 @@ void Terrain::createGrid()
 		{
 			int index = (y * cols) + x;
 			vertices[index].position = h_map_info.heightMap[index];
-			float shade = 1;// ((float)(rand() % 100)) / 150;
-			vertices[index].colour = XMFLOAT4(shade, shade, shade, 1.0f);
+			float shade = ((float)(rand() % 100)) / 250;
+			vertices[index].colour = XMFLOAT4(shade, 0.7f, shade, 1.0f);
 			vertices[index].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 		}
 	}
