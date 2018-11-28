@@ -54,7 +54,7 @@ void Terrain::loadFile()
 
 	int height_mod = 0;
 
-	float height_factor = 10.0f;
+	float height_factor = 20.0f;
 
 	for (int x = 0; x < h_map_info.terrainWidth; x++)
 	{
@@ -90,7 +90,8 @@ void Terrain::createGrid()
 		{
 			int index = (y * cols) + x;
 			vertices[index].position = h_map_info.heightMap[index];
-			vertices[index].colour = XMFLOAT4(((float)(rand() % 100)) / 500, ((float)(rand() % 100)) / 150, ((float)(rand() % 100)) / 500, 1.0f);
+			float shade = ((float)(rand() % 100)) / 150;
+			vertices[index].colour = XMFLOAT4(shade, shade, shade, 1.0f);
 			vertices[index].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 		}
 	}
@@ -103,12 +104,12 @@ void Terrain::createGrid()
 	{
 		for (DWORD j = 0; j < cols - 1; j++)
 		{
-			indices[idx_set + 5] = i * cols + j;				// Bottom left
-			indices[idx_set + 4] = i * cols + j + 1;        // Bottom right
-			indices[idx_set + 3] = (i + 1)*cols + j;		// Top left
-			indices[idx_set + 2] = (i + 1)*cols + j;		// Top left
-			indices[idx_set + 1] = i * cols + j + 1;        // Bottom right
-			indices[idx_set + 0] = (i + 1)*cols + j + 1;    // Top right
+			indices[idx_set + 5] = i * cols + j;
+			indices[idx_set + 4] = i * cols + j + 1;
+			indices[idx_set + 3] = (i + 1)*cols + j;
+			indices[idx_set + 2] = (i + 1)*cols + j;
+			indices[idx_set + 1] = i * cols + j + 1;
+			indices[idx_set + 0] = (i + 1)*cols + j + 1;
 
 			idx_set += 6; // next quad
 		}

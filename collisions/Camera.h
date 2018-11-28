@@ -9,11 +9,8 @@ public:
 	~Camera() = default;
 
 	XMMATRIX getWVPMatrix(XMMATRIX world_matrix);
-	void update(float dt);
-	void setTarget(XMVECTOR to);
+	void move(float x, float y, float z);
 private:
-	float z = -8.0f;
-
 	XMMATRIX cam_view;
 	XMMATRIX cam_projection;
 

@@ -66,9 +66,12 @@ protected:
 
 	Light m_light;
 	Camera m_cam;
+
 	std::vector<Geometry*> visible_geometry;
 	std::vector<Geometry*> external_geometry;
+
 	Window window;
+	Input m_input;
 	HINSTANCE m_h_app_instance;
 	const UINT m_client_width = 800;
 	const UINT m_client_height = 600;

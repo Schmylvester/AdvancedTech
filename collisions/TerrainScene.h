@@ -13,6 +13,9 @@ public:
 	virtual void initObjects() override;
 
 private:
+	Geometry * player;
 	Terrain * terrain;
+
+	float move_speed = 8;
 };
 

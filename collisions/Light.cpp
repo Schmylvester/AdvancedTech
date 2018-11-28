@@ -4,7 +4,7 @@ Light::Light()
 {
 	ZeroMemory(this, sizeof(Light));
 
-	x = 0.3f;
+	x = 0.0f;
 	y = 0.7f;
 	z = 0;
 	dir = XMFLOAT3(x, y, z);
@@ -15,7 +15,7 @@ Light::Light()
 void Light::update(float dt)
 {
 	rotation += dt;
-	x = sin(rotation);
+	z = sin(rotation);
 	y = cos(rotation);
 
 	dir = XMFLOAT3(x, y, z);

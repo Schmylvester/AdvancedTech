@@ -210,6 +210,12 @@ bool DXApp::init(HINSTANCE h_instance, int n_show_cmd)
 		return false;
 	}
 
+	if (!m_input.init(h_instance, *(window.getAppWnd())))
+	{
+		errorBox("Failed to create input");
+		return false;
+	}
+
 	return true;
 }
 

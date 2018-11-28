@@ -58,7 +58,6 @@ void Scene::updateScene(float dt)
 		}
 	}
 
-	m_cam.update(dt);
 	m_light.update(dt);
 
 	frame_count++;

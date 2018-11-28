@@ -1,5 +1,5 @@
 #include "TerrainScene.h"
-#include "Terrain.h"
+#include "GeometryIncludes.h"
 
 TerrainScene::~TerrainScene()
 {
@@ -8,7 +8,30 @@ TerrainScene::~TerrainScene()
 
 void TerrainScene::updateScene(float dt)
 {
-	m_cam.update(dt);
+	m_input.detectInput();
+	float step = dt * move_speed;
+
+	if (m_input.key(DIK_W, InputState::HELD))
+	{
+		player->getTransform()->translate(0, 0, step);
+		m_cam.move(0, 0, step);
+	}
+	if (m_input.key(DIK_A, InputState::HELD))
+	{
+		player->getTransform()->translate(-step, 0, 0);
+		m_cam.move(-step, 0, 0);
+	}
+	if (m_input.key(DIK_S, InputState::HELD))
+	{
+		player->getTransform()->translate(0, 0, -step);
+		m_cam.move(0, 0, -step);
+	}
+	if (m_input.key(DIK_D, InputState::HELD))
+	{
+		player->getTransform()->translate(step, 0, 0);
+		m_cam.move(step, 0, 0);
+	}
+
 	m_light.update(dt);
 }
 
@@ -23,6 +46,7 @@ void TerrainScene::drawScene(float dt)
 	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
 
 	terrain->draw();
+	player->draw();
 
 	m_swap_chain->Present(0, 0);
 }
@@ -33,5 +57,9 @@ void TerrainScene::initObjects()
 
 	terrain = (new Terrain("..\\Resources\\HeightMap.bmp"));
 	terrain->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	terrain->getTransform()->translate(-64, -18, 0);
+	terrain->getTransform()->translate(-64, -5, -64);
+
+	player = new Cube();
+	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	player->getTransform()->translate(0, -4, 0);
 }
