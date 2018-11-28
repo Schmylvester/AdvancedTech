@@ -1,22 +1,15 @@
 #pragma once
 #include "DXUtil.h"
-
-enum class GeometryID
-{
-	PLANE,
-	CUBE,
-	PYRAMID,
-	FRUSTUM
-};
+#include <string>
 
 struct VertexBuffer
 {
-	GeometryID id;
+	std::string id;
 	ID3D11Buffer* buffer;
 };
 
 struct IndexBuffer
 {
-	GeometryID id;
+	std::string id;
 	ID3D11Buffer* buffer;
 };

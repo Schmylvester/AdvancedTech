@@ -10,6 +10,7 @@ public:
 
 	XMMATRIX getWVPMatrix(XMMATRIX world_matrix);
 	void update(float dt);
+	void setTarget(XMVECTOR to);
 private:
 	float z = -8.0f;
 

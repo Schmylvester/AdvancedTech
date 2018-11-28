@@ -21,3 +21,8 @@ void Camera::update(float dt)
 	//cam_pos = XMVectorSet(0.0f, 0.0f, z, 0.0f);
 	//cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
 }
+
+void Camera::setTarget(XMVECTOR to)
+{
+	cam_target = to;
+}

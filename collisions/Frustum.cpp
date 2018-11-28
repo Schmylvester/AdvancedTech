@@ -72,8 +72,8 @@ void Frustum::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 	vertices[22] = Vertex(0.3f, 1.0f, 0.3f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 	vertices[23] = Vertex(1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 1.0f);
 
-	m_vtx_buffer = _app->getVertexBuffer(GeometryID::FRUSTUM, this);
-	m_idx_buffer = _app->getIndexBuffer(GeometryID::FRUSTUM, this);
+	m_vtx_buffer = _app->getVertexBuffer("Frustum", this);
+	m_idx_buffer = _app->getIndexBuffer("Frustum", this);
 
 	Geometry::init(_app, _cb, cam, dev_con, c_buff);
 }

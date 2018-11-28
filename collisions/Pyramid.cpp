@@ -49,8 +49,8 @@ void Pyramid::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCo
 	vertices[14] = Vertex(1.0f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
 	vertices[15] = Vertex(-1.0f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f);
 
-	m_vtx_buffer = _app->getVertexBuffer(GeometryID::PYRAMID, this);
-	m_idx_buffer = _app->getIndexBuffer(GeometryID::PYRAMID, this);
+	m_vtx_buffer = _app->getVertexBuffer("Pyramid", this);
+	m_idx_buffer = _app->getIndexBuffer("Pyramid", this);
 
 	Geometry::init(_app, _cb, cam, dev_con, c_buff);
 }

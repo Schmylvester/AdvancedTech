@@ -244,7 +244,7 @@ void DXApp::releaseObjects()
 	{
 		Memory::SafeRelease(vb.buffer);
 	}
-	while (loader_thread_active){}
+	while (loader_thread_active) {}
 	if (loader_thread.joinable())
 	{
 		loader_thread.detach();
@@ -349,7 +349,7 @@ float DXApp::getDeltaTime()
 	return f;
 }
 
-ID3D11Buffer* DXApp::getIndexBuffer(GeometryID id, Geometry* geo)
+ID3D11Buffer* DXApp::getIndexBuffer(std::string id, Geometry* geo)
 {
 	for (IndexBuffer& ib : m_geo_index_buffers)
 	{
@@ -361,7 +361,7 @@ ID3D11Buffer* DXApp::getIndexBuffer(GeometryID id, Geometry* geo)
 
 	IndexBuffer new_buffer;
 	new_buffer.id = id;
-	
+
 	D3D11_BUFFER_DESC index_buffer_desc;
 	ZeroMemory(&index_buffer_desc, sizeof(index_buffer_desc));
 
@@ -383,7 +383,7 @@ ID3D11Buffer* DXApp::getIndexBuffer(GeometryID id, Geometry* geo)
 	return m_geo_index_buffers.back().buffer;
 }
 
-ID3D11Buffer * DXApp::getVertexBuffer(GeometryID id, Geometry * geo)
+ID3D11Buffer * DXApp::getVertexBuffer(std::string id, Geometry * geo)
 {
 	for (VertexBuffer& vb : m_vertex_buffers)
 	{
@@ -392,7 +392,6 @@ ID3D11Buffer * DXApp::getVertexBuffer(GeometryID id, Geometry * geo)
 			return vb.buffer;
 		}
 	}
-
 	VertexBuffer vb;
 	vb.id = id;
 

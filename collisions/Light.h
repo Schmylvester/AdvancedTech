@@ -15,5 +15,5 @@ public:
 
 private:
 	float x, y, z;
-	int swing_dir = 0;
+	float rotation = 0;
 };

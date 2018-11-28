@@ -5,7 +5,7 @@
 Scene::~Scene()
 {
 	Memory::SafeDelete(player);
-	Memory::SafeDelete(plane);
+	Memory::SafeDelete(terrain);
 }
 void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
 	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
@@ -13,6 +13,7 @@ void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
 void loadUnloadObjects();
 void Scene::updateScene(float dt)
 {
+	terrain->getTransform()->scale(dt * 60, dt * 60, dt * 60);
 	if (frame_count > 1000)
 	{
 		if (dt > max_dt)
@@ -67,10 +68,9 @@ void Scene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	plane = (new PlaneObject());
-	plane->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	plane->getTransform()->translate(0, -8, 0);
-	plane->getTransform()->scale(300, 0.1f, 300);
+	terrain = (new Terrain("..\\Resources\\HeightMap.bmp"));
+	terrain->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	terrain->getTransform()->translate(0, -8, 0);
 
 	player = new Cube();
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
@@ -122,7 +122,7 @@ void Scene::drawScene(float dt)
 	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
 
 	player->draw();
-	plane->draw();
+	terrain->draw();
 	for (Geometry* g : visible_geometry)
 	{
 		g->draw();
