@@ -1,9 +1,15 @@
 #include "TerrainScene.h"
 #include "GeometryIncludes.h"
 
+void loadTerrain(Terrain* player_loc);
+void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
+	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
+	ID3D11Buffer** _const_buffer, Camera* _cam);
+
 TerrainScene::~TerrainScene()
 {
-	Memory::SafeDelete(terrain);
+	for(Geometry* ter : terrain)
+		Memory::SafeDelete(ter);
 }
 
 void TerrainScene::updateScene(float dt)
@@ -32,6 +38,22 @@ void TerrainScene::updateScene(float dt)
 		m_cam.move(step, 0, 0);
 	}
 
+	float player_x = player->getTransform()->getPos().x;
+	float player_z = player->getTransform()->getPos().z;
+	if (!active_cell->playerInCell(player_x, player_z))
+	{
+		for (Geometry* g : terrain)
+		{
+			Terrain* t = static_cast<Terrain*>(g);
+			if (t->playerInCell(player_x, player_z))
+			{
+				active_cell = t;
+				loader_thread_active = true;
+				loader_thread = std::thread(loadTerrain, active_cell);
+			}
+		}
+	}
+
 	m_light.update(dt);
 }
 
@@ -44,8 +66,18 @@ void TerrainScene::drawScene(float dt)
 	m_frame_cb.light = m_light;
 	m_device_context->UpdateSubresource(m_cb_per_frame, 0, NULL, &m_frame_cb, 0, 0);
 	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
-
-	terrain->draw();
+	
+	if (loader_thread.joinable() && !loader_thread_active)
+	{
+		loader_thread.join();
+	}
+	if (!loader_thread_active)
+	{
+		for (Geometry* ter : terrain)
+		{
+			ter->draw();
+		}
+	}
 	player->draw();
 
 	m_swap_chain->Present(0, 0);
@@ -55,11 +87,30 @@ void TerrainScene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	terrain = (new Terrain("..\\Resources\\HeightMap.bmp"));
-	terrain->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	terrain->getTransform()->translate(-64, -5, -64);
+	active_cell = new Terrain("..\\Resources\\HeightMap.bmp", 0, 0);
+	terrain.push_back(active_cell);
+	terrain.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	terrain.back()->getTransform()->translate(-64, -25, -64);
+
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", 1, 1));
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", 1, 0));
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", 1, -1));
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", 0, 1));
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", 0, -1));
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", -1, 1));
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", -1, 0));
+	terrain.push_back(new Terrain("..\\Resources\\HeightMap.bmp", -1, -1));
+
+	for (int i = 1; i < 9; i++)
+	{
+		terrain[i]->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+		Terrain* t = static_cast<Terrain*>(terrain[i]);
+		t->setPos(-64, -64);
+	}
 
 	player = new Cube();
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(0, -4, 0);
+
+	setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 }

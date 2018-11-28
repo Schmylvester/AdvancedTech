@@ -13,9 +13,10 @@ public:
 	virtual void initObjects() override;
 
 private:
+	Terrain * active_cell;
 	Geometry * player;
-	Terrain * terrain;
+	std::vector<Geometry*> terrain;
 
-	float move_speed = 8;
+	float move_speed = 20;
 };
 

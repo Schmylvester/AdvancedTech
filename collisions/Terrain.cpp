@@ -1,6 +1,13 @@
 #include "Terrain.h"
 #include "DXApp.h"
 
+Terrain::Terrain(const char * _name, int x, int y)
+{
+	file_name = _name;
+	grid_x = x;
+	grid_y = y;
+}
+
 Terrain::~Terrain()
 {
 	Memory::SafeDeleteArr(h_map_info.heightMap);
@@ -76,6 +83,8 @@ void Terrain::loadFile()
 
 void Terrain::createGrid()
 {
+	width = h_map_info.terrainWidth;
+	height = h_map_info.terrainHeight;
 	int cols = h_map_info.terrainWidth;
 	int rows = h_map_info.terrainHeight;
 
@@ -90,7 +99,7 @@ void Terrain::createGrid()
 		{
 			int index = (y * cols) + x;
 			vertices[index].position = h_map_info.heightMap[index];
-			float shade = ((float)(rand() % 100)) / 150;
+			float shade = 1;// ((float)(rand() % 100)) / 150;
 			vertices[index].colour = XMFLOAT4(shade, shade, shade, 1.0f);
 			vertices[index].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 		}
@@ -173,4 +182,36 @@ void Terrain::createGrid()
 		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		facesUsing = 0;
 	}
+}
+
+bool Terrain::playerInCell(int player_x, int player_z)
+{
+	int left = (grid_x * width) - 64;
+	int right = ((grid_x + 1) * width) - 64;
+	int bottom = (grid_y * height) - 64;
+	int top = ((grid_y + 1) * height) - 64;
+	return (player_x > left && player_x <= right && player_z > bottom && player_z <= top);
+}
+
+void Terrain::addNeighbour(Terrain * t, int neighbour_idx)
+{
+	assert(neighbours[neighbour_idx] == nullptr);
+	neighbours[neighbour_idx] = t;
+}
+
+bool Terrain::isNeighbour(Terrain * t)
+{
+	for (Terrain* neighbour : neighbours)
+	{
+		if (neighbour == t)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void Terrain::setPos(int active_x, int active_y)
+{
+	m_transform.translate(active_x + (grid_x * (width - 1)), -25, active_y + (grid_y * (height - 1)));
 }

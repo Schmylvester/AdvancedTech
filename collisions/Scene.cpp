@@ -67,7 +67,7 @@ void Scene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	terrain = (new Terrain("..\\Resources\\HeightMap.bmp"));
+	terrain = (new PlaneObject());
 	terrain->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	terrain->getTransform()->translate(0, -8, 0);
 

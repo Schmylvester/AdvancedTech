@@ -1,7 +1,7 @@
 #pragma once
 #include "DXApp.h"
 
-class Terrain;
+class PlaneObject;
 class Scene : public DXApp
 {
 public:
@@ -20,6 +20,6 @@ private:
 	float player_acc = 4.3f;
 	float player_speed = 0;
 	bool player_dir = false;
-	Terrain* terrain;
+	PlaneObject* terrain;
 	Geometry* player;
 };

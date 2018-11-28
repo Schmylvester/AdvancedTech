@@ -50,3 +50,24 @@ void loadUnloadObjects()
 	}
 	DXApp::loader_thread_active = false;
 }
+
+void loadTerrain(Terrain* player_loc)
+{
+	int count = gp_geometry->size();
+	for (int i = 0; i < count; i++)
+	{
+		Terrain* t = static_cast<Terrain*>((*gp_geometry)[i]);
+		if (!player_loc->isNeighbour(t) && t != player_loc)
+		{
+			Memory::SafeDelete((*gp_geometry)[i]);
+		}
+	}
+	for (int i = count - 1; i >= 0; i--)
+	{
+		if ((*gp_geometry)[i] == nullptr)
+		{
+			gp_geometry->erase(gp_geometry->begin() + i);
+		}
+	}
+	DXApp::loader_thread_active = false;
+}
