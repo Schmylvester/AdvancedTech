@@ -22,6 +22,8 @@ void Terrain::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCo
 	m_idx_buffer = _app->getIndexBuffer(file_name, this);
 
 	Geometry::init(_app, _cb, cam, dev_con, c_buff);
+
+	m_transform.translate(terrain_scale * grid_x * (width - 1), 0, terrain_scale * grid_y * (height - 1));
 }
 
 void Terrain::loadFile()
@@ -69,9 +71,9 @@ void Terrain::loadFile()
 		{
 			height = bitmap_image[height_mod];
 			index = (h_map_info.terrainHeight * x) + y;
-			h_map_info.heightMap[index].x = (float)y;
+			h_map_info.heightMap[index].x = (float)y * terrain_scale;
 			h_map_info.heightMap[index].y = (float)(height) / height_factor;
-			h_map_info.heightMap[index].z = (float)x;
+			h_map_info.heightMap[index].z = (float)x * terrain_scale;
 
 			height_mod += 3;
 
@@ -186,16 +188,15 @@ void Terrain::createGrid()
 
 bool Terrain::playerInCell(int player_x, int player_z)
 {
-	int left = (grid_x * width) - 64;
-	int right = ((grid_x + 1) * width) - 64;
-	int bottom = (grid_y * height) - 64;
-	int top = ((grid_y + 1) * height) - 64;
+	int left = (grid_x * (terrain_scale * width)) - 64;
+	int right = ((grid_x + 1) * (terrain_scale * width)) - 64;
+	int bottom = (grid_y * (terrain_scale * height)) - 64;
+	int top = ((grid_y + 1) * (terrain_scale * height)) - 64;
 	return (player_x > left && player_x <= right && player_z > bottom && player_z <= top);
 }
 
-void Terrain::addNeighbour(Terrain * t, int neighbour_idx)
+void Terrain::addNeighbour(Terrain * t, NeighbourID neighbour_idx)
 {
-	assert(neighbours[neighbour_idx] == nullptr);
 	neighbours[neighbour_idx] = t;
 }
 
@@ -211,7 +212,61 @@ bool Terrain::isNeighbour(Terrain * t)
 	return false;
 }
 
-void Terrain::setPos(int active_x, int active_y)
+void Terrain::getIndex(int & x, int & y)
 {
-	m_transform.translate(active_x + (grid_x * (width - 1)), -25, active_y + (grid_y * (height - 1)));
+	x = grid_x;
+	y = grid_y;
+}
+
+void Terrain::createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _app,
+	CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
+{
+	if (neighbours[TOP_LEFT] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x - 1, grid_y + 1));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+	if (neighbours[TOP] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x, grid_y + 1));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+	if (neighbours[TOP_RIGHT] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x + 1, grid_y + 1));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+	if (neighbours[LEFT] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x - 1, grid_y));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+	if (neighbours[RIGHT] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x + 1, grid_y));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+	if (neighbours[BOTTOM_LEFT] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x - 1, grid_y - 1));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+	if (neighbours[BOTTOM] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x, grid_y - 1));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+	if (neighbours[BOTTOM_RIGHT] == nullptr)
+	{
+		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x + 1, grid_y - 1));
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
 }

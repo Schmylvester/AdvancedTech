@@ -3,6 +3,7 @@
 #include "Geometry.h"
 #include "GeometryIncludes.h"
 #include "Scene.h"
+#include "TerrainScene.h"
 
 std::vector<Geometry*>* gp_geometry;
 DXApp* gp_app;
@@ -69,5 +70,8 @@ void loadTerrain(Terrain* player_loc)
 			gp_geometry->erase(gp_geometry->begin() + i);
 		}
 	}
+
+	player_loc->createNeighbours(gp_geometry, gp_app, gp_cb, gp_cam, *gp_dev_con, *gp_const_buffer);
+	static_cast<TerrainScene*>(gp_app)->setGridNeighbours();
 	DXApp::loader_thread_active = false;
 }

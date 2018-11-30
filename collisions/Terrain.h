@@ -1,5 +1,18 @@
 #pragma once
 #include "Geometry.h"
+#include <vector>
+
+enum NeighbourID
+{
+	TOP_LEFT = 0,
+	TOP,
+	TOP_RIGHT,
+	LEFT,
+	RIGHT,
+	BOTTOM_LEFT,
+	BOTTOM,
+	BOTTOM_RIGHT
+};
 
 struct HeightMapInfo
 {
@@ -21,10 +34,13 @@ public:
 	void createGrid();
 
 	bool playerInCell(int player_x, int player_z);
-	void addNeighbour(Terrain* t, int neighbour_idx);
+	void addNeighbour(Terrain* t, NeighbourID neighbour_idx);
 	bool isNeighbour(Terrain* t);
 
-	void setPos(int active_x, int active_y);
+	void getIndex(int& x, int& y);
+	void createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _app,
+		CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con,
+		ID3D11Buffer * c_buff);
 private:
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	HeightMapInfo h_map_info;
@@ -33,5 +49,6 @@ private:
 	int grid_y;
 	int width;
 	int height;
+	float terrain_scale = 4;
 };
 
