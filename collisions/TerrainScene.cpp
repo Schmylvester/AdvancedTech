@@ -105,7 +105,7 @@ void TerrainScene::drawScene(float dt)
 void TerrainScene::initObjects()
 {
 	m_cam = Camera(getRatio());
-	m_cam.move(128, 10, 128);
+	m_cam.move(128, 15, 128);
 
 	active_cell = new Terrain("..\\Resources\\HeightMap.bmp", 0, 0);
 	terrain.push_back(active_cell);
@@ -114,7 +114,7 @@ void TerrainScene::initObjects()
 
 	player = new Cube();
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	player->getTransform()->translate(128, 10, 128);
+	player->getTransform()->translate(128, 15, 128);
 
 	setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 
