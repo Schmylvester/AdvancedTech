@@ -37,6 +37,7 @@ void Terrain::loadFile()
 	unsigned char height;
 
 	fopen_s(&file_ptr, file_name, "rb");
+
 	if (file_ptr == nullptr)
 	{
 		errorBox("Bad job with that file");
@@ -45,23 +46,25 @@ void Terrain::loadFile()
 
 	fread(&bitmap_file_header, sizeof(bitmap_file_header), 1, file_ptr);
 	fread(&bitmap_info_header, sizeof(bitmap_info_header), 1, file_ptr);
-
 	h_map_info.terrainWidth = bitmap_info_header.biWidth;
 	h_map_info.terrainHeight = bitmap_info_header.biHeight;
-
 	image_size = h_map_info.terrainWidth * h_map_info.terrainWidth * 3;
-
 	unsigned char * bitmap_image = new unsigned char[image_size];
-
 	fseek(file_ptr, bitmap_file_header.bfOffBits, SEEK_SET);
-
 	fread(bitmap_image, 1, image_size, file_ptr);
+	fclose(file_ptr);
 
+	//this is good, this is good
+	fopen_s(&file_ptr, "..\\Resources\\normal.bmp", "w");
+	fwrite(&bitmap_file_header, sizeof(bitmap_file_header), 1, file_ptr);
+	fwrite(&bitmap_info_header, sizeof(bitmap_info_header), 1, file_ptr);
+	fwrite(bitmap_image, 1, image_size, file_ptr);
 	fclose(file_ptr);
 
 	h_map_info.heightMap = new XMFLOAT3[h_map_info.terrainWidth * h_map_info.terrainHeight];
 
-	int height_mod = 0;
+	//0 = b, 1 = g, 2 = r
+	int colour_idx = 2;
 
 	float height_factor = 15.0f;
 
@@ -69,14 +72,13 @@ void Terrain::loadFile()
 	{
 		for (int y = 0; y < h_map_info.terrainHeight; y++)
 		{
-			height = bitmap_image[height_mod];
+			height = bitmap_image[colour_idx];
 			index = (h_map_info.terrainHeight * x) + y;
 			h_map_info.heightMap[index].x = (float)y * terrain_scale;
 			h_map_info.heightMap[index].y = (float)(height) / height_factor;
 			h_map_info.heightMap[index].z = (float)x * terrain_scale;
 
-			height_mod += 3;
-
+			colour_idx += 3;
 		}
 	}
 
@@ -248,49 +250,49 @@ void Terrain::createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _a
 {
 	if (neighbours[TOP_LEFT] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x - 1, grid_y + 1));
+		geometry_list->push_back(new Terrain(file_name, grid_x - 1, grid_y + 1));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x, grid_y + 1));
+		geometry_list->push_back(new Terrain(file_name, grid_x, grid_y + 1));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP_RIGHT] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x + 1, grid_y + 1));
+		geometry_list->push_back(new Terrain(file_name, grid_x + 1, grid_y + 1));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[LEFT] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x - 1, grid_y));
+		geometry_list->push_back(new Terrain(file_name, grid_x - 1, grid_y));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[RIGHT] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x + 1, grid_y));
+		geometry_list->push_back(new Terrain(file_name, grid_x + 1, grid_y));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM_LEFT] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x - 1, grid_y - 1));
+		geometry_list->push_back(new Terrain(file_name, grid_x - 1, grid_y - 1));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x, grid_y - 1));
+		geometry_list->push_back(new Terrain(file_name, grid_x, grid_y - 1));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM_RIGHT] == nullptr)
 	{
-		geometry_list->push_back(new Terrain("..\\Resources\\HeightMap.bmp", grid_x + 1, grid_y - 1));
+		geometry_list->push_back(new Terrain(file_name, grid_x + 1, grid_y - 1));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}

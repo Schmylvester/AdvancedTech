@@ -132,6 +132,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainScene.cpp" />
+    <ClCompile Include="TerrainTool.cpp" />
     <ClCompile Include="ThreadedLoader.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainScene.h" />
+    <ClInclude Include="TerrainTool.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />
