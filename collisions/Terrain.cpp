@@ -95,6 +95,7 @@ void Terrain::createGrid()
 
 	//vertices
 	vertices = new Vertex[vertex_count];
+	int* earliest_instance = new int[vertex_count];
 	for (DWORD y = 0; y < rows; y++)
 	{
 		for (DWORD x = 0; x < cols; x++)
@@ -116,23 +117,42 @@ void Terrain::createGrid()
 				vertices[index].colour = XMFLOAT4(0.15f + shade, 0.1f + shade, shade, 1.0f);
 			}
 			vertices[index].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+			earliest_instance[index] = (triangle_count * 3) + 1;
 		}
 	}
 
 	//indices
 	index_count = triangle_count * 3;
-	indices = new DWORD[triangle_count * 3];
+	indices = new DWORD[index_count];
 	int idx_set = 0;
-	for (DWORD i = 0; i < rows - 1; i++)
+	int index = 0;
+	for (DWORD y = 0; y < rows - 1; y++)
 	{
-		for (DWORD j = 0; j < cols - 1; j++)
+		for (DWORD x = 0; x < cols - 1; x++)
 		{
-			indices[idx_set + 5] = i * cols + j;
-			indices[idx_set + 4] = i * cols + j + 1;
-			indices[idx_set + 3] = (i + 1)*cols + j;
-			indices[idx_set + 2] = (i + 1)*cols + j;
-			indices[idx_set + 1] = i * cols + j + 1;
-			indices[idx_set + 0] = (i + 1)*cols + j + 1;
+			index = y * cols + x;
+			indices[idx_set + 5] = index;
+			earliest_instance[index] = min(earliest_instance[index], indices[idx_set + 5]);
+
+			index = y * cols + x + 1;
+			indices[idx_set + 4] = index;
+			earliest_instance[index] = min(earliest_instance[index], indices[idx_set + 4]);
+
+			index = (y + 1) * cols + x;
+			indices[idx_set + 3] = index;
+			earliest_instance[index] = min(earliest_instance[index], indices[idx_set + 3]);
+
+			index = (y + 1) * cols + x;
+			indices[idx_set + 2] = index;
+			earliest_instance[index] = min(earliest_instance[index], indices[idx_set + 2]);
+
+			index = y * cols + x + 1;
+			indices[idx_set + 1] = index;
+			earliest_instance[index] = min(earliest_instance[index], indices[idx_set + 1]);
+
+			index = (y + 1) * cols + x + 1;
+			indices[idx_set] = index;
+			earliest_instance[index] = min(earliest_instance[index], indices[idx_set]);
 
 			idx_set += 6; // next quad
 		}
@@ -144,9 +164,11 @@ void Terrain::createGrid()
 	XMVECTOR edge2 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	int faces = 0;
-	for (int i = 0; i < vertex_count; i++)
+	int max_faces = 0;
+	int increment = 1;
+	for (int i = 0; i < vertex_count; i += increment)
 	{
-		for (int j = 0; j < triangle_count; j++)
+		for (int j = earliest_instance[i]; j < triangle_count && faces < 6; j++)
 		{
 			if (indices[j * 3] == i ||
 				indices[(j * 3) + 1] == i ||
@@ -164,10 +186,6 @@ void Terrain::createGrid()
 
 				normalSum = XMVectorAdd(normalSum, XMVector3Cross(edge1, edge2));
 				faces++;
-				if (faces == 6)
-				{
-					break;
-				}
 			}
 		}
 		normalSum = normalSum / faces;
@@ -178,9 +196,19 @@ void Terrain::createGrid()
 		vertices[i].normal.y = XMVectorGetY(normalSum);
 		vertices[i].normal.z = XMVectorGetZ(normalSum);
 
+		for (int n = 1; n < increment; n++)
+		{
+			if (i < vertex_count - n)
+			{
+				vertices[i + n].normal = vertices[i].normal;
+			}
+		}
+
 		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		faces = 0;
 	}
+
+	Memory::SafeDeleteArr(earliest_instance);
 }
 
 bool Terrain::playerInCell(int player_x, int player_z)
