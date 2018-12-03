@@ -41,6 +41,7 @@ public:
 	void createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _app,
 		CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con,
 		ID3D11Buffer * c_buff);
+
 private:
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	HeightMapInfo h_map_info;
@@ -50,5 +51,6 @@ private:
 	int width;
 	int height;
 	float terrain_scale = 4;
+	bool normals_set = false;
 };
 

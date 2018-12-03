@@ -63,7 +63,7 @@ void Terrain::loadFile()
 
 	int height_mod = 0;
 
-	float height_factor = 20.0f;
+	float height_factor = 15.0f;
 
 	for (int x = 0; x < h_map_info.terrainWidth; x++)
 	{
@@ -101,8 +101,20 @@ void Terrain::createGrid()
 		{
 			int index = (y * cols) + x;
 			vertices[index].position = h_map_info.heightMap[index];
-			float shade = ((float)(rand() % 100)) / 250;
-			vertices[index].colour = XMFLOAT4(shade, 0.7f, shade, 1.0f);
+			float shade = ((float)(rand() % 100)) / 500;
+
+			if (vertices[index].position.y < 10 && vertices[index].position.y >= 5)
+			{
+				vertices[index].colour = XMFLOAT4(shade, 0.4f + shade, 0.4f + shade, 1.0f);
+			}
+			if (vertices[index].position.y >= 10)
+			{
+				vertices[index].colour = XMFLOAT4(shade, 0.4f + shade, shade, 1.0f);
+			}
+			else
+			{
+				vertices[index].colour = XMFLOAT4(0.15f + shade, 0.1f + shade, shade, 1.0f);
+			}
 			vertices[index].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 		}
 	}
@@ -127,53 +139,38 @@ void Terrain::createGrid()
 	}
 
 	//normals
-	std::vector<XMFLOAT3> tempNormal;
-
-	XMFLOAT3 unnormalized = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	float vecX, vecY, vecZ;
 	XMVECTOR edge1 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR edge2 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-
-	for (int i = 0; i < triangle_count; ++i)
-	{
-		vecX = vertices[indices[(i * 3)]].position.x - vertices[indices[(i * 3) + 2]].position.x;
-		vecY = vertices[indices[(i * 3)]].position.y - vertices[indices[(i * 3) + 2]].position.y;
-		vecZ = vertices[indices[(i * 3)]].position.z - vertices[indices[(i * 3) + 2]].position.z;
-		edge1 = XMVectorSet(vecX, vecY, vecZ, 0.0f);
-
-		vecX = vertices[indices[(i * 3) + 2]].position.x - vertices[indices[(i * 3) + 1]].position.x;
-		vecY = vertices[indices[(i * 3) + 2]].position.y - vertices[indices[(i * 3) + 1]].position.y;
-		vecZ = vertices[indices[(i * 3) + 2]].position.z - vertices[indices[(i * 3) + 1]].position.z;
-		edge2 = XMVectorSet(vecX, vecY, vecZ, 0.0f);
-
-		XMStoreFloat3(&unnormalized, XMVector3Cross(edge1, edge2));
-		tempNormal.push_back(unnormalized);
-	}
-
 	XMVECTOR normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	int facesUsing = 0;
-	float tX;
-	float tY;
-	float tZ;
-
-	for (int i = 0; i < vertex_count; ++i)
+	int faces = 0;
+	for (int i = 0; i < vertex_count; i++)
 	{
-		for (int j = 0; j < triangle_count; ++j)
+		for (int j = 0; j < triangle_count; j++)
 		{
 			if (indices[j * 3] == i ||
 				indices[(j * 3) + 1] == i ||
 				indices[(j * 3) + 2] == i)
 			{
-				tX = XMVectorGetX(normalSum) + tempNormal[j].x;
-				tY = XMVectorGetY(normalSum) + tempNormal[j].y;
-				tZ = XMVectorGetZ(normalSum) + tempNormal[j].z;
+				vecX = vertices[indices[(j * 3)] + 2].position.x - vertices[indices[(j * 3)]].position.x;
+				vecY = vertices[indices[(j * 3)] + 2].position.y - vertices[indices[(j * 3)]].position.y;
+				vecZ = vertices[indices[(j * 3)] + 2].position.z - vertices[indices[(j * 3)]].position.z;
+				edge1 = XMVectorSet(vecX, vecY, vecZ, 0.0f);
 
-				normalSum = XMVectorSet(tX, tY, tZ, 0.0f);
-				facesUsing++;
+				vecX = vertices[indices[(j * 3) + 1]].position.x - vertices[indices[(j * 3) + 2]].position.x;
+				vecY = vertices[indices[(j * 3) + 1]].position.y - vertices[indices[(j * 3) + 2]].position.y;
+				vecZ = vertices[indices[(j * 3) + 1]].position.z - vertices[indices[(j * 3) + 2]].position.z;
+				edge2 = XMVectorSet(vecX, vecY, vecZ, 0.0f);
+
+				normalSum = XMVectorAdd(normalSum, XMVector3Cross(edge1, edge2));
+				faces++;
+				if (faces == 6)
+				{
+					break;
+				}
 			}
 		}
-
-		normalSum = normalSum / facesUsing;
+		normalSum = normalSum / faces;
 
 		normalSum = XMVector3Normalize(normalSum);
 
@@ -182,7 +179,7 @@ void Terrain::createGrid()
 		vertices[i].normal.z = XMVectorGetZ(normalSum);
 
 		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-		facesUsing = 0;
+		faces = 0;
 	}
 }
 

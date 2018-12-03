@@ -13,15 +13,15 @@ public:
 	Geometry() = default;
 	virtual ~Geometry();
 	virtual void init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
-	int getVertCount()		{ return vertex_count; }
-	int getIndexCount()		{ return index_count; }
-	int getTriangleCount()	{ return triangle_count; }
-	Vertex* getVertices()	{ return vertices; }
-	DWORD* getIndices()		{ return indices; }
+	int getVertCount() { return vertex_count; }
+	int getIndexCount() { return index_count; }
+	int getTriangleCount() { return triangle_count; }
+	Vertex* getVertices() { return vertices; }
+	DWORD* getIndices() { return indices; }
 	Transform* getTransform() { return &m_transform; }
 
 	void draw();
-	
+
 protected:
 	Transform m_transform;
 
