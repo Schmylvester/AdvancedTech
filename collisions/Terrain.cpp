@@ -1,6 +1,8 @@
 #include "Terrain.h"
 #include "DXApp.h"
 
+void errorBox(LPCSTR message);
+
 Terrain::Terrain(const char * _name, int x, int y)
 {
 	file_name = _name;
@@ -10,7 +12,7 @@ Terrain::Terrain(const char * _name, int x, int y)
 
 Terrain::~Terrain()
 {
-	Memory::SafeDeleteArr(h_map_info.heightMap);
+	Memory::SafeDeleteArr(h_map_info.map);
 }
 
 void Terrain::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
@@ -46,9 +48,9 @@ void Terrain::loadFile()
 
 	fread(&bitmap_file_header, sizeof(bitmap_file_header), 1, file_ptr);
 	fread(&bitmap_info_header, sizeof(bitmap_info_header), 1, file_ptr);
-	h_map_info.terrainWidth = bitmap_info_header.biWidth;
-	h_map_info.terrainHeight = bitmap_info_header.biHeight;
-	image_size = h_map_info.terrainWidth * h_map_info.terrainWidth * 3;
+	h_map_info.img_width = bitmap_info_header.biWidth;
+	h_map_info.img_height = bitmap_info_header.biHeight;
+	image_size = h_map_info.img_width * h_map_info.img_width * 3;
 	unsigned char * bitmap_image = new unsigned char[image_size];
 	fseek(file_ptr, bitmap_file_header.bfOffBits, SEEK_SET);
 	fread(bitmap_image, 1, image_size, file_ptr);
@@ -61,22 +63,22 @@ void Terrain::loadFile()
 	fwrite(bitmap_image, 1, image_size, file_ptr);
 	fclose(file_ptr);
 
-	h_map_info.heightMap = new XMFLOAT3[h_map_info.terrainWidth * h_map_info.terrainHeight];
+	h_map_info.map = new XMFLOAT3[h_map_info.img_width * h_map_info.img_height];
 
 	//0 = b, 1 = g, 2 = r
 	int colour_idx = 2;
 
 	float height_factor = 15.0f;
 
-	for (int x = 0; x < h_map_info.terrainWidth; x++)
+	for (int x = 0; x < h_map_info.img_width; x++)
 	{
-		for (int y = 0; y < h_map_info.terrainHeight; y++)
+		for (int y = 0; y < h_map_info.img_height; y++)
 		{
 			height = bitmap_image[colour_idx];
-			index = (h_map_info.terrainHeight * x) + y;
-			h_map_info.heightMap[index].x = (float)y * terrain_scale;
-			h_map_info.heightMap[index].y = (float)(height) / height_factor;
-			h_map_info.heightMap[index].z = (float)x * terrain_scale;
+			index = (h_map_info.img_height * x) + y;
+			h_map_info.map[index].x = (float)y * terrain_scale;
+			h_map_info.map[index].y = (float)(height) / height_factor;
+			h_map_info.map[index].z = (float)x * terrain_scale;
 
 			colour_idx += 3;
 		}
@@ -87,10 +89,10 @@ void Terrain::loadFile()
 
 void Terrain::createGrid()
 {
-	width = h_map_info.terrainWidth;
-	height = h_map_info.terrainHeight;
-	int cols = h_map_info.terrainWidth;
-	int rows = h_map_info.terrainHeight;
+	width = h_map_info.img_width;
+	height = h_map_info.img_height;
+	int cols = h_map_info.img_width;
+	int rows = h_map_info.img_height;
 
 	vertex_count = rows * cols;
 	triangle_count = (rows - 1) * (cols - 1) * 2;
@@ -103,7 +105,7 @@ void Terrain::createGrid()
 		for (DWORD x = 0; x < cols; x++)
 		{
 			int index = (y * cols) + x;
-			vertices[index].position = h_map_info.heightMap[index];
+			vertices[index].position = h_map_info.map[index];
 			float shade = ((float)(rand() % 100)) / 500;
 
 			if (vertices[index].position.y < 10 && vertices[index].position.y >= 5)

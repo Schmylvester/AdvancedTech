@@ -3,6 +3,7 @@
 
 #pragma region StuffICanLeaveAlove
 
+void errorBox(LPCSTR message);
 bool DXApp::loader_thread_active = false;
 
 bool DXApp::initDirectX3D(HINSTANCE h_instance)

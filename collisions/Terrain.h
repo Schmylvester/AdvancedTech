@@ -1,5 +1,6 @@
 #pragma once
 #include "Geometry.h"
+#include "ImageMapInfo.h"
 #include <vector>
 
 enum NeighbourID
@@ -12,13 +13,6 @@ enum NeighbourID
 	BOTTOM_LEFT,
 	BOTTOM,
 	BOTTOM_RIGHT
-};
-
-struct HeightMapInfo
-{
-	int terrainWidth;
-	int terrainHeight;
-	XMFLOAT3 *heightMap;
 };
 
 class Terrain : public Geometry
@@ -44,7 +38,7 @@ public:
 
 private:
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
-	HeightMapInfo h_map_info;
+	ImageMapInfo h_map_info;
 	const char* file_name;
 	int grid_x;
 	int grid_y;

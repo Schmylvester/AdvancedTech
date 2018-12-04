@@ -6,6 +6,11 @@ namespace
 	Window* global_wnd = nullptr;
 }
 
+void errorBox(LPCSTR message)
+{
+	MessageBox(NULL, message, "Error", MB_OK | MB_ICONERROR);
+}
+
 LRESULT CALLBACK MainWindProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 {
 	if (global_wnd)
@@ -13,11 +18,6 @@ LRESULT CALLBACK MainWindProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_para
 		return global_wnd->wndProc(hwnd, msg, w_param, l_param);
 	}
 	return DefWindowProc(hwnd, msg, w_param, l_param);
-}
-
-void errorBox(LPCSTR message)
-{
-	MessageBox(NULL, message, "Error", MB_OK | MB_ICONERROR);
 }
 
 Window::Window()
