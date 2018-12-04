@@ -56,13 +56,6 @@ void Terrain::loadFile()
 	fread(bitmap_image, 1, image_size, file_ptr);
 	fclose(file_ptr);
 
-	//this is good, this is good
-	fopen_s(&file_ptr, "..\\Resources\\normal.bmp", "w");
-	fwrite(&bitmap_file_header, sizeof(bitmap_file_header), 1, file_ptr);
-	fwrite(&bitmap_info_header, sizeof(bitmap_info_header), 1, file_ptr);
-	fwrite(bitmap_image, 1, image_size, file_ptr);
-	fclose(file_ptr);
-
 	h_map_info.map = new XMFLOAT3[h_map_info.img_width * h_map_info.img_height];
 
 	//0 = b, 1 = g, 2 = r
