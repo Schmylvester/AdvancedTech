@@ -237,7 +237,7 @@ void Terrain::createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _a
 
 void Terrain::getNormals()
 {
-	std::string f = removeFileExt(file_name) + "Normal";
+	std::string f = removeFileExt(file_name) + ".nmp";
 	const char* file = (f).c_str();
 	std::ifstream read_from_file;
 	read_from_file.open(file);
