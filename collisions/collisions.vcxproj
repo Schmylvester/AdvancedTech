@@ -125,6 +125,7 @@
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="NavigationCell.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Geometry.cpp" />
@@ -132,7 +133,6 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainScene.cpp" />
-    <ClCompile Include="TerrainTool.cpp" />
     <ClCompile Include="ThreadedLoader.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -149,6 +149,7 @@
     <ClInclude Include="GeometryIncludes.h" />
     <ClInclude Include="ImageMapInfo.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="NavigationCell.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Geometry.h" />
@@ -156,7 +157,6 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainScene.h" />
-    <ClInclude Include="TerrainTool.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Window.h" />

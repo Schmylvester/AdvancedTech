@@ -75,7 +75,7 @@
     <ClCompile Include="ThreadedLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainTool.cpp">
+    <ClCompile Include="NavigationCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -137,10 +137,10 @@
     <ClInclude Include="Input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainTool.h">
+    <ClInclude Include="ImageMapInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageMapInfo.h">
+    <ClInclude Include="NavigationCell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

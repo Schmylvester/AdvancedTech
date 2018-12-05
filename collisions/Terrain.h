@@ -37,6 +37,9 @@ public:
 		ID3D11Buffer * c_buff);
 
 private:
+	void getNormals();
+	std::string removeFileExt(std::string in);
+
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	ImageMapInfo h_map_info;
 	const char* file_name;

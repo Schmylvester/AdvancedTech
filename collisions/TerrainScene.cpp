@@ -110,7 +110,7 @@ void TerrainScene::initObjects()
 	m_cam = Camera(getRatio());
 	m_cam.move(256, 55, 256);
 
-	active_cell = new Terrain("..\\Resources\\HeightMapr.bmp", 0, 0);
+	active_cell = new Terrain("..\\Resources\\HeightMap.bmp", 0, 0);
 	terrain.push_back(active_cell);
 	terrain.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	terrain.back()->getTransform()->translate(0, 0, 0);
