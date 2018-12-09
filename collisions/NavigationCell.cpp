@@ -1,11 +1,15 @@
 #include "NavigationCell.h"
 #include "DXUtil.h"
 
-bool NavigationCell::canGet(NavigationCell * from)
+int NavigationCell::climbable_incline = 1;
+
+void NavigationCell::checkNeighbour(NavigationCell* cell)
 {
-	if (!accessible)
+	if (abs(cell->getPos().x - x) <= 1 && abs(cell->getPos().z - z) <= 1)
 	{
-		return false;
+		if (accessible && abs(cell->getPos().y - y) <= climbable_incline)
+		{
+			neighbours.push_back(cell);
+		}
 	}
-	return abs(from->getHeight() - y) <= 1;
 }

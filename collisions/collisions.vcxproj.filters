@@ -78,6 +78,9 @@
     <ClCompile Include="NavigationCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Pathfinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXApp.h">
@@ -141,6 +144,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NavigationCell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pathfinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
