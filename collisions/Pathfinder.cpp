@@ -6,6 +6,7 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 	start_cell = from;
 	target_cell = to;
 
+	//initialise the open list
 	Path open;
 	open.active_cell = from;
 	open.previous_cell = nullptr;
@@ -17,25 +18,29 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 	int iter = 0;
 	while (!path_found && iter++ < 10000)
 	{
+		//path found, hooray
 		if (open.active_cell == target_cell)
 		{
 			path_found = true;
 		}
 		else
 		{
+			//check the neighbours of the first element of the open list
 			for (NavigationCell* cell : open_list[0].active_cell->getNeighbours())
 			{
 				if (!listContains(cell, true) && !listContains(cell, false))
 				{
-					closed_list.push_back(open);
+					//set a new working candidate
 					open.previous_cell = open.active_cell;
 					open.active_cell = cell;
 					open.value = getDistance(open.active_cell, target_cell);
 					open.value += getDistance(open.active_cell, start_cell);
 					addToOpenList(open);
-					open_list.erase(open_list.begin());
 				}
 			}
+			//remove it from the open list and add it to the closed list
+			closed_list.push_back(open_list[0]);
+			open_list.erase(open_list.begin());
 		}
 	}
 	if (iter >= 10000)
@@ -44,12 +49,14 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 		assert(false);
 		return std::vector<NavigationCell*>();
 	}
+	//map out the path
 	std::vector<NavigationCell*> return_path;
 	return_path.push_back(open.active_cell);
 	while (return_path.back() != start_cell)
 	{
 		return_path.push_back(getPrev(return_path.back()));
 	}
+	//it's backwards, so reverse it
 	std::vector<NavigationCell*> temp_path = return_path;
 	for (int i = return_path.size() - 1; i >= 0; i--)
 	{
@@ -59,6 +66,7 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 	return return_path;
 }
 
+//checks a list for an element
 bool Pathfinder::listContains(NavigationCell * cell, bool check_open_list)
 {
 	if (check_open_list)
@@ -80,6 +88,7 @@ bool Pathfinder::listContains(NavigationCell * cell, bool check_open_list)
 	return false;
 }
 
+//finds where on the open list this element should go
 void Pathfinder::addToOpenList(Path add)
 {
 	std::vector<Path> temp_list;
@@ -99,6 +108,7 @@ void Pathfinder::addToOpenList(Path add)
 	open_list = temp_list;
 }
 
+//straight line distance between two cells
 float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b)
 {
 	int x = cell_a->getPos().x - cell_b->getPos().x;
@@ -107,6 +117,7 @@ float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b)
 	return distance;
 }
 
+//get the cell that led to this cell in the chain
 NavigationCell * Pathfinder::getPrev(NavigationCell * active)
 {
 	for (Path p : closed_list)
@@ -123,5 +134,8 @@ NavigationCell * Pathfinder::getPrev(NavigationCell * active)
 			return p.previous_cell;
 		}
 	}
+
+	OutputDebugString("Error in the pathfinding code");
+	assert(false);
 	return nullptr;
 }
