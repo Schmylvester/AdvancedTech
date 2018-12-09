@@ -120,6 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AIController.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
@@ -140,6 +141,7 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIController.h" />
     <ClInclude Include="BufferStructs.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffers.h" />

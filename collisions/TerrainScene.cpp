@@ -8,7 +8,7 @@ void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
 
 TerrainScene::~TerrainScene()
 {
-	for(Geometry* ter : terrain)
+	for (Geometry* ter : terrain)
 		Memory::SafeDelete(ter);
 }
 
@@ -66,8 +66,14 @@ void TerrainScene::updateScene(float dt)
 		}
 	}
 
-	m_light.update(dt);
+	//m_light.update(dt);
 
+
+	for (int i = 0; i < ai.size(); i++)
+	{
+		ai[i]->update(dt);
+		ai[i]->assignPath(active_cell->getCell());
+	}
 
 	if (loader_thread.joinable() && !loader_thread_active)
 	{
@@ -85,7 +91,7 @@ void TerrainScene::drawScene(float dt)
 	m_frame_cb.light = m_light;
 	m_device_context->UpdateSubresource(m_cb_per_frame, 0, NULL, &m_frame_cb, 0, 0);
 	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
-	
+
 	if (!loader_thread_active)
 	{
 		for (Geometry* ter : terrain)
@@ -101,7 +107,10 @@ void TerrainScene::drawScene(float dt)
 		}
 	}
 	//player->draw();
-
+	for (int i = 0; i < ai.size(); i++)
+	{
+		ai[i]->draw();
+	}
 	m_swap_chain->Present(0, 0);
 }
 
@@ -113,17 +122,19 @@ void TerrainScene::initObjects()
 	active_cell = new Terrain("..\\Resources\\HeightMap.bmp", 0, 0);
 	terrain.push_back(active_cell);
 	terrain.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	terrain.back()->getTransform()->translate(0, 0, 0);
 
 	player = new Cube();
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(256, 55, 256);
 
-	setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
+	//setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 
-	safe_geometry.push_back(active_cell);
-	loader_thread_active = true;
-	loader_thread = std::thread(loadTerrain, active_cell);
+	//safe_geometry.push_back(active_cell);
+	//loader_thread_active = true;
+	//loader_thread = std::thread(loadTerrain, active_cell);
+
+	ai.push_back(std::make_unique<AIController>(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object, active_cell->getCell()));
+	ai.push_back(std::make_unique<AIController>(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object, active_cell->getCell()));
 }
 
 void TerrainScene::setGridNeighbours()

@@ -49,7 +49,7 @@ bool Window::init(HINSTANCE h_instance, int show_wnd, int width, int height, boo
 
 	UINT x = GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2;
 	UINT y = GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2;
-	m_h_app_wnd = CreateWindowEx(NULL, m_wnd_class_name, "The height map is a picture of Waluigi!", WS_OVERLAPPEDWINDOW, x, y, width, height, NULL, NULL, h_instance, NULL);
+	m_h_app_wnd = CreateWindowEx(NULL, m_wnd_class_name, "This window has a title", WS_OVERLAPPEDWINDOW, x, y, width, height, NULL, NULL, h_instance, NULL);
 	if (!m_h_app_wnd)
 	{
 		errorBox("Error creating window");

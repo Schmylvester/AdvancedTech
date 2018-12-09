@@ -1,5 +1,6 @@
 #include "Terrain.h"
 #include "DXApp.h"
+#include "Pathfinder.h"
 #include <fstream>
 
 void errorBox(LPCSTR message);
@@ -63,7 +64,6 @@ void Terrain::loadFile()
 	int colour_idx = 2;
 
 	float height_factor = 20.0f;
-
 	for (int x = 0; x < h_map_info.img_width; x++)
 	{
 		for (int y = 0; y < h_map_info.img_height; y++)
@@ -73,8 +73,20 @@ void Terrain::loadFile()
 			h_map_info.map[index].x = (float)y * terrain_scale;
 			h_map_info.map[index].y = (float)(height) / height_factor;
 			h_map_info.map[index].z = (float)x * terrain_scale;
-
 			colour_idx += 3;
+			cells[index] = NavigationCell(x, height / height_factor, y, h_map_info.map[index]);
+			if (height / height_factor <= 10)
+			{
+				cells[index].setAccessible(false);
+			}
+		}
+	}
+
+	for (int i = 0; i < 16384; i++)
+	{
+		for (int j = i + 1; j < 16384; j++)
+		{
+			cells[i].checkNeighbour(&cells[j]);
 		}
 	}
 
@@ -101,19 +113,14 @@ void Terrain::createGrid()
 			vertices[index].position = h_map_info.map[index];
 			float shade = ((float)(rand() % 100)) / 500;
 
-			if (vertices[index].position.y < 10 && vertices[index].position.y >= 5)
-			{
-				vertices[index].colour = XMFLOAT4(shade, 0.4f + shade, 0.4f + shade, 1.0f);
-			}
 			if (vertices[index].position.y >= 10)
 			{
 				vertices[index].colour = XMFLOAT4(shade, 0.4f + shade, shade, 1.0f);
 			}
 			else
 			{
-				vertices[index].colour = XMFLOAT4(0.15f + shade, 0.1f + shade, shade, 1.0f);
+				vertices[index].colour = XMFLOAT4(shade, shade, 0.4f + shade, 1.0f);
 			}
-			vertices[index].normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
 		}
 	}
 
@@ -232,6 +239,23 @@ void Terrain::createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _a
 		geometry_list->push_back(new Terrain(file_name, grid_x + 1, grid_y - 1));
 		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
+	}
+}
+
+NavigationCell * Terrain::getCell(int index)
+{
+	if (index == -1)
+	{
+		NavigationCell* return_cell = nullptr;
+		do
+		{
+			return_cell = &(cells[rand() % 16384]);
+		} while (!return_cell->getAccessible());
+		return return_cell;
+	}
+	else
+	{
+		return &(cells[index]);
 	}
 }
 

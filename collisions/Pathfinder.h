@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 
+class NavigationCell;
 struct Path
 {
 	NavigationCell* previous_cell;
@@ -8,7 +9,6 @@ struct Path
 	float value;
 };
 
-class NavigationCell;
 class Pathfinder
 {
 public:
@@ -18,9 +18,9 @@ public:
 	std::vector<NavigationCell*> findpath(NavigationCell* from, NavigationCell* to);
 private:
 	bool listContains(NavigationCell* cell, bool check_open_list);
-	void addToOpenList(Path add);
 	float getDistance(NavigationCell* cell_a, NavigationCell* cell_b);
 	NavigationCell* getPrev(NavigationCell* active);
+	int getBestCandidate() const;
 
 	std::vector<Path> open_list;
 	std::vector<Path> closed_list;

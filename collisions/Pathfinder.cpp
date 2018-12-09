@@ -3,6 +3,11 @@
 
 std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, NavigationCell * to)
 {
+	if (!to->getAccessible())
+	{
+		OutputDebugString("You can not go there");
+		return std::vector<NavigationCell*>();
+	}
 	start_cell = from;
 	target_cell = to;
 
@@ -10,48 +15,58 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 	Path open;
 	open.active_cell = from;
 	open.previous_cell = nullptr;
-	open.value = getDistance(open.active_cell, target_cell);
+	open.value = (getDistance(open.active_cell, target_cell) * 3);
 	open.value += getDistance(open.active_cell, start_cell);
-	addToOpenList(open);
+	open_list.push_back(open);
 
 	bool path_found = false;
 	int iter = 0;
-	while (!path_found && iter++ < 10000)
+	while (!path_found && ++iter < 70000)
 	{
+		int best_candidate = getBestCandidate();
+		if (open_list.size() == 0)
+		{
+			OutputDebugString("Unable to find path, confident that one does not exist");
+			return std::vector<NavigationCell*>();
+		}
 		//path found, hooray
-		if (open.active_cell == target_cell)
+		else if (open_list[best_candidate].active_cell == target_cell)
 		{
 			path_found = true;
 		}
 		else
 		{
 			//check the neighbours of the first element of the open list
-			for (NavigationCell* cell : open_list[0].active_cell->getNeighbours())
+			for (int i = 0; i < 8; i++)
 			{
-				if (!listContains(cell, true) && !listContains(cell, false))
+				NavigationCell* cell = open_list[best_candidate].active_cell->getNeighbour(i);
+				if (cell != nullptr)
 				{
-					//set a new working candidate
-					open.previous_cell = open.active_cell;
-					open.active_cell = cell;
-					open.value = getDistance(open.active_cell, target_cell);
-					open.value += getDistance(open.active_cell, start_cell);
-					addToOpenList(open);
+					if (!listContains(cell, true) && !listContains(cell, false))
+					{
+						//set a new working candidate
+						open.previous_cell = open_list[best_candidate].active_cell;
+						open.active_cell = cell;
+						open.value = getDistance(open.active_cell, target_cell);
+						open.value += getDistance(open.active_cell, start_cell);
+						open_list.push_back(open);
+					}
 				}
 			}
 			//remove it from the open list and add it to the closed list
-			closed_list.push_back(open_list[0]);
-			open_list.erase(open_list.begin());
+			closed_list.push_back(open_list[best_candidate]);
+			open_list.erase(open_list.begin() + best_candidate);
 		}
 	}
-	if (iter >= 10000)
+	if (iter >= 70000)
 	{
-		OutputDebugString("Unable to find path");
+		OutputDebugString("Unable to find path, there might be one but it would take ages to find");
 		assert(false);
 		return std::vector<NavigationCell*>();
 	}
 	//map out the path
 	std::vector<NavigationCell*> return_path;
-	return_path.push_back(open.active_cell);
+	return_path.push_back(target_cell);
 	while (return_path.back() != start_cell)
 	{
 		return_path.push_back(getPrev(return_path.back()));
@@ -88,31 +103,11 @@ bool Pathfinder::listContains(NavigationCell * cell, bool check_open_list)
 	return false;
 }
 
-//finds where on the open list this element should go
-void Pathfinder::addToOpenList(Path add)
-{
-	std::vector<Path> temp_list;
-	int i = 0;
-	for (; i < open_list.size(); i++)
-	{
-		if (open_list[i].value < add.value)
-		{
-			temp_list.push_back(open_list[i]);
-		}
-	}
-	temp_list.push_back(add);
-	for (; i < open_list.size(); i++)
-	{
-		temp_list.push_back(open_list[i]);
-	}
-	open_list = temp_list;
-}
-
 //straight line distance between two cells
 float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b)
 {
-	int x = cell_a->getPos().x - cell_b->getPos().x;
-	int z = cell_a->getPos().z - cell_b->getPos().z;
+	int x = cell_a->getIndexPos().x - cell_b->getIndexPos().x;
+	int z = cell_a->getIndexPos().z - cell_b->getIndexPos().z;
 	float distance = sqrt(pow(x, 2) + pow(z, 2));
 	return distance;
 }
@@ -138,4 +133,19 @@ NavigationCell * Pathfinder::getPrev(NavigationCell * active)
 	OutputDebugString("Error in the pathfinding code");
 	assert(false);
 	return nullptr;
+}
+
+int Pathfinder::getBestCandidate() const
+{
+	int best_candidate = 0;
+
+	for (int i = 1; i < open_list.size(); i++)
+	{
+		if (open_list[i].value < open_list[best_candidate].value)
+		{
+			best_candidate = i;
+		}
+	}
+
+	return best_candidate;
 }

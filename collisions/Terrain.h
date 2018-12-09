@@ -1,6 +1,7 @@
 #pragma once
 #include "Geometry.h"
 #include "ImageMapInfo.h"
+#include "NavigationCell.h"
 #include <vector>
 
 enum NeighbourID
@@ -35,11 +36,11 @@ public:
 	void createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _app,
 		CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con,
 		ID3D11Buffer * c_buff);
-
+	NavigationCell* getCell(int index = -1);
 private:
 	void getNormals();
 	std::string removeFileExt(std::string in);
-
+	NavigationCell cells[16384];
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	ImageMapInfo h_map_info;
 	const char* file_name;

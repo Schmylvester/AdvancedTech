@@ -1,5 +1,6 @@
 #pragma once
 #include "DXApp.h"
+#include "AIController.h"
 
 class Terrain;
 class TerrainScene : public DXApp
@@ -14,6 +15,7 @@ public:
 	void setGridNeighbours();
 
 private:
+	std::vector<std::unique_ptr<AIController>> ai;
 	Terrain * active_cell;
 	Geometry * player;
 	std::vector<Geometry*> terrain;

@@ -36,7 +36,6 @@ void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContex
 	};
 
 	vertices = new Vertex[vertex_count];
-	int colour = rand() % 6;
 	float r, g, b;
 	std::string vertex_tag = "Cube";
 	switch (colour)
