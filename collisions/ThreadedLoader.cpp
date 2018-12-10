@@ -4,6 +4,9 @@
 #include "GeometryIncludes.h"
 #include "Scene.h"
 #include "TerrainScene.h"
+#include "AIController.h"
+#include "NavigationCell.h"
+#include "Pathfinder.h"
 
 std::vector<Geometry*>* gp_geometry;
 DXApp* gp_app;

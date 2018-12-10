@@ -30,7 +30,7 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 			OutputDebugString("Unable to find path, confident that one does not exist");
 			return std::vector<NavigationCell*>();
 		}
-		else if (iter++ >= 3000)
+		else if (iter++ >= 10000)
 		{
 			OutputDebugString("Unable to find path, there might be one but it would take ages to find");
 			return std::vector<NavigationCell*>();
@@ -96,10 +96,10 @@ bool Pathfinder::listContains(NavigationCell * cell, std::vector<Path>* list_to_
 //straight line distance between two cells
 float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b) const
 {
-	int x = cell_a->getIndexPos().x - cell_b->getIndexPos().x;
-	int z = cell_a->getIndexPos().z - cell_b->getIndexPos().z;
+	float x = cell_a->getIndexPos().x - cell_b->getIndexPos().x;
+	float z = cell_a->getIndexPos().z - cell_b->getIndexPos().z;
 	float distance = sqrt(pow(x, 2) + pow(z, 2));
-	//float distance = x + z;
+	//distance = x + z;
 	return distance;
 }
 

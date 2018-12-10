@@ -63,13 +63,24 @@ void TerrainScene::updateScene(float dt)
 		}
 	}
 
-	//m_light.update(dt);
+	m_light.update(dt);
 
 
 	for (int i = 0; i < ai.size(); i++)
 	{
-		ai[i]->update(dt);
-		ai[i]->assignPath(active_cell->getCell());
+		if (Terrain::cell_map_ready)
+		{
+			ai[i]->update(dt);
+			if (rand() % 10000 == 0)
+			{
+				ai[i]->assignPath(active_cell->getCell());
+			}
+		}
+	}
+
+	for (Geometry* g : terrain)
+	{
+		static_cast<Terrain*>(g)->linkCellMap();
 	}
 
 	if (loader_thread.joinable() && !loader_thread_active)
@@ -124,11 +135,11 @@ void TerrainScene::initObjects()
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(256, 55, 256);
 
-	//setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
+	setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 
-	//safe_geometry.push_back(active_cell);
-	//loader_thread_active = true;
-	//loader_thread = std::thread(loadTerrain, active_cell);
+	safe_geometry.push_back(active_cell);
+	loader_thread_active = true;
+	loader_thread = std::thread(loadTerrain, active_cell);
 
 	ai.push_back(std::make_unique<AIController>(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object, active_cell->getCell()));
 	ai.push_back(std::make_unique<AIController>(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object, active_cell->getCell()));

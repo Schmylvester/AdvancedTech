@@ -6,6 +6,20 @@
 #include "ConstantBuffers.h"
 #include "Camera.h"
 
+bool g_thread_ready = true;
+std::vector<NavigationCell*>* g_path;
+NavigationCell * g_from;
+NavigationCell * g_to;
+AIController* g_ai;
+void threadedPathFinder()
+{
+	g_thread_ready = false;
+	Pathfinder path_finder;
+	*(g_path) = path_finder.findpath(g_from, g_to);
+	g_ai->setState(AIState::Moving);
+	g_thread_ready = true;
+}
+
 AIController::AIController(DXApp * _app, CBPerObject * _cb, Camera * cam,
 	ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, NavigationCell* _cell)
 {
@@ -28,12 +42,15 @@ AIController::~AIController()
 
 void AIController::assignPath(NavigationCell * to)
 {
-	if (!on_path)
+	if (state == AIState::Idle && g_thread_ready)
 	{
-		on_path = true;
 		path_index = 0;
-		Pathfinder find;
-		path = find.findpath(position, to);
+
+		g_path = &path;
+		g_from = position;
+		g_to = to;
+		g_ai = this;
+		path_thread = std::thread(threadedPathFinder);
 
 		Transform* t = target_renderer->getTransform();
 		t->setPosition(to->getWorldPos().x, to->getWorldPos().y / 3, to->getWorldPos().z);
@@ -42,12 +59,16 @@ void AIController::assignPath(NavigationCell * to)
 
 void AIController::update(float dt)
 {
+	if (g_thread_ready && path_thread.joinable())
+	{
+		path_thread.join();
+	}
 	if (path.size() <= 1)
 	{
 		path_index = 0;
-		on_path = false;
+		state = AIState::Idle;
 	}
-	if (on_path)
+	if (state == AIState::Moving)
 	{
 		timer += dt;
 		if (timer >= 0.1)
@@ -57,7 +78,7 @@ void AIController::update(float dt)
 			if (path_index == path.size() - 1)
 			{
 				path_index = 0;
-				on_path = false;
+				state = AIState::Idle;
 			}
 			setRendererPos();
 		}
@@ -67,7 +88,7 @@ void AIController::update(float dt)
 void AIController::draw()
 {
 	renderer->draw();
-	if (on_path)
+	if (state == AIState::Moving)
 	{
 		target_renderer->draw();
 	}

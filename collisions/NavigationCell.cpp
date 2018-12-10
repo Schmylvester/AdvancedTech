@@ -1,7 +1,7 @@
 #include "NavigationCell.h"
 #include "DXUtil.h"
 
-int NavigationCell::climbable_incline = 10;
+int NavigationCell::climbable_incline = 10000;
 int NavigationCell::cell_size = 2;
 
 NavigationCell::NavigationCell(int _x, float _y, int _z, XMFLOAT3 world)

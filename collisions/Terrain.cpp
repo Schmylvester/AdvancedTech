@@ -5,6 +5,27 @@
 
 void errorBox(LPCSTR message);
 
+NavigationCell* g_cells;
+bool Terrain::cell_map_ready = true;
+void assignNeighbours()
+{
+	Terrain::cell_map_ready = false;
+	for (int i = 0; i < 16384; i++)
+	{
+		for (int j = i + 1; j < 16384; j++)
+		{
+			if (g_cells[i].checkNeighbour(&g_cells[j]))
+			{
+				if (g_cells[i].countNeighbours() == 8 || g_cells[j].countNeighbours() == 8)
+				{
+					break;
+				}
+			}
+		}
+	}
+	Terrain::cell_map_ready = true;
+}
+
 Terrain::Terrain(const char * _name, int x, int y)
 {
 	file_name = _name;
@@ -15,6 +36,7 @@ Terrain::Terrain(const char * _name, int x, int y)
 Terrain::~Terrain()
 {
 	Memory::SafeDeleteArr(h_map_info.map);
+	while (!cell_map_ready) {}
 }
 
 void Terrain::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
@@ -82,18 +104,10 @@ void Terrain::loadFile()
 		}
 	}
 
-	for (int i = 0; i < 16384; i++)
+	if (cell_map_ready)
 	{
-		for (int j = i + 1; j < 16384; j++)
-		{
-			if (cells[i].checkNeighbour(&cells[j]))
-			{
-				if (cells[i].countNeighbours() == 8 || cells[j].countNeighbours() == 8)
-				{
-					break;
-				}
-			}
-		}
+		g_cells = cells;
+		create_cell_map = std::thread(assignNeighbours);
 	}
 
 	Memory::SafeDeleteArr(bitmap_image);
