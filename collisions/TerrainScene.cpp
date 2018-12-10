@@ -14,9 +14,6 @@ TerrainScene::~TerrainScene()
 
 void TerrainScene::updateScene(float dt)
 {
-	OutputDebugString(std::to_string(dt).c_str());
-	OutputDebugString("\n");
-
 	m_input.detectInput();
 	float step = dt * move_speed;
 

@@ -1,36 +1,37 @@
 #include "Pathfinder.h"
 #include "NavigationCell.h"
 
-std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, NavigationCell * to)
+std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, NavigationCell * to) const
 {
 	if (!to->getAccessible())
 	{
 		OutputDebugString("You can not go there");
 		return std::vector<NavigationCell*>();
 	}
-	start_cell = from;
-	target_cell = to;
+
+	std::vector<Path> open_list;
+	std::vector<Path> closed_list;
 
 	//initialise the open list
 	Path open;
 	open.active_cell = from;
 	open.previous_cell = nullptr;
-	open.value = (getDistance(open.active_cell, target_cell) * 3);
-	open.value += getDistance(open.active_cell, start_cell);
+	open.value = (getDistance(open.active_cell, to) * 3);
+	open.value = getDistance(open.active_cell, from);
 	open_list.push_back(open);
 
 	bool path_found = false;
 	int iter = 0;
-	while (!path_found && ++iter < 70000)
+	while (!path_found && ++iter < 700)
 	{
-		int best_candidate = getBestCandidate();
+		int best_candidate = getBestCandidate(&open_list);
 		if (open_list.size() == 0)
 		{
 			OutputDebugString("Unable to find path, confident that one does not exist");
 			return std::vector<NavigationCell*>();
 		}
 		//path found, hooray
-		else if (open_list[best_candidate].active_cell == target_cell)
+		else if (open_list[best_candidate].active_cell == to)
 		{
 			path_found = true;
 		}
@@ -42,13 +43,13 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 				NavigationCell* cell = open_list[best_candidate].active_cell->getNeighbour(i);
 				if (cell != nullptr)
 				{
-					if (!listContains(cell, true) && !listContains(cell, false))
+					if (!listContains(cell, &open_list) && !listContains(cell, &closed_list))
 					{
 						//set a new working candidate
 						open.previous_cell = open_list[best_candidate].active_cell;
 						open.active_cell = cell;
-						open.value = getDistance(open.active_cell, target_cell);
-						open.value += getDistance(open.active_cell, start_cell);
+						open.value = getDistance(open.active_cell, to);
+						open.value += getDistance(open.active_cell, from);
 						open_list.push_back(open);
 					}
 				}
@@ -58,18 +59,17 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 			open_list.erase(open_list.begin() + best_candidate);
 		}
 	}
-	if (iter >= 70000)
+	if (iter >= 700)
 	{
 		OutputDebugString("Unable to find path, there might be one but it would take ages to find");
-		assert(false);
 		return std::vector<NavigationCell*>();
 	}
 	//map out the path
 	std::vector<NavigationCell*> return_path;
-	return_path.push_back(target_cell);
-	while (return_path.back() != start_cell)
+	return_path.push_back(to);
+	while (return_path.back() != from)
 	{
-		return_path.push_back(getPrev(return_path.back()));
+		return_path.push_back(getPrev(return_path.back(), &open_list, &closed_list));
 	}
 	//it's backwards, so reverse it
 	std::vector<NavigationCell*> temp_path = return_path;
@@ -82,29 +82,19 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 }
 
 //checks a list for an element
-bool Pathfinder::listContains(NavigationCell * cell, bool check_open_list)
+bool Pathfinder::listContains(NavigationCell * cell, std::vector<Path>* list_to_check) const
 {
-	if (check_open_list)
+	for (Path p : *(list_to_check))
 	{
-		for (Path p : open_list)
-		{
-			if (p.active_cell == cell)
-				return true;
-		}
+		if (p.active_cell == cell)
+			return true;
 	}
-	else
-	{
-		for (Path p : closed_list)
-		{
-			if (p.active_cell == cell)
-				return true;
-		}
-	}
+
 	return false;
 }
 
 //straight line distance between two cells
-float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b)
+float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b) const
 {
 	int x = cell_a->getIndexPos().x - cell_b->getIndexPos().x;
 	int z = cell_a->getIndexPos().z - cell_b->getIndexPos().z;
@@ -113,16 +103,16 @@ float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b)
 }
 
 //get the cell that led to this cell in the chain
-NavigationCell * Pathfinder::getPrev(NavigationCell * active)
+NavigationCell * Pathfinder::getPrev(NavigationCell * active, std::vector<Path>* open, std::vector<Path>* closed) const
 {
-	for (Path p : closed_list)
+	for (Path p : *closed)
 	{
 		if (p.active_cell == active)
 		{
 			return p.previous_cell;
 		}
 	}
-	for (Path p : open_list)
+	for (Path p : *open)
 	{
 		if (p.active_cell == active)
 		{
@@ -135,13 +125,13 @@ NavigationCell * Pathfinder::getPrev(NavigationCell * active)
 	return nullptr;
 }
 
-int Pathfinder::getBestCandidate() const
+int Pathfinder::getBestCandidate(std::vector<Path>* open) const
 {
 	int best_candidate = 0;
 
-	for (int i = 1; i < open_list.size(); i++)
+	for (int i = 1; i < open->size(); i++)
 	{
-		if (open_list[i].value < open_list[best_candidate].value)
+		if ((*open)[i].value <= (*open)[best_candidate].value)
 		{
 			best_candidate = i;
 		}

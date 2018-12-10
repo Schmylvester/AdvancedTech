@@ -50,9 +50,9 @@ void AIController::update(float dt)
 	if (on_path)
 	{
 		timer += dt;
-		if (timer >= 0.07)
+		if (timer >= 0.1)
 		{
-			timer -= 0.07;
+			timer -= 0.1;
 			position = path[++path_index];
 			if (path_index == path.size() - 1)
 			{

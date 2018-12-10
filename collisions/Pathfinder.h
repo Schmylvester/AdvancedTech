@@ -15,16 +15,10 @@ public:
 	Pathfinder() = default;
 	~Pathfinder() = default;
 
-	std::vector<NavigationCell*> findpath(NavigationCell* from, NavigationCell* to);
+	std::vector<NavigationCell*> findpath(NavigationCell* from, NavigationCell* to) const;
 private:
-	bool listContains(NavigationCell* cell, bool check_open_list);
-	float getDistance(NavigationCell* cell_a, NavigationCell* cell_b);
-	NavigationCell* getPrev(NavigationCell* active);
-	int getBestCandidate() const;
-
-	std::vector<Path> open_list;
-	std::vector<Path> closed_list;
-
-	NavigationCell* start_cell;
-	NavigationCell* target_cell;
+	bool listContains(NavigationCell * cell, std::vector<Path>* list_to_check) const;
+	float getDistance(NavigationCell* cell_a, NavigationCell* cell_b) const;
+	NavigationCell * getPrev(NavigationCell * active, std::vector<Path>* open, std::vector<Path>* closed) const;
+	int getBestCandidate(std::vector<Path>* open) const;
 };
