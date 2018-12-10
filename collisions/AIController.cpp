@@ -42,7 +42,7 @@ void AIController::assignPath(NavigationCell * to)
 
 void AIController::update(float dt)
 {
-	if (path.size() == 0)
+	if (path.size() <= 1)
 	{
 		path_index = 0;
 		on_path = false;
