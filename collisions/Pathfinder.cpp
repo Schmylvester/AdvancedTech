@@ -16,8 +16,8 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 	Path open;
 	open.active_cell = from;
 	open.previous_cell = nullptr;
-	open.value = (getDistance(open.active_cell, to) * 3);
-	open.value = getDistance(open.active_cell, from);
+	open.value = (getDistance(open.active_cell, to));
+	open.value += (getDistance(open.active_cell, from) * 1.2f);
 	open_list.push_back(open);
 
 	bool path_found = false;
@@ -99,6 +99,7 @@ float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b) 
 	int x = cell_a->getIndexPos().x - cell_b->getIndexPos().x;
 	int z = cell_a->getIndexPos().z - cell_b->getIndexPos().z;
 	float distance = sqrt(pow(x, 2) + pow(z, 2));
+	//float distance = x + z;
 	return distance;
 }
 

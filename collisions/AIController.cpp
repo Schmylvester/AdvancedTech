@@ -17,8 +17,8 @@ AIController::AIController(DXApp * _app, CBPerObject * _cb, Camera * cam,
 	target_renderer->setColour(colour);
 	target_renderer->init(_app, _cb, cam, dev_con, c_buff);
 	position = _cell;
-	renderer->getTransform()->scale(6, 90, 6);
-	target_renderer->getTransform()->scale(6, 90, 6);
+	renderer->getTransform()->scale(2, 150, 2);
+	target_renderer->getTransform()->scale(2, 90, 2);
 }
 
 AIController::~AIController()

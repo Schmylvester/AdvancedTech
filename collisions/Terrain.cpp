@@ -86,7 +86,13 @@ void Terrain::loadFile()
 	{
 		for (int j = i + 1; j < 16384; j++)
 		{
-			cells[i].checkNeighbour(&cells[j]);
+			if (cells[i].checkNeighbour(&cells[j]))
+			{
+				if (cells[i].countNeighbours() >= 8 || cells[j].countNeighbours() >= 8)
+				{
+					break;
+				}
+			}
 		}
 	}
 

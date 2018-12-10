@@ -12,13 +12,13 @@ NavigationCell::NavigationCell(int _x, float _y, int _z, XMFLOAT3 world)
 	world_pos = world;
 }
 
-void NavigationCell::checkNeighbour(NavigationCell* cell)
+bool NavigationCell::checkNeighbour(NavigationCell* cell)
 {
 	for (NavigationCell* n : neighbours)
 	{
 		if (n == cell)
 		{
-			return;
+			return true;
 		}
 	}
 	if (abs(cell->getIndexPos().x - x) <= 1 && abs(cell->getIndexPos().z - z) <= 1)
@@ -28,10 +28,20 @@ void NavigationCell::checkNeighbour(NavigationCell* cell)
 			if (cell != this)
 			{
 				neighbours[getFreeNeighbour()] = cell;
-				cell->checkNeighbour(this);
+				neighbour_count++;
+				cell->addNeighbour(this);
+				return true;
 			}
 		}
 	}
+
+	return false;
+}
+
+void NavigationCell::addNeighbour(NavigationCell * cell)
+{
+	neighbours[getFreeNeighbour()] = cell;
+	neighbour_count++;
 }
 
 int NavigationCell::getFreeNeighbour()
