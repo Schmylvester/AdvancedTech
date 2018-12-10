@@ -22,12 +22,17 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 
 	bool path_found = false;
 	int iter = 0;
-	while (!path_found && ++iter < 700)
+	while (!path_found)
 	{
 		int best_candidate = getBestCandidate(&open_list);
 		if (open_list.size() == 0)
 		{
 			OutputDebugString("Unable to find path, confident that one does not exist");
+			return std::vector<NavigationCell*>();
+		}
+		else if (iter++ >= 3000)
+		{
+			OutputDebugString("Unable to find path, there might be one but it would take ages to find");
 			return std::vector<NavigationCell*>();
 		}
 		//path found, hooray
@@ -58,11 +63,6 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 			closed_list.push_back(open_list[best_candidate]);
 			open_list.erase(open_list.begin() + best_candidate);
 		}
-	}
-	if (iter >= 700)
-	{
-		OutputDebugString("Unable to find path, there might be one but it would take ages to find");
-		return std::vector<NavigationCell*>();
 	}
 	//map out the path
 	std::vector<NavigationCell*> return_path;
