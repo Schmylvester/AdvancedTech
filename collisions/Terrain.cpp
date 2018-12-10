@@ -88,7 +88,7 @@ void Terrain::loadFile()
 		{
 			if (cells[i].checkNeighbour(&cells[j]))
 			{
-				if (cells[i].countNeighbours() >= 8 || cells[j].countNeighbours() >= 8)
+				if (cells[i].countNeighbours() == 8 || cells[j].countNeighbours() == 8)
 				{
 					break;
 				}

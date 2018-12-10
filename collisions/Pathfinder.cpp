@@ -132,9 +132,14 @@ int Pathfinder::getBestCandidate(std::vector<Path>* open) const
 
 	for (int i = 1; i < open->size(); i++)
 	{
-		if ((*open)[i].value <= (*open)[best_candidate].value)
+		if ((*open)[i].value < (*open)[best_candidate].value)
 		{
 			best_candidate = i;
+		}
+		//if they're the same, get a random one
+		else if ((*open)[i].value == (*open)[best_candidate].value)
+		{
+			best_candidate = rand() % 2 == 0 ? best_candidate : i;
 		}
 	}
 
