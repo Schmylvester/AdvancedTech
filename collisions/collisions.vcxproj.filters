@@ -81,8 +81,8 @@
     <ClCompile Include="Pathfinder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AIController.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="CollisionsScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,8 +152,8 @@
     <ClInclude Include="Pathfinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AIController.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="CollisionsScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -63,21 +63,6 @@ void TerrainScene::updateScene(float dt)
 		}
 	}
 
-	m_light.update(dt);
-
-
-	for (int i = 0; i < ai.size(); i++)
-	{
-		if (Terrain::cell_map_ready)
-		{
-			ai[i]->update(dt);
-			if (rand() % 10000 == 0)
-			{
-				ai[i]->assignPath(active_cell->getCell());
-			}
-		}
-	}
-
 	for (Geometry* g : terrain)
 	{
 		static_cast<Terrain*>(g)->linkCellMap();
@@ -115,10 +100,6 @@ void TerrainScene::drawScene(float dt)
 		}
 	}
 	//player->draw();
-	for (int i = 0; i < ai.size(); i++)
-	{
-		ai[i]->draw();
-	}
 	m_swap_chain->Present(0, 0);
 }
 
@@ -140,9 +121,6 @@ void TerrainScene::initObjects()
 	safe_geometry.push_back(active_cell);
 	loader_thread_active = true;
 	loader_thread = std::thread(loadTerrain, active_cell);
-
-	ai.push_back(std::make_unique<AIController>(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object, active_cell->getCell()));
-	ai.push_back(std::make_unique<AIController>(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object, active_cell->getCell()));
 }
 
 void TerrainScene::setGridNeighbours()

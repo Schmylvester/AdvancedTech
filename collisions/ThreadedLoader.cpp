@@ -4,7 +4,6 @@
 #include "GeometryIncludes.h"
 #include "Scene.h"
 #include "TerrainScene.h"
-#include "AIController.h"
 #include "NavigationCell.h"
 #include "Pathfinder.h"
 

@@ -1,5 +1,6 @@
-#include "TerrainScene.h"
+//#include "TerrainScene.h"
 //#include "TerrainTool.h"
+#include "CollisionsScene.h"
 #include <string>
 
 int WINAPI WinMain(__in HINSTANCE h_instance, __in_opt HINSTANCE h_prev_instance, __in LPSTR lp_cmd_line, __in int n_show_cmd)
@@ -8,7 +9,7 @@ int WINAPI WinMain(__in HINSTANCE h_instance, __in_opt HINSTANCE h_prev_instance
 	//tool.readFile("..\\Resources\\SliceTest\\BigPicture.bmp");
 	//return 0;
 	srand(time(NULL));
-	TerrainScene app;
+	CollisionsScene app;
 
 	if (!app.init(h_instance, n_show_cmd))
 	{

@@ -6,8 +6,6 @@ class Light
 public:
 	Light();
 
-	void update(float dt);
-
 	XMFLOAT3 dir;
 	float pad;
 	XMFLOAT4 ambient;
