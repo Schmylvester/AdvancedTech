@@ -1,6 +1,7 @@
 #pragma once
 #include "Scene.h"
 #include "Terrain.h"
+#include "BoxCollider.h"
 
 class CollisionsScene : public Scene
 {
@@ -12,7 +13,10 @@ public:
 	virtual void drawScene(float dt) override;
 	virtual void initObjects() override;
 private:
-	Geometry * player;
+	std::unique_ptr<Geometry> player = nullptr;
+	std::unique_ptr <BoxCollider> playerCol = nullptr;
+	std::unique_ptr <Geometry> player2 = nullptr;
+	std::unique_ptr <BoxCollider> player2Col = nullptr;
 	
 	float move_speed = 17;
 };

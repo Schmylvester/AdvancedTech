@@ -33,7 +33,6 @@ protected:
 	Vertex* vertices = nullptr;
 	ID3D11Buffer* m_vtx_buffer = nullptr;
 	ID3D11Buffer* m_idx_buffer = nullptr;
-
 private:
 	CBPerObject* m_cb = nullptr;
 	Camera* m_cam = nullptr;

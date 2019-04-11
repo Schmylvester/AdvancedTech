@@ -120,7 +120,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="CollisionsScene.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
@@ -133,6 +135,7 @@
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainScene.cpp" />
     <ClCompile Include="ThreadedLoader.cpp" />
@@ -141,8 +144,11 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="BufferStructs.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="CollisionsScene.h" />
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="Cube.h" />
@@ -159,6 +165,7 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainScene.h" />
     <ClInclude Include="Transform.h" />

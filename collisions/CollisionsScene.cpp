@@ -38,6 +38,11 @@ void CollisionsScene::updateScene(float dt)
 
 	float player_x = player->getTransform()->getPos().x;
 	float player_z = player->getTransform()->getPos().z;
+
+	if (playerCol->intersect(player2Col.get()))
+	{
+		int a = 0;
+	}
 }
 
 void CollisionsScene::drawScene(float dt)
@@ -51,15 +56,20 @@ void CollisionsScene::drawScene(float dt)
 	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
 
 	player->draw();
+	player2->draw();
 	m_swap_chain->Present(0, 0);
 }
 
 void CollisionsScene::initObjects()
 {
 	m_cam = Camera(getRatio());
-	m_cam.move(0, 0, 0);
 
-	player = new Cube();
+	player = std::make_unique<Cube>();
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	player->getTransform()->translate(0, 0, 0);
+	playerCol = std::make_unique<BoxCollider>(player->getTransform());
+
+	player2 = std::make_unique<Cube>();
+	player2->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	player2Col = std::make_unique<BoxCollider>(player2->getTransform());
+	player2->getTransform()->translate(3.3f, 0, 0);
 }

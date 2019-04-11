@@ -1,19 +1,21 @@
-#include "ColliderIncludes.h"
-
-SphereCollider::SphereCollider(Transform* _transform, ObjectRenderer* _renderer) : Collider(_renderer)
-{
-	m_transform = _transform;
-	radius = m_transform->getScale().x;
-}
+#include "SphereCollider.h"
+#include "Transform.h"
 
 bool SphereCollider::intersect(BoxCollider * col)
 {
-	return col->intersect(this);
+	return false;
 }
 
 bool SphereCollider::intersect(SphereCollider * col)
 {
-	float distance = sqrt(pow(getPos().x - col->getPos().x, 2) + pow(getPos().y - col->getPos().y, 2));
-	distance = sqrt(pow(distance, 2) + pow(getPos().z - col->getPos().z, 2));
-	return distance < radius + col->getRadius();
+	Vector3 a_pos = m_object_transform->getPos();
+	Vector3 b_pos = col->getTransform()->getPos();
+	float dist = Vector3::Distance(a_pos, b_pos);
+	float collide_dist = m_radius + col->getRadius();
+	return dist < collide_dist;
+}
+
+SphereCollider::SphereCollider(Transform * _transform, float radius) : Collider(_transform)
+{
+	m_radius = radius;
 }
