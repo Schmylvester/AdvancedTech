@@ -10,15 +10,15 @@ public:
 	virtual bool intersect(BoxCollider * col) override;
 	virtual bool intersect(SphereCollider * col) override;
 	BoxCollider() = default;
-	BoxCollider(Transform* _transform);
+	BoxCollider(Transform* _transform, Vector3 size, Vector3 offset);
 	~BoxCollider() = default;
-	void updateVert(int idx);
+	void updateVerts();
 	Vector3 getVert(int idx) { return m_current_vertices[idx]; }
 
 private:
-	Vector4 toQuaternion(Vector3 euler);
 	Vector3 getFaceNormal(int face);
 	void setFaces(int idx, int a, int b, int c, int d);
+	Vector3 quaternionByVector(Vector4 quat, Vector3 vect);
 
 	int faces[6][4];
 	Vector3 m_vertices[8];

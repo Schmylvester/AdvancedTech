@@ -6,11 +6,8 @@
 
 bool BoxCollider::intersect(BoxCollider* col)
 {
-	for (int vert = 0; vert < 8; vert++)
-	{
-		updateVert(vert);
-		col->updateVert(vert);
-	}
+	updateVerts();
+	col->updateVerts();
 	for (int face = 0; face < 6; face++)
 	{
 		Vector3 projectionAxis = getFaceNormal(face);
@@ -38,7 +35,7 @@ bool BoxCollider::intersect(SphereCollider * col)
 	return false;
 }
 
-BoxCollider::BoxCollider(Transform * _transform)
+BoxCollider::BoxCollider(Transform * _transform, Vector3 size, Vector3 offset)
 	: Collider(_transform)
 {
 	setFaces(0, 0, 2, 3, 1);
@@ -57,7 +54,9 @@ BoxCollider::BoxCollider(Transform * _transform)
 				float v_x = (1 - (x * 2));
 				float v_y = (1 - (y * 2));
 				float v_z = (1 - (z * 2));
-				m_vertices[(x * 4) + (y * 2) + z] = Vector3(v_x, v_y, v_z);
+				int i = (x * 4) + (y * 2) + z;
+				m_vertices[i] = Vector3(v_x * size.x, v_y * size.y, v_z * size.z);
+				m_vertices[i] += offset;
 			}
 		}
 	}
@@ -71,33 +70,26 @@ void BoxCollider::setFaces(int idx, int a, int b, int c, int d)
 	faces[idx][3] = d;
 }
 
-void BoxCollider::updateVert(int idx)
+Vector3 BoxCollider::quaternionByVector(Vector4 quat, Vector3 vect)
 {
-	m_current_vertices[idx] = 0.5f * Vector3(
-		m_vertices[idx].x * m_object_transform->getScale().x,
-		m_vertices[idx].y * m_object_transform->getScale().y,
-		m_vertices[idx].z * m_object_transform->getScale().z);
-	m_current_vertices[idx] += m_object_transform->getPos();
-
-	Vector3 dir = m_current_vertices[idx] - m_object_transform->getPos();
-	dir = toQuaternion(m_object_transform->getEulerAngles()) * dir;
-	m_current_vertices[idx] = dir + m_object_transform->getPos();
+	return Vector3();
 }
 
-Vector4 BoxCollider::toQuaternion(Vector3 euler)
+void BoxCollider::updateVerts()
 {
-	float cy = cos(euler.z * 0.5);
-	float sy = sin(euler.z * 0.5);
-	float cp = cos(euler.y * 0.5);
-	float sp = sin(euler.y * 0.5);
-	float cr = cos(euler.x * 0.5);
-	float sr = sin(euler.x * 0.5);
+	for (int i = 0; i < 8; i++)
+	{
+		Vector3 scale = m_object_transform->getScale();
+		m_current_vertices[i] = Vector3(
+			m_vertices[i].x * scale.x,
+			m_vertices[i].y * scale.y,
+			m_vertices[i].z * scale.z);
+		m_current_vertices[i] += m_object_transform->getPos();
 
-	float w = cy * cp * cr + sy * sp * sr;
-	float x = cy * cp * sr - sy * sp * cr;
-	float y = sy * cp * sr + cy * sp * cr;
-	float z = sy * cp * cr - cy * sp * sr;
-	return Vector4(w, x, y, z);
+		Vector3 dir = m_current_vertices[i] - m_object_transform->getPos();
+		dir = XMQuaternionMultiply(dir, m_object_transform->getQuaternion());
+		m_current_vertices[i] = dir + m_object_transform->getPos();
+	}
 }
 
 Vector3 BoxCollider::getFaceNormal(int face)

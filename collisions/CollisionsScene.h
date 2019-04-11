@@ -18,5 +18,6 @@ private:
 	std::unique_ptr <Geometry> player2 = nullptr;
 	std::unique_ptr <BoxCollider> player2Col = nullptr;
 	
-	float move_speed = 17;
+	float move_speed = 7;
+	bool rot_dir = true;
 };

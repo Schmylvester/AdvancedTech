@@ -13,7 +13,7 @@ public:
 	void scale(float x, float y, float z);
 	const Vector3 getPos() { return position_matrix.r[3]; }
 	const Vector3 getScale() { return scaleVector; }
-	const Vector3 getEulerAngles();
+	const Vector4 getQuaternion();
 	XMMATRIX getWorldMatrix();
 private:
 	XMMATRIX world_matrix;

@@ -38,10 +38,17 @@ void CollisionsScene::updateScene(float dt)
 
 	float player_x = player->getTransform()->getPos().x;
 	float player_z = player->getTransform()->getPos().z;
-
+	if (rot_dir)
+	{
+		player2->getTransform()->rotate(XMVectorSet(0, 1, 0, 1), dt);
+	}
+	else
+	{
+		player2->getTransform()->rotate(XMVectorSet(1, 0, 0, 1), -dt);
+	}
 	if (playerCol->intersect(player2Col.get()))
 	{
-		int a = 0;
+		rot_dir = !rot_dir;
 	}
 }
 
@@ -66,10 +73,10 @@ void CollisionsScene::initObjects()
 
 	player = std::make_unique<Cube>();
 	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	playerCol = std::make_unique<BoxCollider>(player->getTransform());
-
+	playerCol = std::make_unique<BoxCollider>(player->getTransform(), Vector3::One, Vector3::Zero);
+	
 	player2 = std::make_unique<Cube>();
 	player2->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	player2Col = std::make_unique<BoxCollider>(player2->getTransform());
+	player2Col = std::make_unique<BoxCollider>(player2->getTransform(), Vector3::One, Vector3::Zero);
 	player2->getTransform()->translate(3.3f, 0, 0);
 }

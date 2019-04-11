@@ -21,28 +21,17 @@ void Transform::scale(float x, float y, float z)
 	scaleVector = Vector3(scaleVector.x * x, scaleVector.y * y, scaleVector.z * z);
 }
 
-const Vector3 Transform::getEulerAngles()
+const Vector4 Transform::getQuaternion()
 {
 	XMFLOAT4X4 rot;
 	XMStoreFloat4x4(&rot, rotation_matrix);
-	float sy = sqrt(rot._11 * rot._11 + rot._21 * rot._21);
+	float w = sqrt(1.0 + rot._11 + rot._22 + rot._33) / 2.0;
+	double w4 = (4.0 * w);
+	float x = (rot._32 - rot._23) / w4;
+	float y = (rot._13 - rot._31) / w4;
+	float z = (rot._21 - rot._12) / w4;
 
-	bool singular = sy < 1e-6;
-
-	float x, y, z;
-	if (!singular)
-	{
-		x = atan2(rot._32, rot._33);
-		y = atan2(-rot._31, sy);
-		z = atan2(rot._21, rot._11);
-	}
-	else
-	{
-		x = atan2(-rot._23, rot._22);
-		y = atan2(-rot._31, sy);
-		z = 0;
-	}
-	return Vector3(x, y, z);
+	return Vector4(x, y, z, w);
 }
 
 XMMATRIX Transform::getWorldMatrix()
