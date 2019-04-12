@@ -15,9 +15,9 @@ public:
 
 private:
 	Terrain * active_cell;
-	Geometry * player;
-	std::vector<Geometry*> terrain;
-	std::vector<Geometry*> safe_geometry;
+	GameObject * player;
+	std::vector<GameObject*> terrain;
+	std::vector<GameObject*> safe_geometry;
 
 	float move_speed = 17;
 };

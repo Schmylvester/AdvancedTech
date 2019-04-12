@@ -2,7 +2,7 @@
 #include "Collider.h"
 #include "DXUtil.h"
 
-class Geometry;
+class GameObject;
 class SphereCollider;
 class BoxCollider : public Collider
 {
@@ -10,7 +10,7 @@ public:
 	virtual void checkIntersection(BoxCollider * col) override;
 	virtual void checkIntersection(SphereCollider * col) override;
 	BoxCollider() = default;
-	BoxCollider(Geometry* _game_object, Vector3 size, Vector3 offset);
+	BoxCollider(GameObject* _game_object, Vector3 size, Vector3 offset);
 	~BoxCollider() = default;
 	void updateVerts();
 	Vector3 getVert(int idx) { return m_current_vertices[idx]; }

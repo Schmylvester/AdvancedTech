@@ -62,10 +62,10 @@ void CollisionsScene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	player = std::make_unique<Cube>();
-	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	player = std::make_unique<GameObject>();
+	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	
-	scene_objects.push_back(std::make_unique<Cube>());
-	scene_objects.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	scene_objects.push_back(std::make_unique<GameObject>());
+	scene_objects.back()->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	scene_objects.back()->getTransform()->translate(3.3f, 0, 0);
 }

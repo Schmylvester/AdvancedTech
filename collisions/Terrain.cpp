@@ -2,6 +2,7 @@
 #include "DXApp.h"
 #include "Pathfinder.h"
 #include <fstream>
+#include "GameObject.h"
 
 void errorBox(LPCSTR message);
 
@@ -48,8 +49,7 @@ void Terrain::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCo
 	m_idx_buffer = _app->getIndexBuffer(file_name, this);
 
 	Geometry::init(_app, _cb, cam, dev_con, c_buff);
-
-	m_transform.translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (height));
+	m_owner->getTransform()->translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (height));
 }
 
 void Terrain::loadFile()

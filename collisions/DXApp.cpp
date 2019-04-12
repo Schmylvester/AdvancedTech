@@ -239,7 +239,7 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_cube_texture);
 	Memory::SafeRelease(m_cubes_text_sampler_state);
 	Memory::SafeRelease(m_texture);
-	for (Geometry* g : external_geometry)
+	for (GameObject* g : external_geometry)
 	{
 		Memory::SafeDelete(g);
 	}

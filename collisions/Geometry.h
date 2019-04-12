@@ -4,9 +4,18 @@
 #include "Transform.h"
 #include "Collider.h"
 
+class GameObject;
 class DXApp;
 class CBPerObject;
 class Camera;
+
+enum class Shape
+{
+	Cube,
+	Pyramid,
+	Plane,
+	Frustum,
+};
 
 class Geometry
 {
@@ -19,14 +28,8 @@ public:
 	int getTriangleCount() { return triangle_count; }
 	Vertex* getVertices() { return vertices; }
 	DWORD* getIndices() { return indices; }
-	Transform* getTransform() { return &m_transform; }
-	void draw();
-	virtual void collision(Collider* other_col, CollisionClassifier type) {};
-
+	void draw(XMMATRIX _world_matrix);
 protected:
-	Collider* m_collider = nullptr;
-	Transform m_transform;
-
 	int index_count;
 	int vertex_count;
 	int triangle_count;
@@ -35,6 +38,7 @@ protected:
 	Vertex* vertices = nullptr;
 	ID3D11Buffer* m_vtx_buffer = nullptr;
 	ID3D11Buffer* m_idx_buffer = nullptr;
+	GameObject* m_owner;
 private:
 	CBPerObject* m_cb = nullptr;
 	Camera* m_cam = nullptr;

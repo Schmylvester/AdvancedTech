@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
+#include "GameObject.h"
 #include <SimpleMath.h>
 #include <iostream>
 
@@ -27,7 +28,7 @@ void BoxCollider::checkIntersection(BoxCollider* col)
 			int on_list_idx = searchList(&(colliding_this_frame), col);
 			if (on_list_idx != -1)
 			{
-				colliding_this_frame.erase(colliding_last_frame.begin + on_list_idx);
+				colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 			}
 			return;
 		}
@@ -42,7 +43,7 @@ void BoxCollider::checkIntersection(SphereCollider * col)
 {
 }
 
-BoxCollider::BoxCollider(Geometry * _game_object, Vector3 size, Vector3 offset)
+BoxCollider::BoxCollider(GameObject * _game_object, Vector3 size, Vector3 offset)
 	: Collider(_game_object)
 {
 	setFaces(0, 0, 2, 3, 1);
@@ -86,16 +87,17 @@ void BoxCollider::updateVerts()
 {
 	for (int i = 0; i < 8; i++)
 	{
-		Vector3 scale = m_object_transform->getScale();
+		Transform* obj_transform = getTransform();
+		Vector3 scale = obj_transform->getScale();
 		m_current_vertices[i] = Vector3(
 			m_vertices[i].x * scale.x,
 			m_vertices[i].y * scale.y,
 			m_vertices[i].z * scale.z);
-		m_current_vertices[i] += m_object_transform->getPos();
+		m_current_vertices[i] += obj_transform->getPos();
 
-		Vector3 dir = m_current_vertices[i] - m_object_transform->getPos();
-		dir = XMQuaternionMultiply(dir, m_object_transform->getQuaternion());
-		m_current_vertices[i] = dir + m_object_transform->getPos();
+		Vector3 dir = m_current_vertices[i] - obj_transform->getPos();
+		dir = XMQuaternionMultiply(dir, obj_transform->getQuaternion());
+		m_current_vertices[i] = dir + obj_transform->getPos();
 	}
 }
 

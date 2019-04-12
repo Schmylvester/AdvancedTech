@@ -1,15 +1,14 @@
 #include "Collider.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
-#include "Geometry.h"
+#include "GameObject.h"
 
-Collider::Collider(Geometry * _game_object)
+Collider::Collider(GameObject * _game_object)
 {
 	m_game_object = _game_object;
-	m_object_transform = _game_object->getTransform();
 }
 
-bool Collider::checkIntersection(Collider * col)
+void Collider::checkIntersection(Collider * col)
 {
 	BoxCollider* b = dynamic_cast<BoxCollider*>(col);
 	if (b != nullptr)
@@ -46,6 +45,11 @@ void Collider::tickCollider()
 		}
 	}
 	colliding_this_frame.clear();
+}
+
+Transform * Collider::getTransform()
+{
+	return m_game_object->getTransform();
 }
 
 int Collider::searchList(std::vector<Collider*>* list, Collider * target)

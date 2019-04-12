@@ -1,14 +1,15 @@
 #include "TerrainScene.h"
 #include "GeometryIncludes.h"
+#include "GameObject.h"
 
 void loadTerrain(Terrain* player_loc);
-void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
+void setPointers(std::vector<GameObject*>* _geometry, DXApp* _app,
 	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
 	ID3D11Buffer** _const_buffer, Camera* _cam);
 
 TerrainScene::~TerrainScene()
 {
-	for (Geometry* ter : terrain)
+	for (GameObject* ter : terrain)
 		Memory::SafeDelete(ter);
 }
 
@@ -42,18 +43,18 @@ void TerrainScene::updateScene(float dt)
 	float player_z = player->getTransform()->getPos().z;
 	if (!active_cell->playerInCell(player_x, player_z))
 	{
-		for (Geometry* g : terrain)
+		for (GameObject* g : terrain)
 		{
-			Terrain* t = static_cast<Terrain*>(g);
+			Terrain* t = static_cast<Terrain*>(g->getGeometry());
 			if (t->playerInCell(player_x, player_z))
 			{
 				active_cell = t;
-				for (Geometry* safe : terrain)
+				for (GameObject* safe : terrain)
 				{
-					Terrain* is_safe = static_cast<Terrain*>(safe);
+					Terrain* is_safe = static_cast<Terrain*>(safe->getGeometry());
 					if (is_safe == active_cell || active_cell->isNeighbour(is_safe))
 					{
-						safe_geometry.push_back(is_safe);
+						safe_geometry.push_back(safe);
 					}
 				}
 				loader_thread_active = true;
@@ -63,9 +64,9 @@ void TerrainScene::updateScene(float dt)
 		}
 	}
 
-	for (Geometry* g : terrain)
+	for (GameObject* g : terrain)
 	{
-		static_cast<Terrain*>(g)->linkCellMap();
+		static_cast<Terrain*>(g->getGeometry())->linkCellMap();
 	}
 
 	if (loader_thread.joinable() && !loader_thread_active)
@@ -87,14 +88,14 @@ void TerrainScene::drawScene(float dt)
 
 	if (!loader_thread_active)
 	{
-		for (Geometry* ter : terrain)
+		for (GameObject* ter : terrain)
 		{
 			ter->draw();
 		}
 	}
 	else
 	{
-		for (Geometry* ter : safe_geometry)
+		for (GameObject* ter : safe_geometry)
 		{
 			ter->draw();
 		}
@@ -109,16 +110,17 @@ void TerrainScene::initObjects()
 	m_cam.move(256, 55, 256);
 
 	active_cell = new Terrain("..\\Resources\\HeightMap.bmp", 0, 0);
-	terrain.push_back(active_cell);
-	terrain.back()->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	GameObject* t = new GameObject();
+	t->init(active_cell, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_frame);
+	terrain.push_back(t);
 
-	player = new Cube();
-	player->init(this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	player = new GameObject();
+	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(256, 55, 256);
 
 	setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 
-	safe_geometry.push_back(active_cell);
+	safe_geometry.push_back(t);
 	loader_thread_active = true;
 	loader_thread = std::thread(loadTerrain, active_cell);
 }
@@ -129,8 +131,8 @@ void TerrainScene::setGridNeighbours()
 	{
 		for (int j = i + 1; j < terrain.size(); j++)
 		{
-			Terrain* i_terr = static_cast<Terrain*>(terrain[i]);
-			Terrain* j_terr = static_cast<Terrain*>(terrain[j]);
+			Terrain* i_terr = static_cast<Terrain*>(terrain[i]->getGeometry());
+			Terrain* j_terr = static_cast<Terrain*>(terrain[j]->getGeometry());
 			int i_x, i_y, j_x, j_y;
 			i_terr->getIndex(i_x, i_y);
 			j_terr->getIndex(j_x, j_y);

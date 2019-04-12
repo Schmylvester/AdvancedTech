@@ -128,6 +128,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="NavigationCell.cpp" />
     <ClCompile Include="Pathfinder.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXUtil.h" />
     <ClInclude Include="Frustum.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="GeometryIncludes.h" />
     <ClInclude Include="ImageMapInfo.h" />
     <ClInclude Include="Input.h" />

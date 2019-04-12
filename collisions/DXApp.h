@@ -24,6 +24,7 @@ enum LoadType
 using namespace DirectX;
 
 class Geometry;
+class GameObject;
 class DXApp
 {
 public:
@@ -67,8 +68,8 @@ protected:
 	Light m_light;
 	Camera m_cam;
 
-	std::vector<Geometry*> visible_geometry;
-	std::vector<Geometry*> external_geometry;
+	std::vector<GameObject*> visible_geometry;
+	std::vector<GameObject*> external_geometry;
 
 	Window window;
 	Input m_input;
