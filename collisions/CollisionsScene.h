@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
+#include "Player.h"
 #include "GameObject.h"
+#include "CollisionManager.h"
 
 class CollisionsScene : public Scene
 {
@@ -12,9 +14,8 @@ public:
 	virtual void drawScene(float dt) override;
 	virtual void initObjects() override;
 private:
-	std::unique_ptr<GameObject> player = nullptr;
+	std::unique_ptr<Player> player = nullptr;
 	std::vector<std::unique_ptr<GameObject>> scene_objects;
 	
-	float move_speed = 7;
-	bool rot_dir = true;
+	CollisionManager m_collision_manager;
 };

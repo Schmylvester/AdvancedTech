@@ -8,18 +8,19 @@ Collider::Collider(GameObject * _game_object)
 	m_game_object = _game_object;
 }
 
-void Collider::checkIntersection(Collider * col)
+bool Collider::checkIntersection(Collider * col)
 {
 	BoxCollider* b = dynamic_cast<BoxCollider*>(col);
 	if (b != nullptr)
 	{
-		checkIntersection(b);
+		return checkIntersection(b);
 	}
 	SphereCollider* s = dynamic_cast<SphereCollider*>(col);
 	if (s != nullptr)
 	{
-		checkIntersection(s);
+		return checkIntersection(s);
 	}
+	return false;
 }
 
 void Collider::tickCollider()
@@ -50,6 +51,14 @@ void Collider::tickCollider()
 Transform * Collider::getTransform()
 {
 	return m_game_object->getTransform();
+}
+
+void Collider::addCol(Collider * col)
+{
+	if (!searchList(&(colliding_this_frame), col) != -1)
+	{
+		colliding_this_frame.push_back(col);
+	}
 }
 
 int Collider::searchList(std::vector<Collider*>* list, Collider * target)

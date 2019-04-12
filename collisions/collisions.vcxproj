@@ -133,6 +133,7 @@
     <ClCompile Include="NavigationCell.cpp" />
     <ClCompile Include="Pathfinder.cpp" />
     <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="NavigationCell.h" />
     <ClInclude Include="Pathfinder.h" />
     <ClInclude Include="Plane.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Light.h" />

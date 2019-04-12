@@ -7,8 +7,8 @@ class SphereCollider;
 class BoxCollider : public Collider
 {
 public:
-	virtual void checkIntersection(BoxCollider * col) override;
-	virtual void checkIntersection(SphereCollider * col) override;
+	virtual bool checkIntersection(BoxCollider * col) override;
+	virtual bool checkIntersection(SphereCollider * col) override;
 	BoxCollider() = default;
 	BoxCollider(GameObject* _game_object, Vector3 size, Vector3 offset);
 	~BoxCollider() = default;

@@ -2,11 +2,12 @@
 #include "Transform.h"
 #include "GameObject.h"
 
-void SphereCollider::checkIntersection(BoxCollider * col)
+bool SphereCollider::checkIntersection(BoxCollider * col)
 {
+	return false;
 }
 
-void SphereCollider::checkIntersection(SphereCollider * col)
+bool SphereCollider::checkIntersection(SphereCollider * col)
 {
 	Vector3 a_pos = getTransform()->getPos();
 	Vector3 b_pos = col->getTransform()->getPos();
@@ -18,6 +19,7 @@ void SphereCollider::checkIntersection(SphereCollider * col)
 		{
 			colliding_this_frame.push_back(col);
 		}
+		return true;
 	}
 	else
 	{
@@ -26,6 +28,7 @@ void SphereCollider::checkIntersection(SphereCollider * col)
 		{
 			colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 		}
+		return false;
 	}
 }
 

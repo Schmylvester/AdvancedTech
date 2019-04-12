@@ -5,7 +5,7 @@
 #include <SimpleMath.h>
 #include <iostream>
 
-void BoxCollider::checkIntersection(BoxCollider* col)
+bool BoxCollider::checkIntersection(BoxCollider* col)
 {
 	updateVerts();
 	col->updateVerts();
@@ -30,17 +30,19 @@ void BoxCollider::checkIntersection(BoxCollider* col)
 			{
 				colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 			}
-			return;
+			return false;
 		}
 	}
 	if (!searchList(&(colliding_this_frame), col) != -1)
 	{
 		colliding_this_frame.push_back(col);
 	}
+	return true;
 }
 
-void BoxCollider::checkIntersection(SphereCollider * col)
+bool BoxCollider::checkIntersection(SphereCollider * col)
 {
+	return false;
 }
 
 BoxCollider::BoxCollider(GameObject * _game_object, Vector3 size, Vector3 offset)

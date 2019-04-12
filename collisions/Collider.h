@@ -18,12 +18,12 @@ class Collider
 public:
 	Collider(GameObject* _game_object);
 	~Collider() = default;
-	void checkIntersection(Collider* col);
-	virtual void checkIntersection(BoxCollider* col) = 0;
-	virtual void checkIntersection(SphereCollider* col) = 0;
+	bool checkIntersection(Collider* col);
+	virtual bool checkIntersection(BoxCollider* col) = 0;
+	virtual bool checkIntersection(SphereCollider* col) = 0;
 	void tickCollider();
 	Transform* getTransform();
-
+	void addCol(Collider* col);
 protected:
 	int searchList(std::vector<Collider*>* list, Collider* target);
 
