@@ -1,14 +1,14 @@
 #pragma once
 #include "Collider.h"
 
-class Transform;
+class Geometry;
 class BoxCollider;
 class SphereCollider : public Collider
 {
 public:
-	virtual bool intersect(BoxCollider * col) override;
-	virtual bool intersect(SphereCollider * col) override;
-	SphereCollider(Transform* _transform, float radius);
+	virtual void checkIntersection(BoxCollider * col) override;
+	virtual void checkIntersection(SphereCollider * col) override;
+	SphereCollider(Geometry* _game_object, float radius);
 	SphereCollider() = default;
 	~SphereCollider() = default;
 

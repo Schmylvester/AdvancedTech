@@ -6,7 +6,7 @@ class CollisionManager
 public:
 	CollisionManager() = default;
 	~CollisionManager() = default;
-	bool checkCollision(Collider* a, Collider* b);
+	void checkCollisions();
 private:
 	std::vector<Collider*> collisionObjects;
 };

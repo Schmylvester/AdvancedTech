@@ -2,6 +2,7 @@
 #include "DXUtil.h"
 #include "Vertex.h"
 #include "Transform.h"
+#include "Collider.h"
 
 class DXApp;
 class CBPerObject;
@@ -19,10 +20,11 @@ public:
 	Vertex* getVertices() { return vertices; }
 	DWORD* getIndices() { return indices; }
 	Transform* getTransform() { return &m_transform; }
-
 	void draw();
+	virtual void collision(Collider* other_col, CollisionClassifier type) {};
 
 protected:
+	Collider* m_collider = nullptr;
 	Transform m_transform;
 
 	int index_count;

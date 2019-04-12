@@ -4,7 +4,7 @@
 #include <SimpleMath.h>
 #include <iostream>
 
-bool BoxCollider::intersect(BoxCollider* col)
+void BoxCollider::checkIntersection(BoxCollider* col)
 {
 	updateVerts();
 	col->updateVerts();
@@ -24,19 +24,26 @@ bool BoxCollider::intersect(BoxCollider* col)
 		}
 		if (a_projected[0] >= b_projected[1] || a_projected[1] <= b_projected[0])
 		{
-			return false;
+			int on_list_idx = searchList(&(colliding_this_frame), col);
+			if (on_list_idx != -1)
+			{
+				colliding_this_frame.erase(colliding_last_frame.begin + on_list_idx);
+			}
+			return;
 		}
 	}
-	return true;
+	if (!searchList(&(colliding_this_frame), col) != -1)
+	{
+		colliding_this_frame.push_back(col);
+	}
 }
 
-bool BoxCollider::intersect(SphereCollider * col)
+void BoxCollider::checkIntersection(SphereCollider * col)
 {
-	return false;
 }
 
-BoxCollider::BoxCollider(Transform * _transform, Vector3 size, Vector3 offset)
-	: Collider(_transform)
+BoxCollider::BoxCollider(Geometry * _game_object, Vector3 size, Vector3 offset)
+	: Collider(_game_object)
 {
 	setFaces(0, 0, 2, 3, 1);
 	setFaces(1, 4, 5, 7, 6);
