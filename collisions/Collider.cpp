@@ -8,7 +8,7 @@ Collider::Collider(GameObject * _game_object)
 	m_game_object = _game_object;
 }
 
-bool Collider::checkIntersection(Collider * col)
+CollisionData Collider::checkIntersection(Collider * col)
 {
 	BoxCollider* b = dynamic_cast<BoxCollider*>(col);
 	if (b != nullptr)
@@ -20,22 +20,24 @@ bool Collider::checkIntersection(Collider * col)
 	{
 		return checkIntersection(s);
 	}
-	return false;
+	CollisionData ret_false;
+	ret_false.did_collide = false;
+	return ret_false;
 }
 
 void Collider::tickCollider()
 {
 	for (int i = 0; i < colliding_last_frame.size(); i++)
 	{
-		if (searchList(&(colliding_this_frame), colliding_last_frame[i]) == -1)
+		if (searchList(&(colliding_this_frame), colliding_last_frame[i].other_object) == -1)
 		{
 			m_game_object->collision(colliding_last_frame[i], CollisionClassifier::Collision_Ended);
 			colliding_last_frame.erase(colliding_last_frame.begin() + i);
 		}
 	}
-	for (Collider* col : colliding_this_frame)
+	for (CollisionData col : colliding_this_frame)
 	{
-		if (searchList(&(colliding_last_frame), col) == -1)
+		if (searchList(&(colliding_last_frame), col.other_object) == -1)
 		{
 			m_game_object->collision(col, CollisionClassifier::Collision_This_Frame);
 			colliding_last_frame.push_back(col);
@@ -53,24 +55,26 @@ Transform * Collider::getTransform()
 	return m_game_object->getTransform();
 }
 
-void Collider::addCol(Collider * col)
+void Collider::addCol(CollisionData col)
 {
-	if (!searchList(&(colliding_this_frame), col) != -1)
+	int list_idx = searchList(&(colliding_this_frame), col.other_object);
+	if (list_idx != -1)
 	{
-		colliding_this_frame.push_back(col);
+		colliding_this_frame.erase(colliding_this_frame.begin() + list_idx);
 	}
+	colliding_this_frame.push_back(col);
 }
 
-void Collider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal, bool& point_inside)
+void Collider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal)
 {
 }
 
-int Collider::searchList(std::vector<Collider*>* list, Collider * target)
+int Collider::searchList(std::vector<CollisionData>* list, Collider * target)
 {
 	int i = 0;
-	for (Collider* col : *list)
+	for (CollisionData col : *list)
 	{
-		if (target == col)
+		if (target == col.other_object)
 		{
 			return i;
 		}

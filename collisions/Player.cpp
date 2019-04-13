@@ -40,3 +40,9 @@ void Player::update(float dt)
 
 	GameObject::update(dt);
 }
+
+void Player::collision(CollisionData col, CollisionClassifier type)
+{
+	if(type == CollisionClassifier::Collision_This_Frame)
+		m_physics->addForceAtPoint(18, col.colision_center, Vector3(0, 1, 0));
+}

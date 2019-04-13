@@ -14,12 +14,7 @@ void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 
 	direction.Normalize();
 	Vector3 face_hit = Vector3::Zero;
 	Vector3 face_inv_normal = Vector3::Zero;
-	bool point_in_collider = false;
-	m_collider->getClosestFace(collision_point, face_hit, face_inv_normal, point_in_collider);
-
-	//not gonna add the force if the point of force isn't on this collider
-	if (!point_in_collider)
-		return;
+	m_collider->getClosestFace(collision_point, face_hit, face_inv_normal);
 
 	//distance from point of collision to its nearest face
 	float dist = (collision_point - face_hit).Length();

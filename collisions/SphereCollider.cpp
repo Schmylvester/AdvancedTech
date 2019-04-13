@@ -2,12 +2,12 @@
 #include "Transform.h"
 #include "GameObject.h"
 
-bool SphereCollider::checkIntersection(BoxCollider * col)
+CollisionData SphereCollider::checkIntersection(BoxCollider * col)
 {
-	return false;
+	return CollisionData();
 }
 
-bool SphereCollider::checkIntersection(SphereCollider * col)
+CollisionData SphereCollider::checkIntersection(SphereCollider * col)
 {
 	Vector3 a_pos = getTransform()->getPos();
 	Vector3 b_pos = col->getTransform()->getPos();
@@ -15,11 +15,15 @@ bool SphereCollider::checkIntersection(SphereCollider * col)
 	float collide_dist = m_radius + col->getRadius();
 	if (dist < collide_dist)
 	{
-		if (!searchList(&(colliding_this_frame), col) != -1)
-		{
-			colliding_this_frame.push_back(col);
-		}
-		return true;
+		CollisionData return_data;
+		return_data.did_collide = true;
+		Vector3 direction = a_pos - b_pos;
+		direction.Normalize();
+		Vector3 ext_a = a_pos + direction * m_radius;
+		Vector3 ext_b = b_pos + direction * col->getRadius();
+		return_data.colision_center = (ext_a + ext_b) / 2;
+		return_data.other_object = col;
+		return return_data;
 	}
 	else
 	{
@@ -28,7 +32,7 @@ bool SphereCollider::checkIntersection(SphereCollider * col)
 		{
 			colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 		}
-		return false;
+		return CollisionData();
 	}
 }
 

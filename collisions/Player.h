@@ -11,6 +11,7 @@ public:
 	~Player() = default;
 
 	virtual void update(float dt) override;
+	virtual void collision(CollisionData col, CollisionClassifier type) override;
 
 private:
 	Input* m_input;

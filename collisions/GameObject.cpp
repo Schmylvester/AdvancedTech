@@ -51,7 +51,7 @@ void GameObject::addCollider(Collider * col, CollisionManager * collision_manage
 	}
 }
 
-void GameObject::collision(Collider * other_col, CollisionClassifier type)
+void GameObject::collision(CollisionData col, CollisionClassifier type)
 {
 	if (type == CollisionClassifier::Collision_This_Frame)
 	{

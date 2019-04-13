@@ -26,11 +26,13 @@ bool BoxCollider::checkIntersection(Vector3 point)
 	return true;
 }
 
-bool BoxCollider::checkIntersection(BoxCollider* col)
+CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 {
 	updateVerts();
 	col->updateVerts();
-	for (int face = 0; face < 6; face++)
+	CollisionData collision_data;
+	collision_data.other_object = col;
+	for (int face = 0; face < 6; face += 2)
 	{
 		Vector3 projectionAxis = getFaceNormal(face);
 		float a_projected[2] = { INFINITY, -INFINITY };
@@ -44,26 +46,43 @@ bool BoxCollider::checkIntersection(BoxCollider* col)
 			b_projected[0] = min(b_projected[0], bVert);
 			b_projected[1] = max(b_projected[1], bVert);
 		}
-		if (a_projected[0] >= b_projected[1] || a_projected[1] <= b_projected[0])
+		if (a_projected[0] >= b_projected[1] || a_projected[1] <= b_projected[0]
+			|| isnan(a_projected[0]) || isnan(a_projected[1])
+			|| isnan(b_projected[0]) || isnan(b_projected[1]))
 		{
 			int on_list_idx = searchList(&(colliding_this_frame), col);
 			if (on_list_idx != -1)
 			{
 				colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 			}
-			return false;
+			return CollisionData();
+		}
+		else
+		{
+			float mid = getMidProjection(a_projected[0], a_projected[1], b_projected[0], b_projected[1]);
+			switch (face)
+			{
+			case 0:
+				collision_data.colision_center.x = mid;
+				break;
+			case 2:
+				collision_data.colision_center.y = mid;
+				break;
+			case 4:
+				collision_data.colision_center.z = mid;
+				break;
+			default:
+				break;
+			}
 		}
 	}
-	if (!searchList(&(colliding_this_frame), col) != -1)
-	{
-		colliding_this_frame.push_back(col);
-	}
-	return true;
+	collision_data.did_collide = true;
+	return collision_data;
 }
 
-bool BoxCollider::checkIntersection(SphereCollider * col)
+CollisionData BoxCollider::checkIntersection(SphereCollider * col)
 {
-	return false;
+	return CollisionData();
 }
 
 BoxCollider::BoxCollider(GameObject * _game_object, Vector3 size, Vector3 offset)
@@ -124,7 +143,7 @@ void BoxCollider::updateVerts()
 	}
 }
 
-void BoxCollider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal, bool& point_in_cube)
+void BoxCollider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal)
 {
 	float closest_distance = INFINITY;
 	for (int face = 0; face < 6; face++)
@@ -144,7 +163,6 @@ void BoxCollider::getClosestFace(Vector3 point, Vector3& position, Vector3& norm
 			closest_distance = dist;
 		}
 	}
-	point_in_cube = checkIntersection(point);
 }
 
 Vector3 BoxCollider::getFaceNormal(int face)
@@ -158,4 +176,24 @@ Vector3 BoxCollider::getFaceNormal(int face)
 	Vector3 b_normal = verts[1].Cross(verts[3]);
 	Vector3 normal = a_normal.Cross(b_normal);
 	return normal;
+}
+
+float BoxCollider::getMidProjection(float a_min, float a_max, float b_min, float b_max)
+{
+	float overlap_min = 0.0f;
+	if (a_min >= b_min && a_min <= b_max)
+		overlap_min = a_min;
+	else if (b_min >= a_min && b_min <= a_max)
+		overlap_min = b_min;
+	else
+		assert(false);
+	float overlap_max = 0.0f;
+	if (a_max <= b_max && a_max >= b_min)
+		overlap_max = a_max;
+	else if (b_max <= a_max && b_max >= a_min)
+		overlap_max = b_max;
+	else
+		assert(false);
+	float mid = (overlap_min + overlap_max) / 2;
+	return mid;
 }

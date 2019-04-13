@@ -7,9 +7,12 @@ void CollisionManager::checkCollisions()
 	{
 		for (int j = i + 1; j < collisionObjects.size(); j++)
 		{
-			if (collisionObjects[i]->checkIntersection(collisionObjects[j]))
+			CollisionData col_data = collisionObjects[i]->checkIntersection(collisionObjects[j]);
+			if (col_data.did_collide)
 			{
-				collisionObjects[j]->addCol(collisionObjects[i]);
+				collisionObjects[i]->addCol(col_data);
+				col_data.other_object = collisionObjects[i];
+				collisionObjects[j]->addCol(col_data);
 			}
 		}
 	}
