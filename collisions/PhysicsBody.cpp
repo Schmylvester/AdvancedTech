@@ -16,11 +16,15 @@ void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 
 	Vector3 face_inv_normal = Vector3::Zero;
 	bool point_in_collider = false;
 	m_collider->getClosestFace(collision_point, face_hit, face_inv_normal, point_in_collider);
+
+	//not gonna add the force if the point of force isn't on this collider
 	if (!point_in_collider)
 		return;
+
+	//distance from point of collision to its nearest face
 	float dist = (collision_point - face_hit).Length();
 
-
+	//lever arm angle of the force
 	float dot = collision_point.Dot(face_inv_normal);
 	float mag_a = collision_point.x * collision_point.x
 		+ collision_point.y * collision_point.y
@@ -29,13 +33,16 @@ void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 
 		+ face_inv_normal.y * face_inv_normal.y
 		+ face_inv_normal.z * face_inv_normal.z;
 	float angle = acos(dot / sqrt(mag_a * mag_b));
+	//rotational force
 	float torque_force = force * dist * angle;
 
+	//get rotation direction
 	Vector3 rotation_direction = direction.Cross(m_obj_transform->getPos());
 	m_rotate_dir += rotation_direction;
 	m_rotate_dir.Normalize();
 	m_rotate_force += torque_force;
 
+	//the rest of the force goes into moving the object
 	m_move_force += direction * (force - torque_force);
 }
 
