@@ -2,7 +2,7 @@
 #include "DXApp.h"
 #include "Camera.h"
 
-void Pyramid::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
+void Pyramid::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject* _owner)
 {
 	triangle_count = 6;
 	index_count = triangle_count * 3;
@@ -52,5 +52,5 @@ void Pyramid::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCo
 	m_vtx_buffer = _app->getVertexBuffer("Pyramid", this);
 	m_idx_buffer = _app->getIndexBuffer("Pyramid", this);
 
-	Geometry::init(_app, _cb, cam, dev_con, c_buff);
+	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 }

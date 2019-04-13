@@ -109,9 +109,10 @@ void TerrainScene::initObjects()
 	m_cam = Camera(getRatio());
 	m_cam.move(256, 55, 256);
 
-	active_cell = new Terrain("..\\Resources\\HeightMap.bmp", 0, 0);
 	GameObject* t = new GameObject();
-	t->init(active_cell, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_frame);
+	t->init("..\\Resources\\HeightMap.bmp", 0, 0, this,
+		&m_object_cb, &m_cam, m_device_context, m_cb_per_frame);
+	active_cell = static_cast<Terrain*>(t->getGeometry());
 	terrain.push_back(t);
 
 	player = new GameObject();

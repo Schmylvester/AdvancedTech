@@ -8,6 +8,7 @@ public:
 	~Transform() = default;
 
 	void translate(float x, float y, float z);
+	void translate(Vector3 move);
 	void setPosition(float x, float y, float z);
 	void rotate(XMVECTOR axis, float angle);
 	void scale(float x, float y, float z);

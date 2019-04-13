@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "DXUtil.h"
 
 class BoxCollider;
 class SphereCollider;
@@ -24,6 +25,7 @@ public:
 	void tickCollider();
 	Transform* getTransform();
 	void addCol(Collider* col);
+	virtual void getClosestFace(Vector3 point, Vector3& position, Vector3& normal, bool& point_inside);
 protected:
 	int searchList(std::vector<Collider*>* list, Collider* target);
 

@@ -7,6 +7,7 @@ class SphereCollider;
 class BoxCollider : public Collider
 {
 public:
+	bool checkIntersection(Vector3 point);
 	virtual bool checkIntersection(BoxCollider * col) override;
 	virtual bool checkIntersection(SphereCollider * col) override;
 	BoxCollider() = default;
@@ -14,6 +15,7 @@ public:
 	~BoxCollider() = default;
 	void updateVerts();
 	Vector3 getVert(int idx) { return m_current_vertices[idx]; }
+	virtual void getClosestFace(Vector3 point, Vector3& position, Vector3& normal, bool& point_inside) override;
 
 private:
 	Vector3 getFaceNormal(int face);

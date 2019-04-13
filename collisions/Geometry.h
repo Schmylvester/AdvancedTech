@@ -22,7 +22,7 @@ class Geometry
 public:
 	Geometry() = default;
 	virtual ~Geometry();
-	virtual void init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
+	virtual void init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject * _owner);
 	int getVertCount() { return vertex_count; }
 	int getIndexCount() { return index_count; }
 	int getTriangleCount() { return triangle_count; }

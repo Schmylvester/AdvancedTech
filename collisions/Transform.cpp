@@ -5,6 +5,11 @@ void Transform::translate(float x, float y, float z)
 	position_matrix *= XMMatrixTranslation(x, y, z);
 }
 
+void Transform::translate(Vector3 move)
+{
+	translate(move.x, move.y, move.z);
+}
+
 void Transform::setPosition(float x, float y, float z)
 {
 	position_matrix = XMMatrixTranslation(x, y, z);

@@ -61,6 +61,10 @@ void Collider::addCol(Collider * col)
 	}
 }
 
+void Collider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal, bool& point_inside)
+{
+}
+
 int Collider::searchList(std::vector<Collider*>* list, Collider * target)
 {
 	int i = 0;

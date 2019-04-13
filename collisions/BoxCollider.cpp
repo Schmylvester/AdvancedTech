@@ -5,6 +5,27 @@
 #include <SimpleMath.h>
 #include <iostream>
 
+bool BoxCollider::checkIntersection(Vector3 point)
+{
+	for (int face = 0; face < 6; face++)
+	{
+		Vector3 projectionAxis = getFaceNormal(face);
+		float a_projected[2] = { INFINITY, -INFINITY };
+		float b_projected = point.Dot(projectionAxis);
+		for (int vert = 0; vert < 8; vert++)
+		{
+			float aVert = m_current_vertices[vert].Dot(projectionAxis);
+			a_projected[0] = min(a_projected[0], aVert);
+			a_projected[1] = max(a_projected[1], aVert);
+		}
+		if (a_projected[0] >= b_projected || a_projected[1] <= b_projected)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 bool BoxCollider::checkIntersection(BoxCollider* col)
 {
 	updateVerts();
@@ -101,6 +122,29 @@ void BoxCollider::updateVerts()
 		dir = XMQuaternionMultiply(dir, obj_transform->getQuaternion());
 		m_current_vertices[i] = dir + obj_transform->getPos();
 	}
+}
+
+void BoxCollider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal, bool& point_in_cube)
+{
+	float closest_distance = INFINITY;
+	for (int face = 0; face < 6; face++)
+	{
+		Vector3 verts[4];
+		for (int i = 0; i < 4; i++)
+		{
+			verts[i] = m_current_vertices[faces[face][i]];
+		}
+		Vector3 avg = (verts[0] + verts[1] + verts[2] + verts[3]) / 4;
+		float dist = (avg - point).Length();
+		if (dist < closest_distance)
+		{
+			position = avg;
+			normal = getFaceNormal(face);
+			normal.Normalize();
+			closest_distance = dist;
+		}
+	}
+	point_in_cube = checkIntersection(point);
 }
 
 Vector3 BoxCollider::getFaceNormal(int face)

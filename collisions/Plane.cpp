@@ -2,7 +2,7 @@
 #include "DXApp.h"
 #include "Camera.h"
 
-void PlaneObject::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
+void PlaneObject::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject* _owner)
 {
 	triangle_count = 2;
 	index_count = triangle_count * 3;
@@ -24,5 +24,5 @@ void PlaneObject::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11Devi
 	m_vtx_buffer = _app->getVertexBuffer("Plane", this);
 	m_idx_buffer = _app->getIndexBuffer("Plane", this);
 
-	Geometry::init(_app, _cb, cam, dev_con, c_buff);
+	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 }

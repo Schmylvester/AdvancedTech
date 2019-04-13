@@ -30,18 +30,25 @@ void GameObject::init(Shape shape, DXApp * _app, CBPerObject * _cb, Camera * cam
 	default:
 		break;
 	}
-	m_geometry->init(_app, _cb, cam, dev_con, c_buff);
+	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 }
 
-void GameObject::init(Geometry* shape, DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
+void GameObject::init(const char* file, int x, int y, DXApp * _app,
+	CBPerObject * _cb, Camera * cam, 
+	ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
 {
-	m_geometry = shape;
-	m_geometry->init(_app, _cb, cam, dev_con, c_buff);
+	m_geometry = new Terrain(file, x, y);
+	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 }
 
-void GameObject::addCollider(Collider * col, CollisionManager * collision_manager)
+void GameObject::addCollider(Collider * col, CollisionManager * collision_manager, bool add_physics)
 {
 	collision_manager->addCollider(col);
+	m_collider = col;
+	if (add_physics)
+	{
+		m_physics = std::make_unique<PhysicsBody>(m_collider, &m_transform);
+	}
 }
 
 void GameObject::collision(Collider * other_col, CollisionClassifier type)
@@ -65,6 +72,11 @@ Geometry * GameObject::getGeometry()
 void GameObject::update(float dt)
 {
 	m_transform.rotate(rotDir, rotation * dt);
+
+	if (m_physics != nullptr)
+	{
+		m_physics->tick(dt);
+	}
 }
 
 void GameObject::draw()

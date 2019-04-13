@@ -9,12 +9,14 @@ Geometry::~Geometry()
 	Memory::SafeDeleteArr(vertices);
 }
 
-void Geometry::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
+void Geometry::init(DXApp * _app, CBPerObject * _cb, Camera * cam,
+	ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject* _owner)
 {
 	m_cb = _cb;
 	m_cam = cam;
 	m_dev_con = dev_con;
 	m_obj_buff = c_buff;
+	m_owner = _owner;
 }
 
 void Geometry::draw(XMMATRIX _world_matrix)

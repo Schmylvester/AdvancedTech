@@ -40,7 +40,9 @@ Terrain::~Terrain()
 	while (!cell_map_ready) {}
 }
 
-void Terrain::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
+void Terrain::init(DXApp * _app, CBPerObject * _cb, Camera * cam,
+	ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff,
+	GameObject* _owner)
 {
 	loadFile();
 	createGrid();
@@ -48,7 +50,7 @@ void Terrain::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCo
 	m_vtx_buffer = _app->getVertexBuffer(file_name, this);
 	m_idx_buffer = _app->getIndexBuffer(file_name, this);
 
-	Geometry::init(_app, _cb, cam, dev_con, c_buff);
+	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 	m_owner->getTransform()->translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (height));
 }
 
@@ -215,49 +217,49 @@ void Terrain::createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _a
 	if (neighbours[TOP_LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x - 1, grid_y + 1));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x, grid_y + 1));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP_RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x + 1, grid_y + 1));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x - 1, grid_y));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x + 1, grid_y));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM_LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x - 1, grid_y - 1));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x, grid_y - 1));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM_RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain(file_name, grid_x + 1, grid_y - 1));
-		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(_app, _cb, cam, dev_con, c_buff, m_owner);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 }
