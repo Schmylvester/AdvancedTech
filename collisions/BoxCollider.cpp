@@ -32,16 +32,17 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	col->updateVerts();
 	CollisionData collision_data;
 	collision_data.other_object = col;
+	collision_data.penetration = INFINITY;
 	for (int face = 0; face < 6; face += 2)
 	{
-		Vector3 projectionAxis = getFaceNormal(face);
+		Vector3 projection_axis = getFaceNormal(face);
 		//projected floats are the min, the max, and a number that says if it is valid
 		float a_projected[3] = { INFINITY, -INFINITY, -1 };
 		float b_projected[3] = { INFINITY, -INFINITY, -1 };
 		for (int vert = 0; vert < 8; vert++)
 		{
-			float aVert = m_current_vertices[vert].Dot(projectionAxis);
-			float bVert = col->getVert(vert).Dot(projectionAxis);
+			float aVert = m_current_vertices[vert].Dot(projection_axis);
+			float bVert = col->getVert(vert).Dot(projection_axis);
 			if (!isnan(aVert))
 			{
 				a_projected[0] = min(a_projected[0], aVert);
@@ -55,6 +56,7 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 				b_projected[2] = 1;
 			}
 		}
+		float translation = min(abs(a_projected[0] - b_projected[1]), abs(b_projected[0] - a_projected[1]));
 		if (a_projected[0] >= b_projected[1] || a_projected[1] <= b_projected[0]
 			|| a_projected[2] < 0 || b_projected[2] < 0)
 		{
@@ -67,23 +69,11 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 			ret_false.did_collide = false;
 			return ret_false;
 		}
-		else
+		else if(translation < collision_data.penetration)
 		{
-			float mid = getMidProjection(a_projected[0], a_projected[1], b_projected[0], b_projected[1]);
-			switch (face)
-			{
-			case 0:
-				collision_data.colision_center.x = mid;
-				break;
-			case 2:
-				collision_data.colision_center.y = mid;
-				break;
-			case 4:
-				collision_data.colision_center.z = mid;
-				break;
-			default:
-				break;
-			}
+			collision_data.penetration = translation;
+			collision_data.collision_direction = projection_axis;
+			collision_data.collision_direction.Normalize();
 		}
 	}
 	collision_data.did_collide = true;
@@ -115,7 +105,7 @@ BoxCollider::BoxCollider(GameObject * _game_object, Vector3 size, Vector3 offset
 				float v_y = (1 - (y * 2));
 				float v_z = (1 - (z * 2));
 				int i = (x * 4) + (y * 2) + z;
-				m_vertices[i] = Vector3(v_x * size.x, v_y * size.y, v_z * size.z);
+				m_vertices[i] = Vector3(v_x * size.x, v_y * size.y, v_z * size.z) * 0.5f;
 				m_vertices[i] += offset;
 			}
 		}
@@ -132,10 +122,11 @@ void BoxCollider::setFaces(int idx, int a, int b, int c, int d)
 
 void BoxCollider::updateVerts()
 {
+	Transform* obj_transform = getTransform();
+	Vector3 scale = obj_transform->getScale();
+	Vector4 rot = obj_transform->getQuaternion();
 	for (int i = 0; i < 8; i++)
 	{
-		Transform* obj_transform = getTransform();
-		Vector3 scale = obj_transform->getScale();
 		m_current_vertices[i] = Vector3(
 			m_vertices[i].x * scale.x,
 			m_vertices[i].y * scale.y,
@@ -143,8 +134,7 @@ void BoxCollider::updateVerts()
 		m_current_vertices[i] += obj_transform->getPos();
 
 		Vector3 dir = m_current_vertices[i] - obj_transform->getPos();
-		Vector4 rot = obj_transform->getQuaternion();
-		dir = XMQuaternionMultiply(dir, rot);
+		dir = rotatePoint(dir, rot);
 		m_current_vertices[i] = dir + obj_transform->getPos();
 	}
 }
@@ -184,22 +174,9 @@ Vector3 BoxCollider::getFaceNormal(int face)
 	return normal;
 }
 
-float BoxCollider::getMidProjection(float a_min, float a_max, float b_min, float b_max)
+Vector3 BoxCollider::rotatePoint(Vector3 point, Vector4 rotation)
 {
-	float overlap_min = 0.0f;
-	if (a_min >= b_min && a_min <= b_max)
-		overlap_min = a_min;
-	else if (b_min >= a_min && b_min <= a_max)
-		overlap_min = b_min;
-	else
-		assert(false);
-	float overlap_max = 0.0f;
-	if (a_max <= b_max && a_max >= b_min)
-		overlap_max = a_max;
-	else if (b_max <= a_max && b_max >= a_min)
-		overlap_max = b_max;
-	else
-		assert(false);
-	float mid = (overlap_min + overlap_max) / 2;
-	return mid;
+	return Vector3((rotation.w * point.x) + (rotation.x) + (rotation.y * point.z) - (rotation.z * point.y),
+		(rotation.w * point.y) - (rotation.x * point.z) + (rotation.y) + (rotation.z * point.x),
+		(rotation.w * point.z) + (rotation.x * point.y) - (rotation.y * point.x) + (rotation.z));
 }

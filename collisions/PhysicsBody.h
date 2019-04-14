@@ -16,11 +16,7 @@ private:
 	Collider* m_collider = nullptr;
 	Transform* m_obj_transform = nullptr;
 	Vector3 m_move_force;
-	Vector3 m_gravity_force;
 	Vector3 m_rotate_dir;
 	float m_rotate_force;
-	float m_gravity = 8.0f;
-
-	float the_ground = -0.3f;
 };
 

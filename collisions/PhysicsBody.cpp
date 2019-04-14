@@ -55,17 +55,8 @@ void PhysicsBody::tick(float dt)
 			m_rotate_force = 0;
 		}
 	}
-	if (m_obj_transform->getPos().y > the_ground)
-	{
-		m_gravity_force += Vector3::Down * m_gravity * dt;
-	}
-	else
-	{
-		m_obj_transform->translate(0, the_ground - m_obj_transform->getPos().y, 0);
-		m_gravity_force = Vector3::Zero;
-	}
+	
 	m_obj_transform->translate(m_move_force * dt);
-	m_obj_transform->translate(m_gravity_force * dt);
 	Vector3 force = m_move_force;
 	force.Normalize();
 	m_move_force -= force * dt * 8;

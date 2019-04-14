@@ -53,9 +53,25 @@ void GameObject::addCollider(Collider * col, CollisionManager * collision_manage
 
 void GameObject::collision(CollisionData col, CollisionClassifier type)
 {
+	if (type == CollisionClassifier::Ongoing_Collision)
+	{
+		//calculate whether this is the forwards or backwards direction to the one we need
+		Vector3 dir_to_object = col.other_object->getTransform()->getPos() - m_transform.getPos();
+		Vector3 dir_from_object = m_transform.getPos() - col.other_object->getTransform()->getPos();
+		if (col.collision_direction.Dot(dir_to_object) > col.collision_direction.Dot(dir_from_object))
+		{
+			col.collision_direction *= -1;
+		}
+
+		//move out of the object
+		m_transform.translate(col.collision_direction * col.penetration);
+	}
 	if (type == CollisionClassifier::Collision_This_Frame)
 	{
-		rotation *= -1;
+		if (m_physics != nullptr)
+		{
+			//m_physics->addForceAtPoint(0.7f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
+		}
 	}
 }
 
@@ -71,8 +87,6 @@ Geometry * GameObject::getGeometry()
 
 void GameObject::update(float dt)
 {
-	m_transform.rotate(rotDir, rotation * dt);
-
 	if (m_physics != nullptr)
 	{
 		m_physics->tick(dt);

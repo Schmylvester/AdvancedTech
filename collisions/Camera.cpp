@@ -23,12 +23,34 @@ void Camera::move(float x, float y, float z)
 	cam_pos += XMVectorSet(x, y, z, 0);
 	cam_target += XMVectorSet(x, y, z, 0);
 
+	if (!XMVector3Equal(XMVectorSubtract(cam_target, cam_pos), XMVectorZero()))
+	{
+		cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	}
+}
 
-	cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+void Camera::setPos(float x, float y, float z)
+{
+
+	cam_target = cam_target + (XMVectorSet(x, y, z, 1) - cam_pos);
+	cam_pos = XMVectorSet(x, y, z, 0);
+
+	if (!XMVector3Equal(XMVectorSubtract(cam_target, cam_pos), XMVectorZero()))
+	{
+		cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	}
 }
 
 void Camera::lookAt(Vector3 target)
 {
-	cam_target = XMVectorSet(target.x, target.y, target.z, 1);
-	cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	cam_target = XMVectorSet(target.x, target.y, target.z, 1);	
+	
+	if (!XMVector3Equal(XMVectorSubtract(cam_target, cam_pos), XMVectorZero()))
+	{
+		cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	}
+}
+
+void Camera::rotateAround(float angle)
+{
 }

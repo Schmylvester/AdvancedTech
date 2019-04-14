@@ -21,7 +21,7 @@ public:
 private:
 	Vector3 getFaceNormal(int face);
 	void setFaces(int idx, int a, int b, int c, int d);
-	float getMidProjection(float a_min, float a_max, float b_min, float b_max);
+	Vector3 rotatePoint(Vector3 a, Vector4 b);
 
 	int faces[6][4];
 	Vector3 m_vertices[8];

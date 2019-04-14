@@ -19,11 +19,7 @@ CollisionData SphereCollider::checkIntersection(SphereCollider * col)
 	{
 		CollisionData return_data;
 		return_data.did_collide = true;
-		Vector3 direction = a_pos - b_pos;
-		direction.Normalize();
-		Vector3 ext_a = a_pos + direction * m_radius;
-		Vector3 ext_b = b_pos + direction * col->getRadius();
-		return_data.colision_center = (ext_a + ext_b) / 2;
+		return_data.collision_direction = a_pos - b_pos;
 		return_data.other_object = col;
 		return return_data;
 	}

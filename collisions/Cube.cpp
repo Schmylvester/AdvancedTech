@@ -7,6 +7,7 @@ void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContex
 	triangle_count = 12;
 	index_count = triangle_count * 3;
 	vertex_count = 24;
+	float size = 2.0f;
 
 	indices = new DWORD[index_count]
 	{
@@ -38,6 +39,7 @@ void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContex
 	vertices = new Vertex[vertex_count];
 	float r, g, b;
 	std::string vertex_tag = "Cube";
+	colour = rand() % 6;
 	switch (colour)
 	{
 	case 0:
@@ -81,40 +83,40 @@ void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContex
 	}
 
 	// Front Face
-	vertices[0] = Vertex(-1.0f, -1.0f, -1.0f, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, -1.0f, -1.0f, -1.0f);
-	vertices[1] = Vertex(-1.0f, 1.0f, -1.0f, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, -1.0f, 1.0f, -1.0f);
-	vertices[2] = Vertex(1.0f, 1.0f, -1.0f, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, 1.0f, 1.0f, -1.0f);
-	vertices[3] = Vertex(1.0f, -1.0f, -1.0f, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, 1.0f, -1.0f, -1.0f);
+	vertices[0] = Vertex(-size / 2, -size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, -1.0f, -1.0f, -1.0f);
+	vertices[1] = Vertex(-size / 2, size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[2] = Vertex(size / 2, size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, 1.0f, 1.0f, -1.0f);
+	vertices[3] = Vertex(size / 2, -size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, 1.0f, -1.0f, -1.0f);
 
 	// Back Face
-	vertices[4] = Vertex(-1.0f, -1.0f, 1.0f, r * 1.2f, g, b, 1.0f, -1.0f, -1.0f, 1.0f);
-	vertices[5] = Vertex(1.0f, -1.0f, 1.0f, r * 1.2f, g, b, 1.0f, 1.0f, -1.0f, 1.0f);
-	vertices[6] = Vertex(1.0f, 1.0f, 1.0f, r * 1.2f, g, b, 1.0f, 1.0f, 1.0f, 1.0f);
-	vertices[7] = Vertex(-1.0f, 1.0f, 1.0f, r * 1.2f, g, b, 1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[4] = Vertex(-size / 2, -size / 2, size / 2, r * 1.2f, g, b, 1.0f, -1.0f, -1.0f, 1.0f);
+	vertices[5] = Vertex(size / 2, -size / 2, size / 2, r * 1.2f, g, b, 1.0f, 1.0f, -1.0f, 1.0f);
+	vertices[6] = Vertex(size / 2, size / 2, size / 2, r * 1.2f, g, b, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[7] = Vertex(-size / 2, size / 2, size / 2, r * 1.2f, g, b, 1.0f, -1.0f, 1.0f, 1.0f);
 
 	// Top Face
-	vertices[8] = Vertex(-1.0f, 1.0f, -1.0f, r, g * 1.2f, b, 1.0f, -1.0f, 1.0f, -1.0f);
-	vertices[9] = Vertex(-1.0f, 1.0f, 1.0f, r, g * 1.2f, b, 1.0f, -1.0f, 1.0f, 1.0f);
-	vertices[10] = Vertex(1.0f, 1.0f, 1.0f, r, g * 1.2f, b, 1.0f, 1.0f, 1.0f, 1.0f);
-	vertices[11] = Vertex(1.0f, 1.0f, -1.0f, r, g * 1.2f, b, 1.0f, 1.0f, 1.0f, -1.0f);
+	vertices[8] = Vertex(-size / 2, size / 2, -size / 2, r, g * 1.2f, b, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[9] = Vertex(-size / 2, size / 2, size / 2, r, g * 1.2f, b, 1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[10] = Vertex(size / 2, size / 2, size / 2, r, g * 1.2f, b, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[11] = Vertex(size / 2, size / 2, -size / 2, r, g * 1.2f, b, 1.0f, 1.0f, 1.0f, -1.0f);
 
 	// Bottom Face
-	vertices[12] = Vertex(-1.0f, -1.0f, -1.0f, r, g, b * 1.2f, 1.0f, -1.0f, -1.0f, -1.0f);
-	vertices[13] = Vertex(1.0f, -1.0f, -1.0f, r, g, b * 1.2f, 1.0f, 1.0f, -1.0f, -1.0f);
-	vertices[14] = Vertex(1.0f, -1.0f, 1.0f, r, g, b * 1.2f, 1.0f, 1.0f, -1.0f, 1.0f);
-	vertices[15] = Vertex(-1.0f, -1.0f, 1.0f, r, g, b * 1.2f, 1.0f, -1.0f, -1.0f, 1.0f);
+	vertices[12] = Vertex(-size / 2, -size / 2, -size / 2, r, g, b * 1.2f, 1.0f, -1.0f, -1.0f, -1.0f);
+	vertices[13] = Vertex(size / 2, -size / 2, -size / 2, r, g, b * 1.2f, 1.0f, 1.0f, -1.0f, -1.0f);
+	vertices[14] = Vertex(size / 2, -size / 2, size / 2, r, g, b * 1.2f, 1.0f, 1.0f, -1.0f, 1.0f);
+	vertices[15] = Vertex(-size / 2, -size / 2, size / 2, r, g, b * 1.2f, 1.0f, -1.0f, -1.0f, 1.0f);
 
 	// Left Face
-	vertices[16] = Vertex(-1.0f, -1.0f, 1.0f, r * 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, -1.0f, 1.0f);
-	vertices[17] = Vertex(-1.0f, 1.0f, 1.0f, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, 1.0f, 1.0f);
-	vertices[18] = Vertex(-1.0f, 1.0f, -1.0f, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, 1.0f, -1.0f);
-	vertices[19] = Vertex(-1.0f, -1.0f, -1.0f, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, -1.0f, -1.0f);
+	vertices[16] = Vertex(-size / 2, -size / 2, size / 2, r * 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, -1.0f, 1.0f);
+	vertices[17] = Vertex(-size / 2, size / 2, size / 2, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[18] = Vertex(-size / 2, size / 2, -size / 2, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[19] = Vertex(-size / 2, -size / 2, -size / 2, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, -1.0f, -1.0f);
 
 	// Right Face
-	vertices[20] = Vertex(1.0f, -1.0f, -1.0f, r, g, b, 1.0f, 1.0f, -1.0f, -1.0f);
-	vertices[21] = Vertex(1.0f, 1.0f, -1.0f, r, g, b, 1.0f, 1.0f, 1.0f, -1.0f);
-	vertices[22] = Vertex(1.0f, 1.0f, 1.0f, r, g, b, 1.0f, 1.0f, 1.0f, 1.0f);
-	vertices[23] = Vertex(1.0f, -1.0f, 1.0f, r, g, b, 1.0f, 1.0f, -1.0f, 1.0f);
+	vertices[20] = Vertex(size / 2, -size / 2, -size / 2, r, g, b, 1.0f, 1.0f, -1.0f, -1.0f);
+	vertices[21] = Vertex(size / 2, size / 2, -size / 2, r, g, b, 1.0f, 1.0f, 1.0f, -1.0f);
+	vertices[22] = Vertex(size / 2, size / 2, size / 2, r, g, b, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[23] = Vertex(size / 2, -size / 2, size / 2, r, g, b, 1.0f, 1.0f, -1.0f, 1.0f);
 
 	m_vtx_buffer = _app->getVertexBuffer(vertex_tag, this);
 	m_idx_buffer = _app->getIndexBuffer("Cube", this);

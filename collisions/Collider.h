@@ -11,7 +11,9 @@ class GameObject;
 struct CollisionData
 {
 	Collider* other_object = nullptr;
-	Vector3 colision_center = Vector3::Zero;
+	//Vector3 colision_center = Vector3::Zero;
+	Vector3 collision_direction = Vector3::Zero;
+	float penetration = 0.0f;
 	bool did_collide = false;
 };
 

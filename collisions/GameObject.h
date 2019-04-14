@@ -36,9 +36,6 @@ protected:
 	Collider* m_collider = nullptr;
 	Geometry* m_geometry = nullptr;
 	Transform m_transform;
-
-	XMVECTOR rotDir = XMVectorSet(0, 0, 1, 1);
-	float rotation = 1;
 	std::unique_ptr<PhysicsBody> m_physics = nullptr;
 };
 

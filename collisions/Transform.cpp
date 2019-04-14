@@ -30,13 +30,15 @@ const Vector4 Transform::getQuaternion()
 {
 	XMFLOAT4X4 rot;
 	XMStoreFloat4x4(&rot, rotation_matrix);
-	float w = sqrt(1.0 + rot._11 + rot._22 + rot._33) / 2.0;
-	double w4 = (4.0 * w);
-	float x = (rot._32 - rot._23) / w4;
-	float y = (rot._13 - rot._31) / w4;
-	float z = (rot._21 - rot._12) / w4;
-
-	return Vector4(x, y, z, w);
+	Vector4 q = Vector4();
+	q.w = sqrt(max(0, 1 + rot._11 + rot._22 + rot._33)) / 2;
+	q.x = sqrt(max(0, 1 + rot._11 - rot._22 - rot._33)) / 2;
+	q.y = sqrt(max(0, 1 - rot._11 + rot._22 - rot._33)) / 2;
+	q.z = sqrt(max(0, 1 - rot._11 - rot._22 + rot._33)) / 2;
+	q.x *= (q.x * (rot._32 - rot._23)) < 0 ? -1 : 1;
+	q.y *= (q.y * (rot._13 - rot._31)) < 0 ? -1 : 1;
+	q.z *= (q.z * (rot._21 - rot._12)) < 0 ? -1 : 1;
+	return q;
 }
 
 XMMATRIX Transform::getWorldMatrix()
