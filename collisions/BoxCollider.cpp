@@ -56,7 +56,6 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 				b_projected[2] = 1;
 			}
 		}
-		float translation = min(abs(a_projected[0] - b_projected[1]), abs(b_projected[0] - a_projected[1]));
 		if (a_projected[0] >= b_projected[1] || a_projected[1] <= b_projected[0]
 			|| a_projected[2] < 0 || b_projected[2] < 0)
 		{
@@ -69,9 +68,12 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 			ret_false.did_collide = false;
 			return ret_false;
 		}
-		else if(translation < collision_data.penetration)
+		float a_diff = b_projected[1] - a_projected[0];
+		float b_diff = a_projected[1] - b_projected[0];
+		float penetration = min(a_diff, b_diff);
+		if (penetration < collision_data.penetration)
 		{
-			collision_data.penetration = translation;
+			collision_data.penetration = penetration;
 			collision_data.collision_direction = projection_axis;
 			collision_data.collision_direction.Normalize();
 		}
