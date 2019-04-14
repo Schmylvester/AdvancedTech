@@ -65,7 +65,7 @@ void GameObject::collision(CollisionData col, CollisionClassifier type)
 	{
 		if (m_physics != nullptr)
 		{
-			m_physics->addForceAtPoint(10.0f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
+			m_physics->addForceAtPoint(1.0f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
 		}
 	}
 }

@@ -62,7 +62,7 @@ void CollisionsScene::initObjects()
 	player->getTransform()->translate(0, 0, 0);
 	player->addCollider(new SphereCollider(player.get(), 1), &m_collision_manager, true);
 
-	for (int i = 0; i < 40; i++)
+	for (int i = 0; i < 150; i++)
 	{
 		scene_objects.push_back(std::make_unique<GameObject>());
 		scene_objects.back()->init(Shape::Sphere, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);

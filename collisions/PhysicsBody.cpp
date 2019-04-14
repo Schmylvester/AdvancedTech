@@ -13,6 +13,8 @@ PhysicsBody::PhysicsBody(Collider * _collider, Transform * _transform)
 
 void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 direction)
 {
+	//this does not work yet
+	return;
 	direction.Normalize();
 	if (dynamic_cast<BoxCollider*>(m_collider))
 	{
@@ -20,6 +22,32 @@ void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 
 	}
 	else if (dynamic_cast<SphereCollider*>(m_collider))
 	{
+		//distance from point of collision to its nearest face
+		float dist = (collision_point - m_obj_transform->getPos()).Length();
+		//lever arm angle of the force
+		Vector3 norm = collision_point - m_obj_transform->getPos();
+		norm.Normalize();
+		float dot = collision_point.Dot(norm);
+		float mag_a = collision_point.x * collision_point.x
+			+ collision_point.y * collision_point.y
+			+ collision_point.z * collision_point.z;
+		float mag_b = norm.x * norm.x
+			+ norm.y * norm.y
+			+ norm.z * norm.z;
+		float angle = acos(dot / sqrt(mag_a * mag_b));
+		//rotational force
+		float torque_force = force * dist * angle;
+		if (isnan(torque_force))
+			torque_force = 0.0f;
+
+		//get rotation direction
+		Vector3 rotation_direction = direction.Cross(m_obj_transform->getPos());
+		m_rotate_dir += rotation_direction;
+		m_rotate_dir.Normalize();
+		m_rotate_force += torque_force;
+
+		//the rest of the force goes into moving the object
+		m_move_force += direction * (force - torque_force);
 	}
 }
 

@@ -16,9 +16,9 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 
 	vertices = new Vertex[vertex_count];
 	Color c = Color(
-		0.5f + ((rand() % 32) / 64), 
-		0.5f + ((rand() % 32) / 64), 
-		0.5f + ((rand() % 32) / 64));
+		0.7f + ((rand() % 32) / 64), 
+		0.7f + ((rand() % 32) / 64), 
+		0.7f + ((rand() % 32) / 64));
 	vertices[0] = Vertex(0, radius, 0, c[0], c[1], c[2], c[3], 0, 1, 0);
 	int idx = 1;
 	for (int i = 1; i < stack_count; i++) {

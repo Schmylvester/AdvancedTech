@@ -138,6 +138,7 @@
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Quadrant.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="Quadrant.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SphereCollider.h" />
