@@ -21,7 +21,6 @@ public:
 private:
 	Vector3 getFaceNormal(int face);
 	void setFaces(int idx, int a, int b, int c, int d);
-	Vector3 quaternionByVector(Vector4 quat, Vector3 vect);
 	float getMidProjection(float a_min, float a_max, float b_min, float b_max);
 
 	int faces[6][4];

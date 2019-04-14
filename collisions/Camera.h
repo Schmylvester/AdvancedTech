@@ -10,6 +10,7 @@ public:
 
 	XMMATRIX getWVPMatrix(XMMATRIX world_matrix);
 	void move(float x, float y, float z);
+	void lookAt(Vector3 target);
 private:
 	XMMATRIX cam_view;
 	XMMATRIX cam_projection;

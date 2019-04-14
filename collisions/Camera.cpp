@@ -26,3 +26,9 @@ void Camera::move(float x, float y, float z)
 
 	cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
 }
+
+void Camera::lookAt(Vector3 target)
+{
+	cam_target = XMVectorSet(target.x, target.y, target.z, 1);
+	cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+}

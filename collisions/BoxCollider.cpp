@@ -35,27 +35,37 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	for (int face = 0; face < 6; face += 2)
 	{
 		Vector3 projectionAxis = getFaceNormal(face);
-		float a_projected[2] = { INFINITY, -INFINITY };
-		float b_projected[2] = { INFINITY, -INFINITY };
+		//projected floats are the min, the max, and a number that says if it is valid
+		float a_projected[3] = { INFINITY, -INFINITY, -1 };
+		float b_projected[3] = { INFINITY, -INFINITY, -1 };
 		for (int vert = 0; vert < 8; vert++)
 		{
 			float aVert = m_current_vertices[vert].Dot(projectionAxis);
 			float bVert = col->getVert(vert).Dot(projectionAxis);
-			a_projected[0] = min(a_projected[0], aVert);
-			a_projected[1] = max(a_projected[1], aVert);
-			b_projected[0] = min(b_projected[0], bVert);
-			b_projected[1] = max(b_projected[1], bVert);
+			if (!isnan(aVert))
+			{
+				a_projected[0] = min(a_projected[0], aVert);
+				a_projected[1] = max(a_projected[1], aVert);
+				a_projected[2] = 1;
+			}
+			if (!isnan(bVert))
+			{
+				b_projected[0] = min(b_projected[0], bVert);
+				b_projected[1] = max(b_projected[1], bVert);
+				b_projected[2] = 1;
+			}
 		}
 		if (a_projected[0] >= b_projected[1] || a_projected[1] <= b_projected[0]
-			|| isnan(a_projected[0]) || isnan(a_projected[1])
-			|| isnan(b_projected[0]) || isnan(b_projected[1]))
+			|| a_projected[2] < 0 || b_projected[2] < 0)
 		{
 			int on_list_idx = searchList(&(colliding_this_frame), col);
 			if (on_list_idx != -1)
 			{
 				colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 			}
-			return CollisionData();
+			CollisionData ret_false;
+			ret_false.did_collide = false;
+			return ret_false;
 		}
 		else
 		{
@@ -120,11 +130,6 @@ void BoxCollider::setFaces(int idx, int a, int b, int c, int d)
 	faces[idx][3] = d;
 }
 
-Vector3 BoxCollider::quaternionByVector(Vector4 quat, Vector3 vect)
-{
-	return Vector3();
-}
-
 void BoxCollider::updateVerts()
 {
 	for (int i = 0; i < 8; i++)
@@ -138,7 +143,8 @@ void BoxCollider::updateVerts()
 		m_current_vertices[i] += obj_transform->getPos();
 
 		Vector3 dir = m_current_vertices[i] - obj_transform->getPos();
-		dir = XMQuaternionMultiply(dir, obj_transform->getQuaternion());
+		Vector4 rot = obj_transform->getQuaternion();
+		dir = XMQuaternionMultiply(dir, rot);
 		m_current_vertices[i] = dir + obj_transform->getPos();
 	}
 }

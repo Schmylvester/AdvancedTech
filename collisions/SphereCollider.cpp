@@ -4,7 +4,9 @@
 
 CollisionData SphereCollider::checkIntersection(BoxCollider * col)
 {
-	return CollisionData();
+	CollisionData ret_false;
+	ret_false.did_collide = false;
+	return ret_false;
 }
 
 CollisionData SphereCollider::checkIntersection(SphereCollider * col)
@@ -32,7 +34,9 @@ CollisionData SphereCollider::checkIntersection(SphereCollider * col)
 		{
 			colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 		}
-		return CollisionData();
+		CollisionData ret_false;
+		ret_false.did_collide = false;
+		return ret_false;
 	}
 }
 

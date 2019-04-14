@@ -10,9 +10,13 @@ void CollisionManager::checkCollisions()
 			CollisionData col_data = collisionObjects[i]->checkIntersection(collisionObjects[j]);
 			if (col_data.did_collide)
 			{
-				collisionObjects[i]->addCol(col_data);
-				col_data.other_object = collisionObjects[i];
-				collisionObjects[j]->addCol(col_data);
+				col_data = collisionObjects[i]->checkIntersection(collisionObjects[j]);
+				if (col_data.did_collide)
+				{
+					collisionObjects[j]->addCol(col_data);
+					col_data.other_object = collisionObjects[j];
+					collisionObjects[i]->addCol(col_data);
+				}
 			}
 		}
 	}

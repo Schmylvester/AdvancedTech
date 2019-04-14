@@ -46,7 +46,7 @@ void CollisionsScene::initObjects()
 
 	player = std::make_unique<Player>(&m_input);
 	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	player->getTransform()->translate(0, 5.1f, 0);
+	player->getTransform()->translate(3, 0, 0);
 	player->addCollider(new BoxCollider(player.get(), Vector3::One, Vector3::Zero), &m_collision_manager, true);
 	
 	scene_objects.push_back(std::make_unique<GameObject>());
