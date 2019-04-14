@@ -1,6 +1,8 @@
 #include "PhysicsBody.h"
 #include "Transform.h"
 #include "Collider.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
 #include "GameObject.h"
 
 PhysicsBody::PhysicsBody(Collider * _collider, Transform * _transform)
@@ -12,6 +14,17 @@ PhysicsBody::PhysicsBody(Collider * _collider, Transform * _transform)
 void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 direction)
 {
 	direction.Normalize();
+	if (dynamic_cast<BoxCollider*>(m_collider))
+	{
+		addForceAtBoxPoint(force, collision_point, direction);
+	}
+	else if (dynamic_cast<SphereCollider*>(m_collider))
+	{
+	}
+}
+
+void PhysicsBody::addForceAtBoxPoint(float force, Vector3 collision_point, Vector3 dir)
+{
 	Vector3 face_hit = Vector3::Zero;
 	Vector3 face_inv_normal = Vector3::Zero;
 	m_collider->getClosestFace(collision_point, face_hit, face_inv_normal);
@@ -30,16 +43,19 @@ void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 
 	float angle = acos(dot / sqrt(mag_a * mag_b));
 	//rotational force
 	float torque_force = force * dist * angle;
+	if (isnan(torque_force))
+		torque_force = 0.0f;
 
 	//get rotation direction
-	Vector3 rotation_direction = direction.Cross(m_obj_transform->getPos());
+	Vector3 rotation_direction = dir.Cross(m_obj_transform->getPos());
 	m_rotate_dir += rotation_direction;
 	m_rotate_dir.Normalize();
 	m_rotate_force += torque_force;
 
 	//the rest of the force goes into moving the object
-	m_move_force += direction * (force - torque_force);
+	m_move_force += dir * (force - torque_force);
 }
+
 
 void PhysicsBody::tick(float dt)
 {

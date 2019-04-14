@@ -15,6 +15,7 @@ void CollisionManager::checkCollisions()
 				{
 					collisionObjects[j]->addCol(col_data);
 					col_data.other_object = collisionObjects[j];
+					col_data.collision_direction *= -1;
 					collisionObjects[i]->addCol(col_data);
 				}
 			}

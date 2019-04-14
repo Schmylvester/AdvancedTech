@@ -19,7 +19,8 @@ CollisionData SphereCollider::checkIntersection(SphereCollider * col)
 	{
 		CollisionData return_data;
 		return_data.did_collide = true;
-		return_data.collision_direction = a_pos - b_pos;
+		return_data.collision_direction = b_pos - a_pos;
+		return_data.penetration = (collide_dist - dist);
 		return_data.other_object = col;
 		return return_data;
 	}

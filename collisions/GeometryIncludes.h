@@ -5,3 +5,4 @@
 #include "Plane.h"
 #include "Geometry.h"
 #include "Terrain.h"
+#include "Sphere.h"

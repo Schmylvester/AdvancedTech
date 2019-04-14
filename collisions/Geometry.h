@@ -15,6 +15,7 @@ enum class Shape
 	Pyramid,
 	Plane,
 	Frustum,
+	Sphere,
 };
 
 class Geometry

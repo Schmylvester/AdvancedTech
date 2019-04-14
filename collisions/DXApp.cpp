@@ -358,14 +358,16 @@ float DXApp::getDeltaTime()
 
 ID3D11Buffer* DXApp::getIndexBuffer(std::string id, Geometry* geo)
 {
+	//search to see whether this index buffer exists already
 	for (IndexBuffer& ib : m_geo_index_buffers)
 	{
 		if (ib.id == id)
 		{
+			//return it if it does
 			return ib.buffer;
 		}
 	}
-
+	//create it if it doesn't
 	IndexBuffer new_buffer;
 	new_buffer.id = id;
 
@@ -392,13 +394,17 @@ ID3D11Buffer* DXApp::getIndexBuffer(std::string id, Geometry* geo)
 
 ID3D11Buffer * DXApp::getVertexBuffer(std::string id, Geometry * geo)
 {
+	//searches vertex buffers to see if one with this tag has already been created
 	for (VertexBuffer& vb : m_vertex_buffers)
 	{
 		if (vb.id == id)
 		{
+			//if it exists, return it
 			return vb.buffer;
 		}
 	}
+
+	//if it doesn't exist, make a new one
 	VertexBuffer vb;
 	vb.id = id;
 

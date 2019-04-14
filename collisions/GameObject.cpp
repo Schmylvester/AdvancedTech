@@ -27,6 +27,9 @@ void GameObject::init(Shape shape, DXApp * _app, CBPerObject * _cb, Camera * cam
 	case Shape::Frustum:
 		m_geometry = new Frustum();
 		break;
+	case Shape::Sphere:
+		m_geometry = new Sphere();
+		break;
 	default:
 		break;
 	}
@@ -55,14 +58,6 @@ void GameObject::collision(CollisionData col, CollisionClassifier type)
 {
 	if (type == CollisionClassifier::Ongoing_Collision)
 	{
-		//calculate whether this is the forwards or backwards direction to the one we need
-		Vector3 dir_to_object = col.other_object->getTransform()->getPos() - m_transform.getPos();
-		Vector3 dir_from_object = m_transform.getPos() - col.other_object->getTransform()->getPos();
-		if (col.collision_direction.Dot(dir_to_object) > col.collision_direction.Dot(dir_from_object))
-		{
-			col.collision_direction *= -1;
-		}
-
 		//move out of the object
 		m_transform.translate(col.collision_direction * col.penetration);
 	}
@@ -70,7 +65,7 @@ void GameObject::collision(CollisionData col, CollisionClassifier type)
 	{
 		if (m_physics != nullptr)
 		{
-			//m_physics->addForceAtPoint(0.7f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
+			m_physics->addForceAtPoint(10.0f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
 		}
 	}
 }
