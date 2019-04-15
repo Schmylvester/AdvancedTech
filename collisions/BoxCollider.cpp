@@ -37,7 +37,7 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	for (int i = 0; i < 3; i++)
 	{
 		projection_axes[i] = getFaceNormal(i * 2);
-		projection_axes[i + 3] = col->getFaceNormal(0);
+		projection_axes[i + 3] = col->getFaceNormal(i * 2);
 	}
 	for (int i = 6; i < 15; i++)
 	{
@@ -45,6 +45,23 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 		int b_idx = (i / 3) + 1;
 		projection_axes[i] = projection_axes[a_idx] * projection_axes[b_idx];
 	}
+	Transform a_t = *getTransform();
+	Transform b_t = *col->getTransform();
+	for (int axis = 0; axis < 15; axis++)
+	{
+		if (checkProjectionIntersect(a_t.getPos(), b_t.getPos(), a_t.getScale(),
+			b_t.getScale(), projection_axes[0], projection_axes[1], projection_axes[2],
+			projection_axes[3], projection_axes[4], projection_axes[5],
+			projection_axes[axis], collision_data))
+		{
+			collision_data.penetration = 0;
+			return collision_data;
+		}
+	}
+
+	collision_data.penetration = 1;
+	collision_data.did_collide = true;
+	return collision_data; //below here is what i tried before
 	for (int axis = 0; axis < 15; axis++)
 	{
 		//projected floats are the min, the max, and a number that says if it is valid
@@ -78,15 +95,22 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 bool BoxCollider::checkProjectionIntersect(Vector3 a_pos, Vector3 b_pos,
 	Vector3 a_size, Vector3 b_size, Vector3 a_x_proj, Vector3 a_y_proj,
 	Vector3 a_z_proj, Vector3 b_x_proj, Vector3 b_y_proj,
-	Vector3 b_z_proj, Vector3 projection)
+	Vector3 b_z_proj, Vector3 projection, CollisionData& col_output)
 {
-	return (abs((b_pos - a_pos).Length())) >
-		abs((a_size.x / 2 * a_x_proj).Dot(projection)) +
-		abs((a_size.y / 2 * a_y_proj).Dot(projection)) +
-		abs((a_size.z / 2 * a_z_proj).Dot(projection)) +
-		abs((b_size.x / 2 * b_x_proj).Dot(projection)) +
-		abs((b_size.y / 2 * b_y_proj).Dot(projection)) +
-		abs((b_size.z / 2 * b_z_proj).Dot(projection));
+	float result = (abs((b_pos - a_pos).Length()));
+	float ax = abs((a_size.x / 2 * a_x_proj).Dot(projection));
+	float ay = abs((a_size.y / 2 * a_y_proj).Dot(projection));
+	float az = abs((a_size.z / 2 * a_z_proj).Dot(projection));
+	float bx = abs((b_size.x / 2 * b_x_proj).Dot(projection));
+	float by = abs((b_size.y / 2 * b_y_proj).Dot(projection));
+	float bz = abs((b_size.z / 2 * b_z_proj).Dot(projection));
+	float sum = (ax + ay + az + bx + by + bz);
+	if (result < col_output.penetration)
+	{
+		col_output.penetration = result;
+		col_output.collision_direction = projection;
+	}
+	return  result - sum > 0;
 }
 
 bool BoxCollider::checkProjectionIntersect(Vector3 projection, BoxCollider* other, float* a_projected, float* b_projected)

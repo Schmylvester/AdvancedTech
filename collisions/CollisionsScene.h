@@ -14,6 +14,9 @@ public:
 	virtual void drawScene(float dt) override;
 	virtual void initObjects() override;
 private:
+	void spheres();
+	void cubes();
+
 	std::unique_ptr<Player> player = nullptr;
 	std::vector<std::unique_ptr<GameObject>> scene_objects;
 	

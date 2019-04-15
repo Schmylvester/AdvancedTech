@@ -45,18 +45,13 @@ void CollisionsScene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	//player = std::make_unique<Player>(&m_input);
-	//player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	//player->getTransform()->translate(0, 0, 0);
-	//player->addCollider(new BoxCollider(player.get()), &m_collision_manager, true);
+	//box colliders don't work so I'm using spheres
+	cubes();
+	//spheres();
+}
 
-	//scene_objects.push_back(std::make_unique<GameObject>());
-	//scene_objects.back()->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	//scene_objects.back()->getTransform()->translate((rand() % 10) - 5, (rand() % 10) - 5, (rand() % 10) - 5);
-	//scene_objects.back()->addCollider(new BoxCollider(scene_objects.back().get()), &m_collision_manager, false);
-
-	//box colliders don't work so I'm using sphere colliders
-
+void CollisionsScene::spheres()
+{
 	player = std::make_unique<Player>(&m_input);
 	player->init(Shape::Sphere, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(0, 0, -13);
@@ -69,4 +64,19 @@ void CollisionsScene::initObjects()
 		scene_objects.back()->getTransform()->translate(3 * (i % 4), 0, 3 * (i / 4));
 		scene_objects.back()->addCollider(new SphereCollider(scene_objects.back().get(), 1), &m_collision_manager, true);
 	}
+}
+
+void CollisionsScene::cubes()
+{
+	player = std::make_unique<Player>(&m_input);
+	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	player->getTransform()->translate(0, 0, 0);
+	player->getTransform()->rotate(XMVectorSet(0, 0, 1, 1), rand());
+	player->addCollider(new BoxCollider(player.get()), &m_collision_manager, true);
+
+	scene_objects.push_back(std::make_unique<GameObject>());
+	scene_objects.back()->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	scene_objects.back()->getTransform()->translate((rand() % 10) - 5, (rand() % 10) - 5, (rand() % 10) - 5);
+	scene_objects.back()->getTransform()->rotate(XMVectorSet(1, 0, 0, 1), rand());
+	scene_objects.back()->addCollider(new BoxCollider(scene_objects.back().get()), &m_collision_manager, false);
 }
