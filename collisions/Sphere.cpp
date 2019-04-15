@@ -11,8 +11,8 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 	vertex_count = 2 + ((stack_count - 1) * (slice_count + 1));
 	index_count = (6 * slice_count) + (6 * (stack_count - 2) * slice_count);
 	triangle_count = index_count / 3;
-	float phiStep = M_PI / stack_count;
-	float thetaStep = 2.0f * M_PI / slice_count;
+	float phi_step = M_PI / stack_count;
+	float theta_step = 2.0f * M_PI / slice_count;
 
 	vertices = new Vertex[vertex_count];
 	float c_r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -22,13 +22,13 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 	vertices[0] = Vertex(0, radius, 0, c[0], c[1], c[2], c[3], 0, 1, 0);
 	int idx = 1;
 	for (int i = 1; i < stack_count; i++) {
-		float phi = i * phiStep;
+		float phi = i * phi_step;
 		for (int j = 0; j <= slice_count; j++) {
-			float theta = j * thetaStep;
+			float theta = j * theta_step;
 			Vector3 p = Vector3(
-				(radius*sin(phi)*cos(theta)),
-				(radius*cos(phi)),
-				(radius* sin(phi)*sin(theta)));
+				(radius *sin(phi) * cos(theta)),
+				(radius *cos(phi)),
+				(radius * sin(phi) * sin(theta)));
 			Vector3 n = p;
 			n.Normalize();
 			c = randomiseColour(c);
@@ -74,7 +74,7 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 
 Color Sphere::randomiseColour(Color in_colour)
 {
-	if (rand() % 2 == 0)
+	if (rand() % 60 > 0)
 		return in_colour;
 	float r;
 	float g;

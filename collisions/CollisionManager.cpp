@@ -19,16 +19,12 @@ void CollisionManager::checkCollisions()
 				CollisionData col_data = collisionObjects[i]->checkIntersection(collisionObjects[j]);
 				if (col_data.did_collide)
 				{
-					col_data = collisionObjects[i]->checkIntersection(collisionObjects[j]);
-					if (col_data.did_collide)
-					{
-						collisionObjects[j]->addCol(col_data);
-						col_data.other_object = collisionObjects[j];
-						col_data.collision_direction *= -1;
-						collisionObjects[i]->addCol(col_data);
-						objectMoved(collisionObjects[i]);
-						objectMoved(collisionObjects[j]);
-					}
+					collisionObjects[j]->addCol(col_data);
+					col_data.other_object = collisionObjects[j];
+					col_data.collision_direction *= -1;
+					collisionObjects[i]->addCol(col_data);
+					objectMoved(collisionObjects[i]);
+					objectMoved(collisionObjects[j]);
 				}
 			}
 		}

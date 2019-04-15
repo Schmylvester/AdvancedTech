@@ -33,31 +33,24 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	CollisionData collision_data;
 	collision_data.other_object = col;
 	collision_data.penetration = INFINITY;
-	for (int face = 0; face < 6; face += 2)
+	Vector3 projection_axes[15];
+	for (int i = 0; i < 3; i++)
 	{
-		Vector3 projection_axis = getFaceNormal(face);
+		projection_axes[i] = getFaceNormal(i * 2);
+		projection_axes[i + 3] = col->getFaceNormal(0);
+	}
+	for (int i = 6; i < 15; i++)
+	{
+		int a_idx = i % 3;
+		int b_idx = (i / 3) + 1;
+		projection_axes[i] = projection_axes[a_idx] * projection_axes[b_idx];
+	}
+	for (int axis = 0; axis < 15; axis++)
+	{
 		//projected floats are the min, the max, and a number that says if it is valid
 		float a_projected[3] = { INFINITY, -INFINITY, -1 };
 		float b_projected[3] = { INFINITY, -INFINITY, -1 };
-		for (int vert = 0; vert < 8; vert++)
-		{
-			float aVert = m_current_vertices[vert].Dot(projection_axis);
-			float bVert = col->getVert(vert).Dot(projection_axis);
-			if (!isnan(aVert))
-			{
-				a_projected[0] = min(a_projected[0], aVert);
-				a_projected[1] = max(a_projected[1], aVert);
-				a_projected[2] = 1;
-			}
-			if (!isnan(bVert))
-			{
-				b_projected[0] = min(b_projected[0], bVert);
-				b_projected[1] = max(b_projected[1], bVert);
-				b_projected[2] = 1;
-			}
-		}
-		if (a_projected[0] >= b_projected[1] || a_projected[1] <= b_projected[0]
-			|| a_projected[2] < 0 || b_projected[2] < 0)
+		if (checkProjectionIntersect(projection_axes[axis], col, a_projected, b_projected))
 		{
 			int on_list_idx = searchList(&(colliding_this_frame), col);
 			if (on_list_idx != -1)
@@ -74,12 +67,51 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 		if (penetration < collision_data.penetration)
 		{
 			collision_data.penetration = penetration;
-			collision_data.collision_direction = projection_axis;
-			collision_data.collision_direction.Normalize();
+			collision_data.collision_direction = projection_axes[axis];
 		}
 	}
 	collision_data.did_collide = true;
+	collision_data.collision_direction.Normalize();
 	return collision_data;
+}
+
+bool BoxCollider::checkProjectionIntersect(Vector3 a_pos, Vector3 b_pos,
+	Vector3 a_size, Vector3 b_size, Vector3 a_x_proj, Vector3 a_y_proj,
+	Vector3 a_z_proj, Vector3 b_x_proj, Vector3 b_y_proj,
+	Vector3 b_z_proj, Vector3 projection)
+{
+	return (abs((b_pos - a_pos).Length())) >
+		abs((a_size.x / 2 * a_x_proj).Dot(projection)) +
+		abs((a_size.y / 2 * a_y_proj).Dot(projection)) +
+		abs((a_size.z / 2 * a_z_proj).Dot(projection)) +
+		abs((b_size.x / 2 * b_x_proj).Dot(projection)) +
+		abs((b_size.y / 2 * b_y_proj).Dot(projection)) +
+		abs((b_size.z / 2 * b_z_proj).Dot(projection));
+}
+
+bool BoxCollider::checkProjectionIntersect(Vector3 projection, BoxCollider* other, float* a_projected, float* b_projected)
+{
+	for (int vert = 0; vert < 8; vert++)
+	{
+		float aVert = m_current_vertices[vert].Dot(projection);
+		float bVert = other->getVert(vert).Dot(projection);
+		if (!isnan(aVert))
+		{
+			a_projected[0] = min(a_projected[0], aVert);
+			a_projected[1] = max(a_projected[1], aVert);
+			a_projected[2] = 1;
+		}
+		if (!isnan(bVert))
+		{
+			b_projected[0] = min(b_projected[0], bVert);
+			b_projected[1] = max(b_projected[1], bVert);
+			b_projected[2] = 1;
+		}
+	}
+	return (a_projected[0] >= b_projected[1]
+		|| a_projected[1] <= b_projected[0]
+		|| a_projected[2] < 0
+		|| b_projected[2] < 0);
 }
 
 CollisionData BoxCollider::checkIntersection(SphereCollider * col)
@@ -87,7 +119,7 @@ CollisionData BoxCollider::checkIntersection(SphereCollider * col)
 	return CollisionData();
 }
 
-BoxCollider::BoxCollider(GameObject * _game_object, Vector3 size, Vector3 offset)
+BoxCollider::BoxCollider(GameObject * _game_object)
 	: Collider(_game_object)
 {
 	setFaces(0, 0, 2, 3, 1);
@@ -107,8 +139,7 @@ BoxCollider::BoxCollider(GameObject * _game_object, Vector3 size, Vector3 offset
 				float v_y = (1 - (y * 2));
 				float v_z = (1 - (z * 2));
 				int i = (x * 4) + (y * 2) + z;
-				m_vertices[i] = Vector3(v_x * size.x, v_y * size.y, v_z * size.z) * 0.5f;
-				m_vertices[i] += offset;
+				m_vertices[i] = Vector3(v_x, v_y, v_z) *0.5f;
 			}
 		}
 	}
@@ -173,6 +204,7 @@ Vector3 BoxCollider::getFaceNormal(int face)
 	Vector3 a_normal = verts[0].Cross(verts[2]);
 	Vector3 b_normal = verts[1].Cross(verts[3]);
 	Vector3 normal = a_normal.Cross(b_normal);
+	normal.Normalize();
 	return normal;
 }
 
