@@ -45,28 +45,28 @@ void CollisionsScene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	player = std::make_unique<Player>(&m_input);
-	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	player->getTransform()->translate(0, 0, 0);
-	player->addCollider(new BoxCollider(player.get()), &m_collision_manager, true);
+	//player = std::make_unique<Player>(&m_input);
+	//player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	//player->getTransform()->translate(0, 0, 0);
+	//player->addCollider(new BoxCollider(player.get()), &m_collision_manager, true);
 
-	scene_objects.push_back(std::make_unique<GameObject>());
-	scene_objects.back()->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	scene_objects.back()->getTransform()->translate((rand() % 10) - 5, (rand() % 10) - 5, (rand() % 10) - 5);
-	scene_objects.back()->addCollider(new BoxCollider(scene_objects.back().get()), &m_collision_manager, false);
+	//scene_objects.push_back(std::make_unique<GameObject>());
+	//scene_objects.back()->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	//scene_objects.back()->getTransform()->translate((rand() % 10) - 5, (rand() % 10) - 5, (rand() % 10) - 5);
+	//scene_objects.back()->addCollider(new BoxCollider(scene_objects.back().get()), &m_collision_manager, false);
 
 	//box colliders don't work so I'm using sphere colliders
 
-	//player = std::make_unique<Player>(&m_input);
-	//player->init(Shape::Sphere, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	//player->getTransform()->translate(0, 0, -13);
-	//player->addCollider(new SphereCollider(player.get(), 1), &m_collision_manager, true);
+	player = std::make_unique<Player>(&m_input);
+	player->init(Shape::Sphere, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+	player->getTransform()->translate(0, 0, -13);
+	player->addCollider(new SphereCollider(player.get(), 1), &m_collision_manager, true);
 
-	//for (int i = 0; i < 15; i++)
-	//{
-	//	scene_objects.push_back(std::make_unique<GameObject>());
-	//	scene_objects.back()->init(Shape::Sphere, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
-	//	scene_objects.back()->getTransform()->translate(3 * (i % 4), 0, 3 * (i / 4));
-	//	scene_objects.back()->addCollider(new SphereCollider(scene_objects.back().get(), 1), &m_collision_manager, true);
-	//}
+	for (int i = 0; i < 15; i++)
+	{
+		scene_objects.push_back(std::make_unique<GameObject>());
+		scene_objects.back()->init(Shape::Sphere, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
+		scene_objects.back()->getTransform()->translate(3 * (i % 4), 0, 3 * (i / 4));
+		scene_objects.back()->addCollider(new SphereCollider(scene_objects.back().get(), 1), &m_collision_manager, true);
+	}
 }
