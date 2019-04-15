@@ -1,83 +1,125 @@
 #include "Cube.h"
-#include "ObjectRenderer.h"
 #include "DXApp.h"
-#include "ColliderIncludes.h"
+#include "Camera.h"
 
-Cube::Cube(DXApp * app, float colour[4])
+void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject* _owner)
 {
-	m_transform = new Transform();
-	m_render = new ObjectRenderer(app, colour, m_transform->getMatrix(), app->getLoader());
-	//if (rand() % 2 == 0)
-	//	m_physics = new BoxCollider(m_transform);
-	//else
-		m_physics = new SphereCollider(m_transform, m_render);
-	for (int i = 0; i < 8; i++)
+	triangle_count = 12;
+	index_count = triangle_count * 3;
+	vertex_count = 24;
+	float size = 2.0f;
+
+	indices = new DWORD[index_count]
 	{
-		m_corners[i].x = (i < 4) ? -1 : 1;
-		m_corners[i].x *= m_transform->getScale().x;
-		m_corners[i].y = ((i / 2) % 2) == 0 ? -1 : 1;
-		m_corners[i].y *= m_transform->getScale().y;
-		m_corners[i].z = (i % 2 == 0) ? -1 : 1;
-		m_corners[i].z *= m_transform->getScale().z;
+		// Front Face
+		0,  1,  2,
+		0,  2,  3,
 
-		m_render->updateVertices(i, m_corners[i].x, m_corners[i].y, m_corners[i].z);
-		setRenderTriangles(true);
+		// Back Face
+		4,  5,  6,
+		4,  6,  7,
+
+		// Top Face
+		8,  9, 10,
+		8, 10, 11,
+
+		// Bottom Face
+		12, 13, 14,
+		12, 14, 15,
+
+		// Left Face
+		16, 17, 18,
+		16, 18, 19,
+
+		// Right Face
+		20, 21, 22,
+		20, 22, 23
+	};
+
+	vertices = new Vertex[vertex_count];
+	float r, g, b;
+	std::string vertex_tag = "Cube";
+	colour = rand() % 6;
+	switch (colour)
+	{
+	case 0:
+		r = 0.8f;
+		b = 0.3f;
+		g = 0.3f;
+		vertex_tag = "Red Cube";
+		break;
+	case 1:
+		r = 0.3f;
+		b = 0.3f;
+		g = 0.8f;
+		vertex_tag = "Green Cube";
+		break;
+	case 2:
+		r = 0.3f;
+		b = 0.8f;
+		g = 0.3f;
+		vertex_tag = "Blue Cube";
+		break;
+	case 3:
+		r = 0.8f;
+		b = 0.8f;
+		g = 0.3f;
+		vertex_tag = "Magenta Cube";
+		break;
+	case 4:
+		r = 0.8f;
+		b = 0.3f;
+		g = 0.8f;
+		vertex_tag = "Yellow Cube";
+		break;
+	case 5:
+		r = 0.3f;
+		b = 0.8f;
+		g = 0.8f;
+		vertex_tag = "Cyan Cube";
+		break;
+	default:
+		break;
 	}
-}
 
-Cube::~Cube()
-{
-	Memory::SafeDelete(m_physics);
-	Memory::SafeDelete(m_render);
-	Memory::SafeDelete(m_transform);
-}
+	// Front Face
+	vertices[0] = Vertex(-size / 2, -size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, -1.0f, -1.0f, -1.0f);
+	vertices[1] = Vertex(-size / 2, size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[2] = Vertex(size / 2, size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, 1.0f, 1.0f, -1.0f);
+	vertices[3] = Vertex(size / 2, -size / 2, -size / 2, r * 1.2f, g * 1.2f, b * 1.2f, 1.0f, 1.0f, -1.0f, -1.0f);
 
-void Cube::draw()
-{
-	m_transform->update();
-	for(int i = 0; i < 8; i++)
-		m_render->updateVertices(i, m_corners[i].x, m_corners[i].y, m_corners[i].z);
-	setRenderTriangles(false);
-	m_render->draw();
-}
+	// Back Face
+	vertices[4] = Vertex(-size / 2, -size / 2, size / 2, r * 1.2f, g, b, 1.0f, -1.0f, -1.0f, 1.0f);
+	vertices[5] = Vertex(size / 2, -size / 2, size / 2, r * 1.2f, g, b, 1.0f, 1.0f, -1.0f, 1.0f);
+	vertices[6] = Vertex(size / 2, size / 2, size / 2, r * 1.2f, g, b, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[7] = Vertex(-size / 2, size / 2, size / 2, r * 1.2f, g, b, 1.0f, -1.0f, 1.0f, 1.0f);
 
-void Cube::tick(float dt)
-{
-	m_physics->tick(dt);
-}
+	// Top Face
+	vertices[8] = Vertex(-size / 2, size / 2, -size / 2, r, g * 1.2f, b, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[9] = Vertex(-size / 2, size / 2, size / 2, r, g * 1.2f, b, 1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[10] = Vertex(size / 2, size / 2, size / 2, r, g * 1.2f, b, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[11] = Vertex(size / 2, size / 2, -size / 2, r, g * 1.2f, b, 1.0f, 1.0f, 1.0f, -1.0f);
 
-void Cube::move(float x, float y, float z)
-{
-	m_transform->move(x, y, z);
-}
+	// Bottom Face
+	vertices[12] = Vertex(-size / 2, -size / 2, -size / 2, r, g, b * 1.2f, 1.0f, -1.0f, -1.0f, -1.0f);
+	vertices[13] = Vertex(size / 2, -size / 2, -size / 2, r, g, b * 1.2f, 1.0f, 1.0f, -1.0f, -1.0f);
+	vertices[14] = Vertex(size / 2, -size / 2, size / 2, r, g, b * 1.2f, 1.0f, 1.0f, -1.0f, 1.0f);
+	vertices[15] = Vertex(-size / 2, -size / 2, size / 2, r, g, b * 1.2f, 1.0f, -1.0f, -1.0f, 1.0f);
 
-void Cube::rotate(char axis, float rot)
-{
-	m_transform->rotate(axis, rot);
-}
+	// Left Face
+	vertices[16] = Vertex(-size / 2, -size / 2, size / 2, r * 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, -1.0f, 1.0f);
+	vertices[17] = Vertex(-size / 2, size / 2, size / 2, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, 1.0f, 1.0f);
+	vertices[18] = Vertex(-size / 2, size / 2, -size / 2, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, 1.0f, -1.0f);
+	vertices[19] = Vertex(-size / 2, -size / 2, -size / 2, r* 0.8f, g* 0.8f, b* 0.8f, 1.0f, -1.0f, -1.0f, -1.0f);
 
-void Cube::setScl(float x, float y, float z)
-{
-	m_transform->setScl(x, y, z);
-}
+	// Right Face
+	vertices[20] = Vertex(size / 2, -size / 2, -size / 2, r, g, b, 1.0f, 1.0f, -1.0f, -1.0f);
+	vertices[21] = Vertex(size / 2, size / 2, -size / 2, r, g, b, 1.0f, 1.0f, 1.0f, -1.0f);
+	vertices[22] = Vertex(size / 2, size / 2, size / 2, r, g, b, 1.0f, 1.0f, 1.0f, 1.0f);
+	vertices[23] = Vertex(size / 2, -size / 2, size / 2, r, g, b, 1.0f, 1.0f, -1.0f, 1.0f);
 
-Collider * Cube::getPhysics()
-{
-	return m_physics;
-}
+	m_vtx_buffer = _app->getVertexBuffer(vertex_tag, this);
+	m_idx_buffer = _app->getIndexBuffer("Cube", this);
 
-void Cube::setRenderTriangles(bool init)
-{
-	m_render->setTriangleValues(0, 1, 7, 5, init);
-	m_render->setTriangleValues(1, 3, 7, 1, init);
-	m_render->setTriangleValues(2, 5, 7, 4, init);
-	m_render->setTriangleValues(3, 4, 7, 6, init);
-	m_render->setTriangleValues(4, 6, 7, 3, init);
-	m_render->setTriangleValues(5, 4, 6, 0, init);
-	m_render->setTriangleValues(6, 0, 6, 2, init);
-	m_render->setTriangleValues(7, 2, 6, 3, init);
-	m_render->setTriangleValues(8, 0, 2, 3, init);
-	m_render->setTriangleValues(9, 3, 1, 0, init);
-	m_render->setTriangleValues(10, 5, 4, 1, init);
-	m_render->setTriangleValues(11, 1, 4, 0, init);
+	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 }

@@ -1,35 +1,15 @@
 #pragma once
 #include "Geometry.h"
-#include "Transform.h"
 
-using namespace DirectX::SimpleMath;
-
-class DXApp;
-class ObjectRenderer;
-class Collider;
-
-class Cube
+class Cube : public Geometry
 {
 public:
-	Cube(DXApp * app, float colour[4]);
-	~Cube();
+	Cube() = default;
+	virtual ~Cube() = default;
 
-	void draw();
-	void tick(float dt);
+	virtual void init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject* _owner) override;
+	void setColour(int to) { colour = to; }
 
-	void move(float x, float y, float z);
-	void rotate(char axis, float rot);
-
-	void setScl(float x, float y, float z);
-
-	Collider* getPhysics();
-	Transform* getTransform() { return m_transform; }
 private:
-	Transform* m_transform;
-
-	Vector3 m_corners[8];
-	ObjectRenderer* m_render;
-	Collider* m_physics;
-	void setRenderTriangles(bool init);
+	int colour = 0;
 };
-

@@ -1,231 +1,159 @@
 #include "DXApp.h"
+#include "Cube.h"
 
-namespace
+#pragma region StuffICanLeaveAlove
+
+void errorBox(LPCSTR message);
+bool DXApp::loader_thread_active = false;
+
+bool DXApp::initDirectX3D(HINSTANCE h_instance)
 {
-	DXApp* gp_app = nullptr;
-}
+	HRESULT hr;
 
-LRESULT CALLBACK MainWindProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
-{
-	if (gp_app)
-	{
-		return gp_app->msgProc(hwnd, msg, w_param, l_param);
-	}
-	return DefWindowProc(hwnd, msg, w_param, l_param);
-}
+	createDevice();
 
-DXApp::DXApp(HINSTANCE h_instance)
-{
-	m_h_app_instance = h_instance;
-	m_h_app_wnd = NULL;
-	m_app_title = "UWE Bad Movies society is best society.";
-	m_wnd_style = WS_OVERLAPPEDWINDOW;
-	gp_app = this;
+	ID3D11Texture2D* back_buffer;
+	hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&back_buffer);
 
-	m_dev = nullptr;
-	m_dev_con = nullptr;
-	m_swap_chain = nullptr;
-	m_render_target_view = nullptr;;
-}
+	hr = m_device->CreateRenderTargetView(back_buffer, NULL, &m_rt_view);
+	Memory::SafeRelease(back_buffer);
 
-
-DXApp::~DXApp()
-{
-	if (m_dev_con)
-	{
-		m_dev_con->ClearState();
-	}
-	Memory::SafeRelease(m_render_target_view);
-	Memory::SafeRelease(m_swap_chain);
-	Memory::SafeRelease(m_dev_con);
-	Memory::SafeRelease(m_dev);
-	Memory::SafeRelease(m_constant_buffer);
-}
-
-int DXApp::run()
-{
-	MSG msg = { 0 };
-	while (msg.message != WM_QUIT)
-	{
-		if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-		else
-		{
-			float dt = getDeltaTime();
-			update(dt);
-			render(dt);
-		}
-	}
-	return static_cast<int>(msg.wParam);
-}
-
-bool DXApp::init()
-{
-	if (!initWindow())
-	{
-		return false;
-	}
-	if (!initDirect3D())
-	{
-		return false;
-	}
-	m_cam = std::make_unique<Camera>(&input, this);
-	triangle_loader = std::make_unique<TriangleLoader>(this, m_cam.get());
+	m_device_context->OMSetRenderTargets(1, &m_rt_view, NULL);
 
 	return true;
 }
 
-bool DXApp::initWindow()
+bool DXApp::createDevice()
 {
-	WNDCLASSEX wcex;
-	ZeroMemory(&wcex, sizeof(WNDCLASSEX));
-	wcex.cbClsExtra = 0;
-	wcex.cbWndExtra = 0;
-	wcex.cbSize = sizeof(WNDCLASSEX);
-	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.hInstance = m_h_app_instance;
-	wcex.lpfnWndProc = MainWindProc;
-	wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
-	wcex.lpszMenuName = NULL;
-	wcex.lpszClassName = "DXAPPWNCLASS";
-	wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+	DXGI_MODE_DESC buffer_desc;
+	ZeroMemory(&buffer_desc, sizeof(DXGI_MODE_DESC));
 
-	if (!RegisterClassEx(&wcex))
+	buffer_desc.Width = m_client_width;
+	buffer_desc.Height = m_client_height;
+	buffer_desc.RefreshRate.Numerator = 60;
+	buffer_desc.RefreshRate.Denominator = 1;
+	buffer_desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	buffer_desc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	buffer_desc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+
+	DXGI_SWAP_CHAIN_DESC swap_chain_desc;
+	ZeroMemory(&swap_chain_desc, sizeof(DXGI_SWAP_CHAIN_DESC));
+
+	swap_chain_desc.BufferDesc = buffer_desc;
+	swap_chain_desc.SampleDesc.Count = 1;
+	swap_chain_desc.SampleDesc.Quality = 0;
+	swap_chain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swap_chain_desc.BufferCount = 1;
+	swap_chain_desc.OutputWindow = *window.getAppWnd();
+	swap_chain_desc.Windowed = TRUE;
+	swap_chain_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, NULL, NULL, NULL, D3D11_SDK_VERSION,
+		&swap_chain_desc, &m_swap_chain, &m_device, NULL, &m_device_context);
+	if (hr != S_OK)
 	{
-		OutputDebugString("\nFailed to create window class\n");
+		errorBox("Device Initialisation - Failed");
 		return false;
 	}
-
-	RECT r = { 0, 0, m_client_width, m_client_height };
-	AdjustWindowRect(&r, m_wnd_style, FALSE);
-	UINT width = r.right - r.left;
-	UINT height = r.bottom - r.top;
-
-	UINT x = GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2;
-	UINT y = GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2;
-
-	m_h_app_wnd = CreateWindow("DXAPPWNCLASS", m_app_title.c_str(),
-		m_wnd_style, x, y, width, height, NULL, NULL, m_h_app_instance, NULL);
-
-	if (!m_h_app_wnd)
-	{
-		OutputDebugString("\nFailed to create window instance\n");
-		return false;
-	}
-
-	ShowWindow(m_h_app_wnd, SW_SHOW);
-
 	return true;
 }
 
-bool DXApp::initDirect3D()
+bool DXApp::createViewport()
 {
-	UINT create_device_flags = 0;
-#ifdef _DEBUG
-	create_device_flags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif	//_DEBUG
-	D3D_DRIVER_TYPE driver_types[] =
-	{
-		D3D_DRIVER_TYPE_HARDWARE,
-		D3D_DRIVER_TYPE_WARP,
-		D3D_DRIVER_TYPE_REFERENCE,
-	};
-
-	UINT num_driver_types = ARRAYSIZE(driver_types);
-
-	D3D_FEATURE_LEVEL feature_levels[] =
-	{
-		D3D_FEATURE_LEVEL_11_0,
-		D3D_FEATURE_LEVEL_10_1,
-		D3D_FEATURE_LEVEL_10_0,
-		D3D_FEATURE_LEVEL_9_3,
-	};
-
-	UINT num_feature_levels = ARRAYSIZE(feature_levels);
-
-	DXGI_SWAP_CHAIN_DESC swap_desc;
-	ZeroMemory(&swap_desc, sizeof(DXGI_SWAP_CHAIN_DESC));
-	swap_desc.BufferCount = 1;
-	swap_desc.BufferDesc.Width = m_client_width;
-	swap_desc.BufferDesc.Height = m_client_height;
-	swap_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swap_desc.BufferDesc.RefreshRate.Numerator = 60;
-	swap_desc.BufferDesc.RefreshRate.Denominator = 1;
-	swap_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swap_desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	swap_desc.Windowed = true;
-	swap_desc.SampleDesc.Count = 4;
-	swap_desc.SampleDesc.Quality = 0;
-	swap_desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-	swap_desc.OutputWindow = m_h_app_wnd;
-
-	HRESULT result;
-	for (int i = 0; i < num_driver_types; ++i)
-	{
-		result = D3D11CreateDeviceAndSwapChain(NULL, driver_types[i], NULL,
-			create_device_flags, feature_levels, num_feature_levels,
-			D3D11_SDK_VERSION, &swap_desc, &m_swap_chain, &m_dev,
-			&m_feature_level, &m_dev_con);
-
-		if (SUCCEEDED(result))
-		{
-			m_driver_type = driver_types[i];
-			break;
-		}
-	}
-
-	if (FAILED(result))
-	{
-		OutputDebugString("\nFailed to create device and swap chain\n");
-		return false;
-	}
-
-	ID3D11Texture2D* mp_back_buffer_txt = 0;
-	m_swap_chain->GetBuffer(NULL, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&mp_back_buffer_txt));
-	m_dev->CreateRenderTargetView(mp_back_buffer_txt, nullptr, &m_render_target_view);
-
-	m_dev_con->OMSetRenderTargets(1, &m_render_target_view, nullptr);
-
 	D3D11_VIEWPORT viewport;
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+	ZeroMemory(&viewport, sizeof(viewport));
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
 	viewport.Width = m_client_width;
 	viewport.Height = m_client_height;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
 
-	m_dev_con->RSSetViewports(1, &viewport);
+	m_device_context->RSSetViewports(1, &viewport);
 
-	D3D11_TEXTURE2D_DESC depth_stencil_desc;
-	D3D11_TEXTURE2D_DESC back_buffer_desc;
-	mp_back_buffer_txt->GetDesc(&back_buffer_desc);
-	depth_stencil_desc.Width = back_buffer_desc.Width;
-	depth_stencil_desc.Height = back_buffer_desc.Height;
-	depth_stencil_desc.MipLevels = 1;
-	depth_stencil_desc.ArraySize = 1;
-	depth_stencil_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depth_stencil_desc.SampleDesc.Count = 1;
-	depth_stencil_desc.SampleDesc.Quality = 0;
-	depth_stencil_desc.Usage = D3D11_USAGE_DEFAULT;
-	depth_stencil_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depth_stencil_desc.CPUAccessFlags = 0;
-	depth_stencil_desc.MiscFlags = 0;
+	return true;
+}
 
-	m_dev->CreateTexture2D(&depth_stencil_desc, NULL, &m_depth_txt);
+bool DXApp::createDepthStencil()
+{
+	D3D11_TEXTURE2D_DESC depth_stcl_desc;
+	depth_stcl_desc.Width = m_client_width;
+	depth_stcl_desc.Height = m_client_height;
+	depth_stcl_desc.MipLevels = 1;
+	depth_stcl_desc.ArraySize = 1;
+	depth_stcl_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depth_stcl_desc.SampleDesc.Count = 1;
+	depth_stcl_desc.SampleDesc.Quality = 0;
+	depth_stcl_desc.Usage = D3D11_USAGE_DEFAULT;
+	depth_stcl_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depth_stcl_desc.CPUAccessFlags = 0;
+	depth_stcl_desc.MiscFlags = 0;
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC depth_view_desc = {};
-	depth_view_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	depth_view_desc.Format = depth_stencil_desc.Format;
-	depth_view_desc.Texture2D.MipSlice = 0;
+	HRESULT hr = m_device->CreateTexture2D(&depth_stcl_desc, NULL, &m_depth_stcl_buffer);
+	if (hr != S_OK)
+	{
+		errorBox("Failed to create Texture2D");
+		return false;
+	}
+	hr = m_device->CreateDepthStencilView(m_depth_stcl_buffer, NULL, &m_depth_stcl_view);
+	if (hr != S_OK)
+	{
+		errorBox("Failed to create depth stencil view");
+		return false;
+	}
+	m_device_context->OMSetRenderTargets(1, &m_rt_view, m_depth_stcl_view);
 
-	m_dev->CreateDepthStencilView(m_depth_txt, &depth_view_desc, &m_depth_stncl_view);
+	return true;
+}
 
-	if (!initConstantBuffer())
+bool DXApp::initRasteriserStates()
+{
+	HRESULT hr;
+	D3D11_RASTERIZER_DESC wfDesc;
+	ZeroMemory(&wfDesc, sizeof(wfDesc));
+
+	wfDesc.FillMode = D3D11_FILL_WIREFRAME;
+	wfDesc.CullMode = D3D11_CULL_NONE;
+	hr = m_device->CreateRasterizerState(&wfDesc, &m_wireframe);
+	if (hr != S_OK)
+	{
+		errorBox("Problem with wireframe");
+		return false;
+	}
+
+	wfDesc.FillMode = D3D11_FILL_SOLID;
+	wfDesc.CullMode = D3D11_CULL_BACK;
+	hr = m_device->CreateRasterizerState(&wfDesc, &m_solid);
+	if (hr != S_OK)
+	{
+		errorBox("Problem with solid");
+		return false;
+	}
+
+	return true;
+}
+
+bool DXApp::createConstBuffer()
+{
+	D3D11_BUFFER_DESC const_buffer_desc;
+	ZeroMemory(&const_buffer_desc, sizeof(const_buffer_desc));
+
+	const_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+	const_buffer_desc.ByteWidth = sizeof(m_object_cb);
+	const_buffer_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	const_buffer_desc.CPUAccessFlags = 0;
+	const_buffer_desc.MiscFlags = 0;
+
+	HRESULT hr = m_device->CreateBuffer(&const_buffer_desc, NULL, &m_cb_per_object);
+	if (hr != S_OK)
+	{
+		return false;
+	}
+
+	const_buffer_desc.ByteWidth = sizeof(m_frame_cb);
+	hr = m_device->CreateBuffer(&const_buffer_desc, NULL, &m_cb_per_frame);
+	if (hr != S_OK)
 	{
 		return false;
 	}
@@ -233,95 +161,285 @@ bool DXApp::initDirect3D()
 	return true;
 }
 
-bool DXApp::initConstantBuffer()
+#pragma endregion
+
+DXApp::~DXApp()
 {
-	XMStoreFloat4x4(&m_const_data.m_world_matrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_const_data.m_view_matrix, XMMatrixIdentity());
+	releaseObjects();
+}
 
-	D3D11_BUFFER_DESC cb_desc;
-	cb_desc.ByteWidth = sizeof(VS_CONSTANT_BUFFER);
-	cb_desc.Usage = D3D11_USAGE_DYNAMIC;
-	cb_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cb_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cb_desc.MiscFlags = 0;
-	cb_desc.StructureByteStride = 0;
-
-	D3D11_SUBRESOURCE_DATA init_data;
-	init_data.pSysMem = &m_const_data;
-	init_data.SysMemPitch = 0;
-	init_data.SysMemSlicePitch = 0;
-
-	auto hr = m_dev->CreateBuffer(&cb_desc, &init_data, &m_constant_buffer);
-	if (FAILED(hr))
+int DXApp::run(int n_cmd_show)
+{
+	MSG msg;
+	ZeroMemory(&msg, sizeof(MSG));
+	while (true)
 	{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT)
+				break;
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
+		{
+			window.runWindow(n_cmd_show);
+			float dt = getDeltaTime();
+			updateScene(dt);
+			drawScene(dt);
+		}
+	}
+	return msg.wParam;
+}
+
+bool DXApp::init(HINSTANCE h_instance, int n_show_cmd)
+{
+	if (!window.init(h_instance, n_show_cmd, m_client_width, m_client_height, true))
+	{
+		errorBox("Window Initialization - Failed");
+		return false;
+	}
+	if (!initDirectX3D(h_instance))
+	{
+		errorBox("Direct3D Initialisation - Failed");
 		return false;
 	}
 
-	m_dev_con->VSSetConstantBuffers(0, 1, &m_constant_buffer);
+	if (!initScene())
+	{
+		errorBox("Scene Initialisation - Failed");
+		return false;
+	}
+
+	if (!m_input.init(h_instance, *(window.getAppWnd())))
+	{
+		errorBox("Failed to create input");
+		return false;
+	}
 
 	return true;
 }
 
-int DXApp::quitApp()
+void DXApp::releaseObjects()
 {
-	PostQuitMessage(0);
-	return 0;
+	Memory::SafeRelease(m_swap_chain);
+	Memory::SafeRelease(m_device_context);
+	Memory::SafeRelease(m_device);
+	Memory::SafeRelease(m_rt_view);
+	Memory::SafeRelease(m_v_shader);
+	Memory::SafeRelease(m_p_shader);
+	Memory::SafeRelease(m_v_buffer);
+	Memory::SafeRelease(m_p_buffer);
+	Memory::SafeRelease(m_vertex_layout);
+	Memory::SafeRelease(m_depth_stcl_view);
+	Memory::SafeRelease(m_depth_stcl_buffer);
+	Memory::SafeRelease(m_cb_per_object);
+	Memory::SafeRelease(m_cb_per_frame);
+	Memory::SafeRelease(m_wireframe);
+	Memory::SafeRelease(m_cube_texture);
+	Memory::SafeRelease(m_cubes_text_sampler_state);
+	Memory::SafeRelease(m_texture);
+	for (GameObject* g : external_geometry)
+	{
+		Memory::SafeDelete(g);
+	}
+	for (IndexBuffer& ib : m_geo_index_buffers)
+	{
+		Memory::SafeRelease(ib.buffer);
+	}
+	for (VertexBuffer& vb : m_vertex_buffers)
+	{
+		Memory::SafeRelease(vb.buffer);
+	}
+	while (loader_thread_active) {}
+	if (loader_thread.joinable())
+	{
+		loader_thread.detach();
+	}
+}
+
+bool DXApp::initScene()
+{
+	if (!createConstBuffer())
+	{
+		errorBox("Failed to create per object constant buffer");
+		return false;
+	}
+
+	initObjects();
+
+	if (!createPixelBuffer())
+	{
+		errorBox("Pixel buffer creation failed");
+		return false;
+	}
+
+	if (!createInputLayout())
+	{
+		errorBox("Failed to create input layout");
+		return false;
+	}
+
+	m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	createViewport();
+
+	if (!createDepthStencil())
+	{
+		errorBox("Failed to create depth stencil");
+		return false;
+	}
+
+	initRasteriserStates();
+
+	return true;
+}
+
+bool DXApp::createPixelBuffer()
+{
+	HRESULT hr;
+	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "PShader", "ps_5_0", NULL, NULL, &m_p_buffer, NULL);
+	if (hr != S_OK)
+	{
+		errorBox("The pixel shader didn't load right");
+		return false;
+	}
+	hr = m_device->CreatePixelShader(m_p_buffer->GetBufferPointer(), m_p_buffer->GetBufferSize(), NULL, &m_p_shader);
+	if (hr != S_OK)
+	{
+		errorBox("The pixel shader couldn't be created");
+		return false;
+	}
+
+	m_device_context->PSSetShader(m_p_shader, NULL, NULL);
+	return true;
+}
+
+bool DXApp::createInputLayout()
+{
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+
+	UINT num_elements = ARRAYSIZE(layout);
+
+	HRESULT hr = m_device->CreateInputLayout(layout, num_elements, m_v_buffer->GetBufferPointer(), m_v_buffer->GetBufferSize(), &m_vertex_layout);
+	if (hr != S_OK)
+	{
+		return false;
+	}
+	m_device_context->IASetInputLayout(m_vertex_layout);
+
+	return true;
+}
+
+void DXApp::toggleWireframe()
+{
+	if (wireframe_active)
+	{
+		m_device_context->RSSetState(m_solid);
+	}
+	else
+	{
+		m_device_context->RSSetState(m_wireframe);
+	}
+	wireframe_active = !wireframe_active;
 }
 
 float DXApp::getDeltaTime()
 {
 	float f = float(clock() - last_clock) / CLOCKS_PER_SEC;
-	fps = 1 / f;
 	last_clock = clock();
 	return f;
 }
 
-LRESULT DXApp::msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
+ID3D11Buffer* DXApp::getIndexBuffer(std::string id, Geometry* geo)
 {
-	int mouse_x = LOWORD(l_param);
-	int mouse_y = HIWORD(l_param);
-	switch (msg)
+	//search to see whether this index buffer exists already
+	for (IndexBuffer& ib : m_geo_index_buffers)
 	{
-	case WM_DESTROY:
-		return quitApp();
-	case WM_KEYDOWN:		//key
-		if (w_param == (int)KeyBind::Esc)	//probably enumerated or defined somewhere, but this is esc
+		if (ib.id == id)
 		{
-			return quitApp();
+			//return it if it does
+			return ib.buffer;
 		}
-		input.keyboard.keyDown((KeyBind)w_param);
-		break;
-	case WM_KEYUP:
-		input.keyboard.keyUp((KeyBind)w_param);
-		break;
-	case WM_LBUTTONDOWN:	//click
-	case WM_MOUSEMOVE:
-		input.mouse.move(mouse_x, mouse_y);
-		break;
-	default:
-		break;
 	}
-	return DefWindowProc(hwnd, msg, w_param, l_param);
+	//create it if it doesn't
+	IndexBuffer new_buffer;
+	new_buffer.id = id;
+
+	D3D11_BUFFER_DESC index_buffer_desc;
+	ZeroMemory(&index_buffer_desc, sizeof(index_buffer_desc));
+
+	index_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+	index_buffer_desc.ByteWidth = sizeof(DWORD) * 3 * geo->getTriangleCount();
+	index_buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	index_buffer_desc.CPUAccessFlags = 0;
+	index_buffer_desc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA init_data;
+	init_data.pSysMem = geo->getIndices();
+	if (m_device->CreateBuffer(&index_buffer_desc, &init_data, &new_buffer.buffer) != S_OK)
+	{
+		errorBox("Index buffer not created");
+	}
+
+	m_geo_index_buffers.push_back(new_buffer);
+
+	return m_geo_index_buffers.back().buffer;
 }
 
-void DXApp::setColour(int colour_index)
+ID3D11Buffer * DXApp::getVertexBuffer(std::string id, Geometry * geo)
 {
-	m_colour[colour_index] = m_colour[colour_index] >= 1 ? 0 : m_colour[colour_index] + 0.1f;
-}
+	//searches vertex buffers to see if one with this tag has already been created
+	for (VertexBuffer& vb : m_vertex_buffers)
+	{
+		if (vb.id == id)
+		{
+			//if it exists, return it
+			return vb.buffer;
+		}
+	}
 
-void DXApp::updateConstantBuffer(XMMATRIX world, XMMATRIX view)
-{
-	world = XMMatrixTranspose(world);
-	view = XMMatrixTranspose(view);
-	XMStoreFloat4x4(&m_const_data.m_world_matrix, world);
-	XMStoreFloat4x4(&m_const_data.m_view_matrix, view);
+	//if it doesn't exist, make a new one
+	VertexBuffer vb;
+	vb.id = id;
 
-	D3D11_MAPPED_SUBRESOURCE mappedSubResource;
-	memset(&mappedSubResource, 0, sizeof(mappedSubResource));
+	HRESULT hr;
+	hr = D3DCompileFromFile(L"shaders.shader", NULL, NULL, "VShader", "vs_5_0", NULL, NULL, &m_v_buffer, NULL);
+	if (hr != S_OK)
+	{
+		errorBox("The vertex shader didn't load right");
+		return false;
+	}
 
-	HRESULT hr = m_dev_con->Map(m_constant_buffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mappedSubResource);
-	memcpy(mappedSubResource.pData, &m_const_data, sizeof(VS_CONSTANT_BUFFER));
-	m_dev_con->Unmap(m_constant_buffer, 0);
+	hr = m_device->CreateVertexShader(m_v_buffer->GetBufferPointer(), m_v_buffer->GetBufferSize(), NULL, &m_v_shader);
+	if (hr != S_OK)
+	{
+		errorBox("The vertex shader couldn't be created");
+		return false;
+	}
 
-	m_dev_con->VSSetConstantBuffers(0, 1, &m_constant_buffer);
+	m_device_context->VSSetShader(m_v_shader, NULL, NULL);
+
+	D3D11_BUFFER_DESC vertex_buffer_desc;
+	ZeroMemory(&vertex_buffer_desc, sizeof(vertex_buffer_desc));
+
+	vertex_buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertex_buffer_desc.ByteWidth = sizeof(Vertex) * geo->getVertCount();
+	vertex_buffer_desc.CPUAccessFlags = 0;
+	vertex_buffer_desc.MiscFlags = 0;
+	vertex_buffer_desc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA vertex_buffer_data;
+	ZeroMemory(&vertex_buffer_data, sizeof(vertex_buffer_data));
+	vertex_buffer_data.pSysMem = geo->getVertices();
+	hr = m_device->CreateBuffer(&vertex_buffer_desc, &vertex_buffer_data, &vb.buffer);
+
+	m_vertex_buffers.push_back(vb);
+
+	return vb.buffer;
 }

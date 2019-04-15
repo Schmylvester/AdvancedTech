@@ -1,41 +1,55 @@
 #pragma once
-#include "Transform.h"
-#include "ObjectRenderer.h"
 #include <vector>
+#include "DXUtil.h"
 
 class Collider;
 class BoxCollider;
 class SphereCollider;
+class Transform;
+class GameObject;
+class Quadrant;
+class CollisionManager;
+
+struct CollisionData
+{
+	Collider* other_object = nullptr;
+	//Vector3 colision_center = Vector3::Zero;
+	Vector3 collision_direction = Vector3::Zero;
+	float penetration = 0.0f;
+	bool did_collide = false;
+};
+
+enum class CollisionClassifier
+{
+	Collision_This_Frame,
+	Ongoing_Collision,
+	Collision_Ended,
+};
 
 class Collider
 {
 public:
-	Collider() = default;
-	Collider(ObjectRenderer * _renderer);
-	~Collider();
+	Collider(GameObject* _game_object);
+	~Collider() = default;
+	CollisionData checkIntersection(Collider* col);
+	virtual CollisionData checkIntersection(BoxCollider* col) = 0;
+	virtual CollisionData checkIntersection(SphereCollider* col) = 0;
+	void tickCollider();
+	Transform* getTransform();
+	void addCol(CollisionData col);
+	virtual void getClosestFace(Vector3 point, Vector3& position, Vector3& normal);
 
-	virtual bool intersect(BoxCollider* col) = 0;
-	virtual bool intersect(SphereCollider* col) = 0;
-	void tick(float dt);
-	virtual void collide(Collider* col);
+	void objectMoved();
 
-	void setGravity(float _gravity) { m_gravity = _gravity; }
-	Transform getTransform() { return *m_transform; }
-	float getBounce() { return m_bounciness; }
+	void setQuad(Quadrant* quad) { m_quad = quad; }
+	Quadrant* getQuad() const { return m_quad; }
+	void setManager(CollisionManager* m_col_man) { m_collision_manager = m_col_man; }
 protected:
-	virtual void collisionEnter(Collider* col);
-	virtual void collisionExit(Collider* col);
-	Vector3 m_move_speed = Vector3(0.0f, 0.0f, 0.0f);
-	Vector3 m_rotate_speed = Vector3(0.0f, 0.0f, 0.0f);
-	float m_bounciness = 0.9f;
-	float m_gravity = 0.2f;
+	int searchList(std::vector<CollisionData>* list, Collider* target);
 
-	Transform* m_transform;
-
-	std::vector<Collider*> m_this_tick_col;
-	std::vector<Collider*> m_last_tick_col;
-	bool seachList(Collider * col, std::vector<Collider*>* list);
-
-	ObjectRenderer* m_renderer;
+	GameObject* m_game_object = nullptr;
+	std::vector<CollisionData> colliding_this_frame;
+	std::vector<CollisionData> colliding_last_frame;
+	CollisionManager* m_collision_manager;
+	Quadrant* m_quad;
 };
-

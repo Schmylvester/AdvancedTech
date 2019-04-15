@@ -1,16 +1,18 @@
 #pragma once
 #include "Collider.h"
-class SphereCollider :
-	public Collider
+
+class Geometry;
+class BoxCollider;
+class SphereCollider : public Collider
 {
 public:
-	SphereCollider(Transform * _transform, ObjectRenderer * _renderer);
+	virtual CollisionData checkIntersection(BoxCollider * col) override;
+	virtual CollisionData checkIntersection(SphereCollider * col) override;
+	SphereCollider(GameObject* _game_object, float radius);
+	SphereCollider() = default;
 	~SphereCollider() = default;
-	virtual bool intersect(BoxCollider* col) override;
-	virtual bool intersect(SphereCollider* col) override;
 
-	float getRadius() { return radius; }
-	Vector3 getPos() { return m_transform->getPos(); }
-private:
-	float radius;
+	float getRadius() { return m_radius; }
+protected:
+	float m_radius;
 };
