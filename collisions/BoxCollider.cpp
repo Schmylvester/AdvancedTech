@@ -32,7 +32,7 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	col->updateVerts();
 	CollisionData collision_data;
 	collision_data.other_object = col;
-	collision_data.penetration = INFINITY;
+	collision_data.penetration = 0.1f;
 	Vector3 projection_axes[15];
 	for (int i = 0; i < 3; i++)
 	{
@@ -45,29 +45,17 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 		int b_idx = (i / 3) + 1;
 		projection_axes[i] = projection_axes[a_idx] * projection_axes[b_idx];
 	}
+
 	Transform a_t = *getTransform();
 	Transform b_t = *col->getTransform();
 	for (int axis = 0; axis < 15; axis++)
 	{
-		if (checkProjectionIntersect(a_t.getPos(), b_t.getPos(), a_t.getScale(),
+		float intersect = checkProjectionIntersect(a_t.getPos(), b_t.getPos(), a_t.getScale(),
 			b_t.getScale(), projection_axes[0], projection_axes[1], projection_axes[2],
 			projection_axes[3], projection_axes[4], projection_axes[5],
-			projection_axes[axis], collision_data))
-		{
-			collision_data.penetration = 0;
-			return collision_data;
-		}
-	}
+			projection_axes[axis]);
 
-	collision_data.penetration = 1;
-	collision_data.did_collide = true;
-	return collision_data; //below here is what i tried before
-	for (int axis = 0; axis < 15; axis++)
-	{
-		//projected floats are the min, the max, and a number that says if it is valid
-		float a_projected[3] = { INFINITY, -INFINITY, -1 };
-		float b_projected[3] = { INFINITY, -INFINITY, -1 };
-		if (checkProjectionIntersect(projection_axes[axis], col, a_projected, b_projected))
+		if (intersect > 0)
 		{
 			int on_list_idx = searchList(&(colliding_this_frame), col);
 			if (on_list_idx != -1)
@@ -78,24 +66,18 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 			ret_false.did_collide = false;
 			return ret_false;
 		}
-		float a_diff = b_projected[1] - a_projected[0];
-		float b_diff = a_projected[1] - b_projected[0];
-		float penetration = min(a_diff, b_diff);
-		if (penetration < collision_data.penetration)
-		{
-			collision_data.penetration = penetration;
-			collision_data.collision_direction = projection_axes[axis];
-		}
 	}
+
 	collision_data.did_collide = true;
+	collision_data.collision_direction = b_t.getPos() - a_t.getPos();
 	collision_data.collision_direction.Normalize();
 	return collision_data;
 }
 
-bool BoxCollider::checkProjectionIntersect(Vector3 a_pos, Vector3 b_pos,
+float BoxCollider::checkProjectionIntersect(Vector3 a_pos, Vector3 b_pos,
 	Vector3 a_size, Vector3 b_size, Vector3 a_x_proj, Vector3 a_y_proj,
 	Vector3 a_z_proj, Vector3 b_x_proj, Vector3 b_y_proj,
-	Vector3 b_z_proj, Vector3 projection, CollisionData& col_output)
+	Vector3 b_z_proj, Vector3 projection)
 {
 	float result = (abs((b_pos - a_pos).Length()));
 	float ax = abs((a_size.x / 2 * a_x_proj).Dot(projection));
@@ -105,37 +87,7 @@ bool BoxCollider::checkProjectionIntersect(Vector3 a_pos, Vector3 b_pos,
 	float by = abs((b_size.y / 2 * b_y_proj).Dot(projection));
 	float bz = abs((b_size.z / 2 * b_z_proj).Dot(projection));
 	float sum = (ax + ay + az + bx + by + bz);
-	if (result < col_output.penetration)
-	{
-		col_output.penetration = result;
-		col_output.collision_direction = projection;
-	}
-	return  result - sum > 0;
-}
-
-bool BoxCollider::checkProjectionIntersect(Vector3 projection, BoxCollider* other, float* a_projected, float* b_projected)
-{
-	for (int vert = 0; vert < 8; vert++)
-	{
-		float aVert = m_current_vertices[vert].Dot(projection);
-		float bVert = other->getVert(vert).Dot(projection);
-		if (!isnan(aVert))
-		{
-			a_projected[0] = min(a_projected[0], aVert);
-			a_projected[1] = max(a_projected[1], aVert);
-			a_projected[2] = 1;
-		}
-		if (!isnan(bVert))
-		{
-			b_projected[0] = min(b_projected[0], bVert);
-			b_projected[1] = max(b_projected[1], bVert);
-			b_projected[2] = 1;
-		}
-	}
-	return (a_projected[0] >= b_projected[1]
-		|| a_projected[1] <= b_projected[0]
-		|| a_projected[2] < 0
-		|| b_projected[2] < 0);
+	return  result - sum;
 }
 
 CollisionData BoxCollider::checkIntersection(SphereCollider * col)
