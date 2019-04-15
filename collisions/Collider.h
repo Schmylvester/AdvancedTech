@@ -7,6 +7,8 @@ class BoxCollider;
 class SphereCollider;
 class Transform;
 class GameObject;
+class Quadrant;
+class CollisionManager;
 
 struct CollisionData
 {
@@ -36,10 +38,18 @@ public:
 	Transform* getTransform();
 	void addCol(CollisionData col);
 	virtual void getClosestFace(Vector3 point, Vector3& position, Vector3& normal);
+
+	void objectMoved();
+
+	void setQuad(Quadrant* quad) { m_quad = quad; }
+	Quadrant* getQuad() const { return m_quad; }
+	void setManager(CollisionManager* m_col_man) { m_collision_manager = m_col_man; }
 protected:
 	int searchList(std::vector<CollisionData>* list, Collider* target);
 
 	GameObject* m_game_object = nullptr;
 	std::vector<CollisionData> colliding_this_frame;
 	std::vector<CollisionData> colliding_last_frame;
+	CollisionManager* m_collision_manager;
+	Quadrant* m_quad;
 };

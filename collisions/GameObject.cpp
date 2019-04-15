@@ -59,13 +59,14 @@ void GameObject::collision(CollisionData col, CollisionClassifier type)
 	if (type == CollisionClassifier::Ongoing_Collision)
 	{
 		//move out of the object
-		m_transform.translate(col.collision_direction * col.penetration);
+		m_transform.translate(col.collision_direction * col.penetration / 2);
+		m_collider->objectMoved();
 	}
 	if (type == CollisionClassifier::Collision_This_Frame)
 	{
 		if (m_physics != nullptr)
 		{
-			m_physics->addForceAtPoint(1.0f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
+			//m_physics->addForceAtPoint(1.0f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
 		}
 	}
 }

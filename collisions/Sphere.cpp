@@ -6,8 +6,8 @@
 void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject * _owner)
 {
 	float radius = 1;
-	int stack_count = 16;
-	int slice_count = 16;
+	int stack_count = 10;
+	int slice_count = 10;
 	vertex_count = 2 + ((stack_count - 1) * (slice_count + 1));
 	index_count = (6 * slice_count) + (6 * (stack_count - 2) * slice_count);
 	triangle_count = index_count / 3;
@@ -15,10 +15,10 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 	float thetaStep = 2.0f * M_PI / slice_count;
 
 	vertices = new Vertex[vertex_count];
-	Color c = Color(
-		0.7f + ((rand() % 32) / 64), 
-		0.7f + ((rand() % 32) / 64), 
-		0.7f + ((rand() % 32) / 64));
+	float c_r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	float c_g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 1.0f - c_r);
+	float c_b = 1 - (c_r + c_g);
+	Color c = Color(c_r, c_g, c_b);
 	vertices[0] = Vertex(0, radius, 0, c[0], c[1], c[2], c[3], 0, 1, 0);
 	int idx = 1;
 	for (int i = 1; i < stack_count; i++) {
@@ -66,36 +66,57 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 		indices[idx++] = (baseIndex + i);
 		indices[idx++] = (baseIndex + i + 1);
 	}
-
-	m_vtx_buffer = _app->getVertexBuffer("Sphere", this);
+	std::string id = std::to_string(rand());
+	m_vtx_buffer = _app->getVertexBuffer(id, this);
 	m_idx_buffer = _app->getIndexBuffer("Sphere", this);
 	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 }
 
 Color Sphere::randomiseColour(Color in_colour)
 {
-	switch (rand() % 6)
+	float r;
+	float g;
+	float b;
+	switch (rand() % 7)
 	{
 	case 0:
-		return Color(in_colour[0] + 0.1f, in_colour[1], in_colour[2]);
+		r = in_colour[0] + 0.1f;
+		g = in_colour[1];
+		b = in_colour[2];
 		break;
 	case 1:
-		return Color(in_colour[0] - 0.1f, in_colour[1], in_colour[2]);
+		r = in_colour[0] - 0.1f;
+		g = in_colour[1];
+		b = in_colour[2];
 		break;
 	case 2:
-		return Color(in_colour[0], in_colour[1] + 0.1f, in_colour[2]);
+		r = in_colour[0];
+		g = in_colour[1] + 0.1f;
+		b = in_colour[2];
 		break;
 	case 3:
-		return Color(in_colour[0], in_colour[1] - 0.1f, in_colour[2]);
+		r = in_colour[0];
+		g = in_colour[1] - 0.1f;
+		b = in_colour[2];
 		break;
 	case 4:
-		return Color(in_colour[0], in_colour[1], in_colour[2] + 0.1f);
+		r = in_colour[0];
+		g = in_colour[1];
+		b = in_colour[2] + 0.1f;
 		break;
 	case 5:
-		return Color(in_colour[0], in_colour[1], in_colour[2] - 0.1f);
+		r = in_colour[0];
+		g = in_colour[1];
+		b = in_colour[2] - 0.1f;
+		break;
+	case 6:
+		r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 1.0f - r);
+		b = 1 - (r + g);
 		break;
 	default:
 		return in_colour;
 		break;
 	}
+	return Color(r, g, b);
 }

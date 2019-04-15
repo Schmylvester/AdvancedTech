@@ -2,6 +2,7 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "GameObject.h"
+#include "CollisionManager.h"
 
 Collider::Collider(GameObject * _game_object)
 {
@@ -67,6 +68,11 @@ void Collider::addCol(CollisionData col)
 
 void Collider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal)
 {
+}
+
+void Collider::objectMoved()
+{
+	m_collision_manager->objectMoved(this);
 }
 
 int Collider::searchList(std::vector<CollisionData>* list, Collider * target)
