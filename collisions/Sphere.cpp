@@ -6,8 +6,8 @@
 void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject * _owner)
 {
 	float radius = 1;
-	int stack_count = 10;
-	int slice_count = 10;
+	int stack_count = 12;
+	int slice_count = 12;
 	vertex_count = 2 + ((stack_count - 1) * (slice_count + 1));
 	index_count = (6 * slice_count) + (6 * (stack_count - 2) * slice_count);
 	triangle_count = index_count / 3;
@@ -74,49 +74,14 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 
 Color Sphere::randomiseColour(Color in_colour)
 {
+	if (rand() % 2 == 0)
+		return in_colour;
 	float r;
 	float g;
 	float b;
-	switch (rand() % 7)
-	{
-	case 0:
-		r = in_colour[0] + 0.1f;
-		g = in_colour[1];
-		b = in_colour[2];
-		break;
-	case 1:
-		r = in_colour[0] - 0.1f;
-		g = in_colour[1];
-		b = in_colour[2];
-		break;
-	case 2:
-		r = in_colour[0];
-		g = in_colour[1] + 0.1f;
-		b = in_colour[2];
-		break;
-	case 3:
-		r = in_colour[0];
-		g = in_colour[1] - 0.1f;
-		b = in_colour[2];
-		break;
-	case 4:
-		r = in_colour[0];
-		g = in_colour[1];
-		b = in_colour[2] + 0.1f;
-		break;
-	case 5:
-		r = in_colour[0];
-		g = in_colour[1];
-		b = in_colour[2] - 0.1f;
-		break;
-	case 6:
-		r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-		g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 1.0f - r);
-		b = 1 - (r + g);
-		break;
-	default:
-		return in_colour;
-		break;
-	}
+
+	r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 1.0f - r);
+	b = 1 - (r + g);
 	return Color(r, g, b);
 }
