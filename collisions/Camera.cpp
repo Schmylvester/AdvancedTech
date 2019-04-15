@@ -1,68 +1,56 @@
 #include "Camera.h"
-#include "DXApp.h"
 
-Camera::Camera(Input * input, DXApp* _app)
+Camera::Camera(float ratio)
 {
-	m_app = _app;
-	m_input = input;
-	using namespace DirectX;
-	m_view_matrix = XMMatrixLookAtLH(m_transform.getPos(),
-		XMVectorAdd(m_transform.getPos(), XMLoadFloat3(&m_target)), XMLoadFloat3(&m_up));
-	m_perspective_matrix = XMMatrixPerspectiveFovLH(XMConvertToRadians(90), _app->getRatio(), 0.1f, 100.0f);
+	cam_pos = XMVectorSet(0.0f, 2.0f, -8, 0.0f);
+	cam_up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	cam_target = XMVectorSet(0.0f, 0.0f, 0.5f, 0.0f);
+	//cam_pos = XMVectorSet(0.0f, 500.0f, 0, 0.0f);
+	//cam_up = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	//cam_target = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
-	m_view_matrix = m_view_matrix * m_perspective_matrix;
+	cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	cam_projection = XMMatrixPerspectiveFovLH(0.4f * 3.14f, ratio, 1.0f, 1000.0f);
 }
 
-void Camera::tick(float dt)
+XMMATRIX Camera::getWVPMatrix(XMMATRIX world_matrix)
 {
-	changeRotation();
-	if (m_rotation_axis.x != 0
-		|| m_rotation_axis.y != 0
-		|| m_rotation_axis.z != 0)
-		rotate(m_rotation_axis, dt * 15);
-
-	m_view_matrix = XMMatrixLookAtLH(m_transform.getPos(),
-		XMLoadFloat3(&m_target), XMLoadFloat3(&m_up)) * m_perspective_matrix;
+	return world_matrix * cam_view * cam_projection;
 }
 
-void Camera::changeRotation()
-{
-	if (m_input->keyboard.searchInputs(KeyBind::Bar1, KeyState::DOWN))
-		m_rotation_axis = XMFLOAT3(1, 0, 0);
-	if (m_input->keyboard.searchInputs(KeyBind::Bar2, KeyState::DOWN))
-		m_rotation_axis = XMFLOAT3(0, 1, 0);
-	if (m_input->keyboard.searchInputs(KeyBind::Bar3, KeyState::DOWN))
-		m_rotation_axis = XMFLOAT3(0, 0, 1);
-	if (m_input->keyboard.searchInputs(KeyBind::Bar4, KeyState::DOWN))
-		m_rotation_axis = XMFLOAT3(-1, 0, 0);
-	if (m_input->keyboard.searchInputs(KeyBind::Bar5, KeyState::DOWN))
-		m_rotation_axis = XMFLOAT3(0, -1, 0);
-	if (m_input->keyboard.searchInputs(KeyBind::Bar6, KeyState::DOWN))
-		m_rotation_axis = XMFLOAT3(0, 0, -1);
-}
-
-///this doesn't work
 void Camera::move(float x, float y, float z)
 {
-	XMVECTOR temp_vec = XMLoadFloat3(&m_target) + XMLoadFloat3(&m_transform.getPos());
-	XMStoreFloat3(&m_target, temp_vec);
+	cam_pos += XMVectorSet(x, y, z, 0);
+	cam_target += XMVectorSet(x, y, z, 0);
 
-	m_transform.move(x, y, z);
+	if (!XMVector3Equal(XMVectorSubtract(cam_target, cam_pos), XMVectorZero()))
+	{
+		cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	}
 }
 
-void Camera::rotate(XMFLOAT3 axis, float degrees)
+void Camera::setPos(float x, float y, float z)
 {
-	XMVECTOR temp_vec = XMLoadFloat3(&m_target) - XMLoadFloat3(&m_transform.getPos());
-	XMStoreFloat3(&m_target, temp_vec);
 
-	temp_vec = XMLoadFloat3(&m_up) - XMLoadFloat3(&m_transform.getPos());
-	XMStoreFloat3(&m_up, temp_vec);
+	cam_target = cam_target + (XMVectorSet(x, y, z, 1) - cam_pos);
+	cam_pos = XMVectorSet(x, y, z, 0);
 
-	temp_vec = XMVector3Transform(XMLoadFloat3(&m_target),
-		XMMatrixRotationAxis(XMLoadFloat3(&axis), XMConvertToRadians(degrees)));
-	XMStoreFloat3(&m_target, temp_vec);
+	if (!XMVector3Equal(XMVectorSubtract(cam_target, cam_pos), XMVectorZero()))
+	{
+		cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	}
+}
 
-	temp_vec = XMVector3Transform(XMLoadFloat3(&m_up),
-		XMMatrixRotationAxis(XMLoadFloat3(&axis), XMConvertToRadians(degrees)));
-	XMStoreFloat3(&m_up, temp_vec);
+void Camera::lookAt(Vector3 target)
+{
+	cam_target = XMVectorSet(target.x, target.y, target.z, 1);	
+	
+	if (!XMVector3Equal(XMVectorSubtract(cam_target, cam_pos), XMVectorZero()))
+	{
+		cam_view = XMMatrixLookAtLH(cam_pos, cam_target, cam_up);
+	}
+}
+
+void Camera::rotateAround(float angle)
+{
 }

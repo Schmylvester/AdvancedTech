@@ -1,77 +1,110 @@
 #pragma once
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include "DXUtil.h"
 #include <string>
 #include <time.h>
-#include "DXUtil.h"
 #include <SimpleMath.h>
+#include <functional>
+#include <thread>
+#include <vector>
+
+#include "Window.h"
+#include "ConstantBuffers.h"
 #include "Camera.h"
-#include "Input.h"
-#include "TriangleLoader.h"
+#include "BufferStructs.h"
+
+enum LoadType
+{
+	NEVER_MIND,
+
+	LOAD_TILE,
+	LOAD_OBJECT,
+	SAVE_TILE_DATA,
+};
 
 using namespace DirectX;
 
-struct VS_CONSTANT_BUFFER
-{
-	XMFLOAT4X4 m_world_matrix;
-	XMFLOAT4X4 m_view_matrix;
-};
-
+class Geometry;
+class GameObject;
 class DXApp
 {
 public:
-	DXApp() = delete;
-	DXApp(HINSTANCE h_instance);
-	virtual ~DXApp();
+	DXApp() = default;
+	~DXApp();
 
 	//main application loop
-	int run();
+	int run(int n_cmd_show);
 
-	virtual bool init();
-	virtual void update(float dt) = 0;
-	virtual void render(float dt) = 0;
-	virtual LRESULT msgProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param);
+	bool init(HINSTANCE h_instance, int n_show_cmd);
+	bool initDirectX3D(HINSTANCE h_instance);
+	void releaseObjects();
 
-	ID3D11Device* getDevice() { return m_dev; }
-	ID3D11DeviceContext* getContext() { return m_dev_con; }
+	ID3D11Device* getDevice() { return m_device; }
+	ID3D11DeviceContext* getContext() { return m_device_context; }
+
+	ID3D11Buffer* getIndexBuffer(std::string id, Geometry* geo);
+	ID3D11Buffer* getVertexBuffer(std::string id, Geometry* geo);
+
+	static bool loader_thread_active;
+protected:
+	virtual void updateScene(float dt) = 0;
+	virtual void initObjects() = 0;
+	virtual void drawScene(float dt) = 0;
+
 	float getRatio() { return (float)m_client_width / m_client_height; }
 
-	Camera* getCam() { return m_cam.get(); }
-	TriangleLoader* getLoader() { return triangle_loader.get(); }
-	void updateConstantBuffer(XMMATRIX world, XMMATRIX view);
-protected:
-	float fps;
-	std::unique_ptr<TriangleLoader> triangle_loader = nullptr;
+	bool initScene();
+	bool createDevice();
+	bool createPixelBuffer();
+	bool createInputLayout();
+	bool createViewport();
+	bool createDepthStencil();
+	bool createConstBuffer();
+	bool initRasteriserStates();
 
-	void setColour(int colour_index);
-	bool initWindow();
-	bool initDirect3D();
-	bool initConstantBuffer();
-	int quitApp();
+	void toggleWireframe();
+
 	float getDeltaTime();
 
-	std::unique_ptr<Camera> m_cam;
-	float m_colour[4];
+	Light m_light;
+	Camera m_cam;
 
-	HWND m_h_app_wnd;
+	std::vector<GameObject*> visible_geometry;
+	std::vector<GameObject*> external_geometry;
+
+	Window window;
+	Input m_input;
 	HINSTANCE m_h_app_instance;
-	UINT m_client_width = 800;
-	UINT m_client_height = 600;
-	std::string m_app_title;
-	DWORD m_wnd_style;
-
-	ID3D11DepthStencilView* m_depth_stncl_view;
-	ID3D11Texture2D* m_depth_txt = nullptr;
-	ID3D11Device* m_dev = nullptr;
-	ID3D11DeviceContext* m_dev_con = nullptr;
+	const UINT m_client_width = 800;
+	const UINT m_client_height = 600;
+	
 	IDXGISwapChain* m_swap_chain = nullptr;
-	ID3D11RenderTargetView* m_render_target_view = nullptr;
-	D3D_DRIVER_TYPE m_driver_type;
-	D3D_FEATURE_LEVEL m_feature_level;
-	D3D11_VIEWPORT m_viewport;
-	ID3D11Buffer* m_constant_buffer = nullptr;
-	VS_CONSTANT_BUFFER m_const_data;
+	ID3D11Device* m_device = nullptr;
+	ID3D11DeviceContext* m_device_context = nullptr;
+	ID3D11RenderTargetView* m_rt_view = nullptr;
+	ID3D11VertexShader* m_v_shader = nullptr;
+	ID3D11PixelShader* m_p_shader = nullptr;
+	ID3D10Blob* m_v_buffer = nullptr;
+	ID3D10Blob* m_p_buffer = nullptr;
+	ID3D11InputLayout* m_vertex_layout = nullptr;
+	ID3D11DepthStencilView* m_depth_stcl_view = nullptr;
+	ID3D11Texture2D* m_depth_stcl_buffer = nullptr;
+	ID3D11Buffer* m_cb_per_object = nullptr;
+	ID3D11Buffer* m_cb_per_frame = nullptr;
+	ID3D11ShaderResourceView* m_cube_texture = nullptr;
+	ID3D11SamplerState* m_cubes_text_sampler_state = nullptr;
+	ID3D11Resource* m_texture = nullptr;
 
-	Input input;
+	bool wireframe_active = false;
+	ID3D11RasterizerState* m_solid = nullptr;
+	ID3D11RasterizerState* m_wireframe = nullptr;
+
+	std::vector<IndexBuffer> m_geo_index_buffers;
+	std::vector<VertexBuffer> m_vertex_buffers;
+
+	CBPerObject m_object_cb;
+	CBPerFrame m_frame_cb;
+
+	std::thread loader_thread;
+
 	clock_t last_clock = clock();
 };

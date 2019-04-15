@@ -120,42 +120,68 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="CollisionDetection.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="CollisionsScene.cpp" />
     <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="BoxCollider.cpp" />
-    <ClCompile Include="Input.h" />
-    <ClCompile Include="MouseInput.cpp" />
-    <ClCompile Include="ObjectRenderer.cpp" />
     <ClCompile Include="DXApp.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="NavigationCell.cpp" />
+    <ClCompile Include="Pathfinder.cpp" />
+    <ClCompile Include="PhysicsBody.cpp" />
+    <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Geometry.cpp" />
-    <ClCompile Include="KeyboardInput.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Quadrant.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainScene.cpp" />
+    <ClCompile Include="ThreadedLoader.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="TriangleLoader.cpp" />
+    <ClCompile Include="Window.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h" />
+    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="BufferStructs.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
-    <ClInclude Include="ColliderIncludes.h" />
-    <ClInclude Include="CollisionDetection.h" />
+    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="CollisionsScene.h" />
+    <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="Cube.h" />
-    <ClInclude Include="BoxCollider.h" />
-    <ClInclude Include="MouseInput.h" />
-    <ClInclude Include="ObjectRenderer.h" />
     <ClInclude Include="DXApp.h" />
     <ClInclude Include="DXUtil.h" />
+    <ClInclude Include="Frustum.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GeometryIncludes.h" />
+    <ClInclude Include="ImageMapInfo.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="NavigationCell.h" />
+    <ClInclude Include="Pathfinder.h" />
+    <ClInclude Include="PhysicsBody.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Geometry.h" />
-    <ClInclude Include="KeyboardInput.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="Quadrant.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainScene.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="Triangle.h" />
-    <ClInclude Include="TriangleLoader.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

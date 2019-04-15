@@ -1,19 +1,43 @@
-#include "ColliderIncludes.h"
+#include "SphereCollider.h"
+#include "Transform.h"
+#include "GameObject.h"
 
-SphereCollider::SphereCollider(Transform* _transform, ObjectRenderer* _renderer) : Collider(_renderer)
+CollisionData SphereCollider::checkIntersection(BoxCollider * col)
 {
-	m_transform = _transform;
-	radius = m_transform->getScale().x;
+	CollisionData ret_false;
+	ret_false.did_collide = false;
+	return ret_false;
 }
 
-bool SphereCollider::intersect(BoxCollider * col)
+CollisionData SphereCollider::checkIntersection(SphereCollider * col)
 {
-	return col->intersect(this);
+	Vector3 a_pos = getTransform()->getPos();
+	Vector3 b_pos = col->getTransform()->getPos();
+	float dist = Vector3::Distance(a_pos, b_pos);
+	float collide_dist = m_radius + col->getRadius();
+	if (dist < collide_dist)
+	{
+		CollisionData return_data;
+		return_data.did_collide = true;
+		return_data.collision_direction = b_pos - a_pos;
+		return_data.penetration = (collide_dist - dist);
+		return_data.other_object = col;
+		return return_data;
+	}
+	else
+	{
+		int on_list_idx = searchList(&(colliding_this_frame), col);
+		if (on_list_idx != -1)
+		{
+			colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
+		}
+		CollisionData ret_false;
+		ret_false.did_collide = false;
+		return ret_false;
+	}
 }
 
-bool SphereCollider::intersect(SphereCollider * col)
+SphereCollider::SphereCollider(GameObject * _game_object, float radius) : Collider(_game_object)
 {
-	float distance = sqrt(pow(getPos().x - col->getPos().x, 2) + pow(getPos().y - col->getPos().y, 2));
-	distance = sqrt(pow(distance, 2) + pow(getPos().z - col->getPos().z, 2));
-	return distance < radius + col->getRadius();
+	m_radius = radius;
 }

@@ -1,78 +1,90 @@
 #include "Collider.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
+#include "GameObject.h"
+#include "CollisionManager.h"
 
-Collider::Collider(ObjectRenderer* _renderer)
+Collider::Collider(GameObject * _game_object)
 {
-	m_renderer = _renderer;
-	float numbers[5] = {-0.3f, -0.1f, 0, 0.1f, 0.3f };
-	m_move_speed.x = numbers[rand() % 5];
-	m_move_speed.y = numbers[rand() % 5];
-	m_rotate_speed.x = numbers[rand() % 5];
-	m_rotate_speed.y = numbers[rand() % 5];
-	m_rotate_speed.z = numbers[rand() % 5];
+	m_game_object = _game_object;
 }
 
-Collider::~Collider()
+CollisionData Collider::checkIntersection(Collider * col)
 {
-}
-
-void Collider::tick(float dt)
-{
-	for (Collider* lt_col : m_last_tick_col)
+	BoxCollider* b = dynamic_cast<BoxCollider*>(col);
+	if (b != nullptr)
 	{
-		if (!seachList(lt_col, &m_this_tick_col))
+		return checkIntersection(b);
+	}
+	SphereCollider* s = dynamic_cast<SphereCollider*>(col);
+	if (s != nullptr)
+	{
+		return checkIntersection(s);
+	}
+	CollisionData ret_false;
+	ret_false.did_collide = false;
+	return ret_false;
+}
+
+void Collider::tickCollider()
+{
+	for (int i = 0; i < colliding_last_frame.size(); i++)
+	{
+		if (searchList(&(colliding_this_frame), colliding_last_frame[i].other_object) == -1)
 		{
-			collisionExit(lt_col);
+			m_game_object->collision(colliding_last_frame[i], CollisionClassifier::Collision_Ended);
+			colliding_last_frame.erase(colliding_last_frame.begin() + i);
 		}
 	}
-	for (Collider* tt_col : m_this_tick_col)
+	for (CollisionData col : colliding_this_frame)
 	{
-		if (!seachList(tt_col, &m_last_tick_col))
+		if (searchList(&(colliding_last_frame), col.other_object) == -1)
 		{
-			collisionEnter(tt_col);
+			m_game_object->collision(col, CollisionClassifier::Collision_This_Frame);
+			colliding_last_frame.push_back(col);
+		}
+		else
+		{
+			m_game_object->collision(col, CollisionClassifier::Ongoing_Collision);
 		}
 	}
-	m_last_tick_col.clear();
-	for (Collider* col : m_this_tick_col)
+	colliding_this_frame.clear();
+}
+
+Transform * Collider::getTransform()
+{
+	return m_game_object->getTransform();
+}
+
+void Collider::addCol(CollisionData col)
+{
+	int list_idx = searchList(&(colliding_this_frame), col.other_object);
+	if (list_idx != -1)
 	{
-		m_last_tick_col.push_back(col);
+		colliding_this_frame.erase(colliding_this_frame.begin() + list_idx);
 	}
-	m_this_tick_col.clear();
-
-	//m_move_speed.y -= (m_gravity * dt);
-	m_transform->rotate('x', m_rotate_speed.x * dt);
-	m_transform->rotate('y', m_rotate_speed.y * dt);
-	m_transform->rotate('z', m_rotate_speed.z * dt);
-	m_transform->move((m_move_speed.x * dt), (m_move_speed.y * dt), (m_move_speed.z * dt));
+	colliding_this_frame.push_back(col);
 }
 
-void Collider::collide(Collider* col)
+void Collider::getClosestFace(Vector3 point, Vector3& position, Vector3& normal)
 {
-	for (Collider* already : m_this_tick_col)
+}
+
+void Collider::objectMoved()
+{
+	m_collision_manager->objectMoved(this);
+}
+
+int Collider::searchList(std::vector<CollisionData>* list, Collider * target)
+{
+	int i = 0;
+	for (CollisionData col : *list)
 	{
-		if (col == already)
-			return;
-	}
-	m_this_tick_col.push_back(col);
-}
-
-void Collider::collisionEnter(Collider* col)
-{
-	m_renderer->changeColour();
-	m_move_speed *= -(m_bounciness * col->getBounce());
-}
-
-void Collider::collisionExit(Collider* col)
-{
-}
-
-bool Collider::seachList(Collider* col, std::vector<Collider*>* list)
-{
-	for (Collider* col_chk : *list)
-	{
-		if (col_chk == col)
+		if (target == col.other_object)
 		{
-			return true;
+			return i;
 		}
+		i++;
 	}
-	return false;
+	return -1;
 }
