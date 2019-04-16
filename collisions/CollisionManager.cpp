@@ -8,13 +8,12 @@ CollisionManager::CollisionManager()
 
 void CollisionManager::checkCollisions()
 {
-	m_quad_tree.countColliders();
 	for (int i = 0; i < collisionObjects.size(); i++)
 	{
 		for (int j = i + 1; j < collisionObjects.size(); j++)
 		{
 			//checks the quad tree to see what they know
-			if (collisionObjects[i]->getQuad()->quadDist(collisionObjects[j]->getQuad()) < 5)
+			if (collisionObjects[i]->getQuad()->quadDist(collisionObjects[j]->getQuad()) < 15)
 			{
 				CollisionData col_data = collisionObjects[i]->checkIntersection(collisionObjects[j]);
 				if (col_data.did_collide)

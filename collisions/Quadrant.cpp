@@ -77,6 +77,21 @@ void Quadrant::createSubs()
 {
 	if (m_colliders.size() > 1)
 	{
+		//if two colliders are in the same place, it will go forever, move them slightly
+		for (int a = 0; a < m_colliders.size(); a++)
+		{
+			for (int b = a + 1; b < m_colliders.size(); b++)
+			{
+				Transform* a_t = m_colliders[a]->getTransform();
+				Transform* b_t = m_colliders[b]->getTransform();
+				if (a_t->getPos() == b_t->getPos())
+				{
+					b_t->translate(0.01f, 0, 0);
+					a = m_colliders.size();
+					b = m_colliders.size();
+				}
+			}
+		}
 		m_sub_quads[0] = new Quadrant(this, &m_colliders, m_all_colliders, m_min, m_center);
 		m_sub_quads[1] = new Quadrant(this, &m_colliders, m_all_colliders, Vector2(m_center.x, m_min.y), Vector2(m_max.x, m_center.y));
 		m_sub_quads[2] = new Quadrant(this, &m_colliders, m_all_colliders, Vector2(m_min.x, m_center.y), Vector2(m_center.x, m_max.y));
@@ -104,6 +119,7 @@ void Quadrant::tick(bool big_rect)
 {
 	if (big_rect)
 	{
+		countColliders();
 		for (Collider* col : *m_all_colliders)
 		{
 			m_min.x = min(m_min.x, col->getTransform()->getPos().x);

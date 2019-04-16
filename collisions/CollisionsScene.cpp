@@ -45,9 +45,9 @@ void CollisionsScene::initObjects()
 {
 	m_cam = Camera(getRatio());
 
-	//box colliders don't work so I'm using spheres
-	cubes();
-	//spheres();
+	//box colliders almost work, but don't work so I'm using spheres
+	//cubes();
+	spheres();
 }
 
 void CollisionsScene::spheres()
@@ -80,6 +80,6 @@ void CollisionsScene::cubes()
 		scene_objects.back()->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 		scene_objects.back()->getTransform()->translate((rand() % 10) - 5, (rand() % 10) - 5, (rand() % 10) - 5);
 		scene_objects.back()->getTransform()->rotate(XMVectorSet(1, 0, 0, 1), rand());
-		scene_objects.back()->addCollider(new BoxCollider(scene_objects.back().get()), &m_collision_manager, false);
+		scene_objects.back()->addCollider(new BoxCollider(scene_objects.back().get()), &m_collision_manager, true);
 	}
 }
