@@ -1,10 +1,7 @@
 #include "DXApp.h"
 #include "Cube.h"
 
-#pragma region StuffICanLeaveAlove
-
 void errorBox(LPCSTR message);
-bool DXApp::loader_thread_active = false;
 
 bool DXApp::initDirectX3D(HINSTANCE h_instance)
 {
@@ -113,8 +110,8 @@ bool DXApp::initRasteriserStates()
 	D3D11_RASTERIZER_DESC wfDesc;
 	ZeroMemory(&wfDesc, sizeof(wfDesc));
 
-	wfDesc.FillMode = D3D11_FILL_WIREFRAME;
-	wfDesc.CullMode = D3D11_CULL_NONE;
+	wfDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+	wfDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
 	hr = m_device->CreateRasterizerState(&wfDesc, &m_wireframe);
 	if (hr != S_OK)
 	{
@@ -122,8 +119,8 @@ bool DXApp::initRasteriserStates()
 		return false;
 	}
 
-	wfDesc.FillMode = D3D11_FILL_SOLID;
-	wfDesc.CullMode = D3D11_CULL_BACK;
+	wfDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+	wfDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 	hr = m_device->CreateRasterizerState(&wfDesc, &m_solid);
 	if (hr != S_OK)
 	{
@@ -161,8 +158,6 @@ bool DXApp::createConstBuffer()
 	return true;
 }
 
-#pragma endregion
-
 DXApp::~DXApp()
 {
 	releaseObjects();
@@ -186,7 +181,7 @@ int DXApp::run(int n_cmd_show)
 			window.runWindow(n_cmd_show);
 			float dt = getDeltaTime();
 			updateScene(dt);
-			drawScene(dt);
+			draw(dt);
 		}
 	}
 	return msg.wParam;
@@ -337,6 +332,20 @@ void DXApp::toggleWireframe()
 		m_device_context->RSSetState(m_wireframe);
 	}
 	wireframe_active = !wireframe_active;
+}
+
+void DXApp::draw(float dt)
+{
+	float bg_colour[4]{ 0.0f, 0.0f, 0.0f, 1.0f };
+	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
+	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	m_frame_cb.light = m_light;
+	m_device_context->UpdateSubresource(m_cb_per_frame, 0, NULL, &m_frame_cb, 0, 0);
+	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
+
+	drawScene(dt);
+	m_swap_chain->Present(0, 0);
 }
 
 float DXApp::getDeltaTime()

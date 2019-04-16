@@ -71,7 +71,6 @@ LRESULT Window::wndProc(HWND hwnd, UINT msg, WPARAM w_param, LPARAM l_param)
 	case WM_KEYDOWN:
 		if (w_param == 27)
 		{
-			while (DXApp::loader_thread_active){}
 			PostQuitMessage(0);
 			return 0;
 		}
