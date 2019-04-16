@@ -18,14 +18,8 @@ void GameObject::init(Shape shape, DXApp * _app, CBPerObject * _cb, Camera * cam
 	case Shape::Cube:
 		m_geometry = new Cube();
 		break;
-	case Shape::Pyramid:
-		m_geometry = new Pyramid();
-		break;
 	case Shape::Plane:
 		m_geometry = new PlaneObject();
-		break;
-	case Shape::Frustum:
-		m_geometry = new Frustum();
 		break;
 	case Shape::Sphere:
 		m_geometry = new Sphere();
@@ -33,14 +27,6 @@ void GameObject::init(Shape shape, DXApp * _app, CBPerObject * _cb, Camera * cam
 	default:
 		break;
 	}
-	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
-}
-
-void GameObject::init(const char* file, int x, int y, DXApp * _app,
-	CBPerObject * _cb, Camera * cam, 
-	ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
-{
-	m_geometry = new Terrain(file, x, y);
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 }
 

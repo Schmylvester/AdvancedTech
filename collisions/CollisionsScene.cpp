@@ -3,11 +3,6 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 
-void loadTerrain(Terrain* player_loc);
-void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
-	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
-	ID3D11Buffer** _const_buffer, Camera* _cam);
-
 CollisionsScene::~CollisionsScene()
 {
 }
@@ -44,7 +39,6 @@ void CollisionsScene::drawScene(float dt)
 void CollisionsScene::initObjects()
 {
 	m_cam = Camera(getRatio());
-
 	//box colliders almost work, but don't work so I'm using spheres
 	//cubes();
 	spheres();

@@ -12,9 +12,7 @@ class Camera;
 enum class Shape
 {
 	Cube,
-	Pyramid,
 	Plane,
-	Frustum,
 	Sphere,
 };
 

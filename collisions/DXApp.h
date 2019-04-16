@@ -12,15 +12,6 @@
 #include "Camera.h"
 #include "BufferStructs.h"
 
-enum LoadType
-{
-	NEVER_MIND,
-
-	LOAD_TILE,
-	LOAD_OBJECT,
-	SAVE_TILE_DATA,
-};
-
 using namespace DirectX;
 
 class Geometry;
@@ -29,7 +20,7 @@ class DXApp
 {
 public:
 	DXApp() = default;
-	~DXApp();
+	virtual ~DXApp();
 
 	//main application loop
 	int run(int n_cmd_show);
@@ -68,9 +59,6 @@ protected:
 	Light m_light;
 	Camera m_cam;
 
-	std::vector<GameObject*> visible_geometry;
-	std::vector<GameObject*> external_geometry;
-
 	Window window;
 	Input m_input;
 	HINSTANCE m_h_app_instance;
@@ -103,8 +91,6 @@ protected:
 
 	CBPerObject m_object_cb;
 	CBPerFrame m_frame_cb;
-
-	std::thread loader_thread;
 
 	clock_t last_clock = clock();
 };

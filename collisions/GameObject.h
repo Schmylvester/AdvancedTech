@@ -20,9 +20,6 @@ public:
 
 	void init(Shape shape, DXApp* _app, CBPerObject * _cb, Camera * cam,
 		ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
-	void init(const char * file, int x, int y, DXApp * _app,
-		CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, 
-		ID3D11Buffer * c_buff);
 	
 	void addCollider(Collider* col, CollisionManager* collision_manager, bool add_physics);
 	virtual void collision(CollisionData col, CollisionClassifier type);

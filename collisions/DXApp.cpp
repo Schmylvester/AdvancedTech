@@ -213,10 +213,9 @@ bool DXApp::init(HINSTANCE h_instance, int n_show_cmd)
 
 	if (!m_input.init(h_instance, *(window.getAppWnd())))
 	{
-		errorBox("Failed to create input");
+		errorBox("Input Initialisation - Failed");
 		return false;
 	}
-
 	return true;
 }
 
@@ -239,10 +238,6 @@ void DXApp::releaseObjects()
 	Memory::SafeRelease(m_cube_texture);
 	Memory::SafeRelease(m_cubes_text_sampler_state);
 	Memory::SafeRelease(m_texture);
-	for (GameObject* g : external_geometry)
-	{
-		Memory::SafeDelete(g);
-	}
 	for (IndexBuffer& ib : m_geo_index_buffers)
 	{
 		Memory::SafeRelease(ib.buffer);
@@ -250,11 +245,6 @@ void DXApp::releaseObjects()
 	for (VertexBuffer& vb : m_vertex_buffers)
 	{
 		Memory::SafeRelease(vb.buffer);
-	}
-	while (loader_thread_active) {}
-	if (loader_thread.joinable())
-	{
-		loader_thread.detach();
 	}
 }
 
@@ -320,7 +310,7 @@ bool DXApp::createInputLayout()
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOUR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 

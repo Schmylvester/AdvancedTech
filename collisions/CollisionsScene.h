@@ -1,10 +1,10 @@
 #pragma once
-#include "Scene.h"
+#include "DXApp.h"
 #include "Player.h"
 #include "GameObject.h"
 #include "CollisionManager.h"
 
-class CollisionsScene : public Scene
+class CollisionsScene : public DXApp
 {
 public:
 	CollisionsScene() = default;
