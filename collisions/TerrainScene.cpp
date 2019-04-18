@@ -3,7 +3,7 @@
 #include "Terrain.h"
 
 void loadTerrain(Terrain* player_loc);
-void setPointers(std::vector<GameObject*>* _geometry, DXApp* _app,
+void setPointers(void* _geometry, DXApp* _app,
 	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
 	ID3D11Buffer** _const_buffer, Camera* _cam);
 
@@ -119,12 +119,7 @@ void TerrainScene::initObjects()
 	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(256, 55, 256);
 
-	std::vector<GameObject*> go;
-	for (Terrain* t : terrain)
-	{
-		go.push_back(t);
-	}
-	setPointers(&(go), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
+	setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 
 	safe_geometry.push_back(t);
 	loader_thread_active = true;

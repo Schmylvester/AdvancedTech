@@ -50,7 +50,7 @@ private:
 	int grid_y;
 	int width;
 	int height;
-	float terrain_scale = 2;
+	float terrain_scale = 4;
 	bool normals_set = false;
 };
 

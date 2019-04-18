@@ -4,7 +4,7 @@
 #include "SphereCollider.h"
 
 void loadTerrain(Terrain* player_loc);
-void setPointers(std::vector<Geometry*>* _geometry, DXApp* _app,
+void setPointers(void* _geometry, DXApp* _app,
 	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
 	ID3D11Buffer** _const_buffer, Camera* _cam);
 

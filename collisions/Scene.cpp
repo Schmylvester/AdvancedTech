@@ -8,7 +8,7 @@ Scene::~Scene()
 	Memory::SafeDelete(player);
 	Memory::SafeDelete(terrain);
 }
-void setPointers(std::vector<GameObject*>* _geometry, DXApp* _app,
+void setPointers(void* _geometry, DXApp* _app,
 	CBPerObject* _cb, ID3D11DeviceContext** _dev_con,
 	ID3D11Buffer** _const_buffer, Camera* _cam);
 void loadUnloadObjects();
