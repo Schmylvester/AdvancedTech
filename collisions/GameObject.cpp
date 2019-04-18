@@ -36,14 +36,6 @@ void GameObject::init(Shape shape, DXApp * _app, CBPerObject * _cb, Camera * cam
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 }
 
-void GameObject::init(const char* file, int x, int y, DXApp * _app,
-	CBPerObject * _cb, Camera * cam, 
-	ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
-{
-	m_geometry = new Terrain(file, x, y);
-	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
-}
-
 void GameObject::addCollider(Collider * col, CollisionManager * collision_manager, bool add_physics)
 {
 	collision_manager->addCollider(col);

@@ -2,6 +2,7 @@
 #include "Geometry.h"
 #include "ImageMapInfo.h"
 #include "NavigationCell.h"
+#include "GameObject.h"
 #include <vector>
 #include <thread>
 
@@ -17,34 +18,29 @@ enum NeighbourID
 	BOTTOM_RIGHT
 };
 
-class Terrain : public Geometry
+class Terrain : public GameObject
 {
 public:
-	Terrain() = delete;
-	Terrain(const char* _name, int x, int y);
+	Terrain() = default;
 	~Terrain();
 
-	virtual void init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject* _owner) override;
+	void init(const char* _name, int x, int y, DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
 
 	void loadFile();
-	void createGrid();
 
 	bool playerInCell(int player_x, int player_z);
 	void addNeighbour(Terrain* t, NeighbourID neighbour_idx);
 	bool isNeighbour(Terrain* t);
 
 	void getIndex(int& x, int& y);
-	void createNeighbours(std::vector<Geometry*>* geometry_list, DXApp * _app,
+	void createNeighbours(std::vector<Terrain*>* geometry_list, DXApp * _app,
 		CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con,
 		ID3D11Buffer * c_buff);
 	NavigationCell* getCell(int index = -1);
 	void linkCellMap() { if (cell_map_ready && create_cell_map.joinable()) { create_cell_map.join(); } }
 
-
 	static bool cell_map_ready;
 private:
-	void getNormals();
-	std::string removeFileExt(std::string in);
 	std::thread create_cell_map;
 	NavigationCell cells[16384];
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
@@ -54,7 +50,7 @@ private:
 	int grid_y;
 	int width;
 	int height;
-	float terrain_scale = 4;
+	float terrain_scale = 2;
 	bool normals_set = false;
 };
 

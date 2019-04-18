@@ -59,7 +59,7 @@ void loadTerrain(Terrain* player_loc)
 	int count = gp_objects->size();
 	for (int i = 0; i < count; i++)
 	{
-		Terrain* t = static_cast<Terrain*>((*gp_objects)[i]->getGeometry());
+		Terrain* t = static_cast<Terrain*>((*gp_objects)[i]);
 		if (!player_loc->isNeighbour(t) && t != player_loc)
 		{
 			Memory::SafeDelete((*gp_objects)[i]);
@@ -73,9 +73,12 @@ void loadTerrain(Terrain* player_loc)
 		}
 	}
 
-	std::vector<Geometry*> geometries;
+	std::vector<Terrain*> geometries;
 	for (GameObject* go : *gp_objects)
-		geometries.push_back(go->getGeometry());
+		if (Terrain* t = dynamic_cast<Terrain*>(go))
+		{
+			geometries.push_back(t);
+		}
 	player_loc->createNeighbours(&geometries, gp_app, gp_cb, gp_cam, *gp_dev_con, *gp_const_buffer);
 	static_cast<TerrainScene*>(gp_app)->setGridNeighbours();
 	DXApp::loader_thread_active = false;
