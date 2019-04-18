@@ -119,7 +119,7 @@ void Cube::init(DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContex
 	vertices[23] = Vertex(size / 2, -size / 2, size / 2, r, g, b, 1.0f, 1.0f, -1.0f, 1.0f);
 
 	m_vtx_buffer = _app->getVertexBuffer(vertex_tag, this);
-	m_idx_buffer = _app->getIndexBuffer("Cube", this);
+	m_idx_buffer = _app->getIndexBuffer(Shape::Cube, this);
 
 	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 }

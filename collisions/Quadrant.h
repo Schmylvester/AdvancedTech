@@ -1,15 +1,16 @@
 #pragma once
 #include <vector>
 #include "DXUtil.h"
+
 class Collider;
 class Quadrant
 {
 public:
 	Quadrant() = default;
 	Quadrant(std::vector<Collider*>* collisionObjects);
-	Quadrant(Quadrant* parent, std::vector<Collider*>* collisionObjects, std::vector<Collider*>* all_colliders, Vector2 _min, Vector2 _max);
 	~Quadrant();
 
+	void init(Quadrant* parent, std::vector<Collider*>* collisionObjects, std::vector<Collider*>* all_colliders, Vector2 _min, Vector2 _max);
 	void tick(bool big_rect);
 	int countColliders();
 	std::vector<Collider*>* getColliders();
@@ -18,9 +19,12 @@ public:
 	Vector4 getRect();
 	bool contains(Collider* col);
 private:
+	static std::vector<Quadrant*> m_quad_pool;
+
 	void absorbSubs();
 	void createSubs();
 	int onList(std::vector<Collider*>* list, Collider* col);
+	Quadrant* getQuadFromPool();
 
 	int m_count = 0;
 	Quadrant * m_parent_quad = nullptr;
@@ -32,4 +36,3 @@ private:
 	std::vector<Collider*> m_colliders;
 	bool active = false;
 };
-

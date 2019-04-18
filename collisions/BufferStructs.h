@@ -1,5 +1,6 @@
 #pragma once
 #include "DXUtil.h"
+#include "Geometry.h"
 #include <string>
 
 struct VertexBuffer
@@ -10,6 +11,6 @@ struct VertexBuffer
 
 struct IndexBuffer
 {
-	std::string id;
+	Shape id;
 	ID3D11Buffer* buffer;
 };

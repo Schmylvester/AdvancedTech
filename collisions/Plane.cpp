@@ -22,7 +22,7 @@ void PlaneObject::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11Devi
 	
 
 	m_vtx_buffer = _app->getVertexBuffer("Plane", this);
-	m_idx_buffer = _app->getIndexBuffer("Plane", this);
+	m_idx_buffer = _app->getIndexBuffer(Shape::Plane, this);
 
 	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 }

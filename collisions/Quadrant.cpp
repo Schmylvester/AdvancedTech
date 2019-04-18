@@ -3,6 +3,8 @@
 #include "Transform.h"
 #include <string>
 
+std::vector<Quadrant*> Quadrant::m_quad_pool;
+
 Quadrant::Quadrant(std::vector<Collider*>* collisionObjects)
 {
 	m_all_colliders = collisionObjects;
@@ -23,7 +25,7 @@ Quadrant::Quadrant(std::vector<Collider*>* collisionObjects)
 	createSubs();
 }
 
-Quadrant::Quadrant(Quadrant* parent, std::vector<Collider*>* collisionObjects, std::vector<Collider*>* all_colliders, Vector2 _min, Vector2 _max)
+void Quadrant::init(Quadrant* parent, std::vector<Collider*>* collisionObjects, std::vector<Collider*>* all_colliders, Vector2 _min, Vector2 _max)
 {
 	m_all_colliders = all_colliders;
 	m_parent_quad = parent;
@@ -67,7 +69,7 @@ void Quadrant::absorbSubs()
 
 		if (m_sub_quads[i] != nullptr)
 		{
-			delete m_sub_quads[i];
+			m_quad_pool.push_back(m_sub_quads[i]);
 			m_sub_quads[i] = nullptr;
 		}
 	}
@@ -92,10 +94,14 @@ void Quadrant::createSubs()
 				}
 			}
 		}
-		m_sub_quads[0] = new Quadrant(this, &m_colliders, m_all_colliders, m_min, m_center);
-		m_sub_quads[1] = new Quadrant(this, &m_colliders, m_all_colliders, Vector2(m_center.x, m_min.y), Vector2(m_max.x, m_center.y));
-		m_sub_quads[2] = new Quadrant(this, &m_colliders, m_all_colliders, Vector2(m_min.x, m_center.y), Vector2(m_center.x, m_max.y));
-		m_sub_quads[3] = new Quadrant(this, &m_colliders, m_all_colliders, m_center, m_max);
+		m_sub_quads[0] = getQuadFromPool();
+		m_sub_quads[0]->init(this, &m_colliders, m_all_colliders, m_min, m_center);
+		m_sub_quads[1] = getQuadFromPool();
+		m_sub_quads[1]->init(this, &m_colliders, m_all_colliders, Vector2(m_center.x, m_min.y), Vector2(m_max.x, m_center.y));
+		m_sub_quads[2] = getQuadFromPool();
+		m_sub_quads[2]->init(this, &m_colliders, m_all_colliders, Vector2(m_min.x, m_center.y), Vector2(m_center.x, m_max.y));
+		m_sub_quads[3] = getQuadFromPool();
+		m_sub_quads[3]->init(this, &m_colliders, m_all_colliders, m_center, m_max);
 	}
 	else if (m_colliders.size() == 1)
 	{
@@ -113,6 +119,18 @@ int Quadrant::onList(std::vector<Collider*>* list, Collider * col)
 		}
 	}
 	return -1;
+}
+
+Quadrant * Quadrant::getQuadFromPool()
+{
+	//if there are quads in the pool, return the first one and remove it from the pool
+	if (m_quad_pool.size() > 0)
+	{
+		Quadrant* ret = m_quad_pool[0];
+		m_quad_pool.erase(m_quad_pool.begin());
+		return ret;
+	}
+	return new Quadrant();
 }
 
 void Quadrant::tick(bool big_rect)

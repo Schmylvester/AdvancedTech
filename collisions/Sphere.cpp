@@ -68,7 +68,7 @@ void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceCon
 	}
 	std::string id = std::to_string(rand());
 	m_vtx_buffer = _app->getVertexBuffer(id, this);
-	m_idx_buffer = _app->getIndexBuffer("Sphere", this);
+	m_idx_buffer = _app->getIndexBuffer(Shape::Sphere, this);
 	Geometry::init(_app, _cb, cam, dev_con, c_buff, _owner);
 }
 

@@ -355,7 +355,7 @@ float DXApp::getDeltaTime()
 	return f;
 }
 
-ID3D11Buffer* DXApp::getIndexBuffer(std::string id, Geometry* geo)
+ID3D11Buffer* DXApp::getIndexBuffer(Shape id, Geometry* geo)
 {
 	//search to see whether this index buffer exists already
 	for (IndexBuffer& ib : m_geo_index_buffers)

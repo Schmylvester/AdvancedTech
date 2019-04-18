@@ -32,7 +32,7 @@ public:
 	ID3D11Device* getDevice() { return m_device; }
 	ID3D11DeviceContext* getContext() { return m_device_context; }
 
-	ID3D11Buffer* getIndexBuffer(std::string id, Geometry* geo);
+	ID3D11Buffer* getIndexBuffer(Shape, Geometry* geo);
 	ID3D11Buffer* getVertexBuffer(std::string id, Geometry* geo);
 
 protected:
