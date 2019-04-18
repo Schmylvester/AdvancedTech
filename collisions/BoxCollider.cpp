@@ -32,7 +32,7 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	col->updateVerts();
 	CollisionData collision_data;
 	collision_data.other_object = col;
-	collision_data.penetration = 0.1f;
+	collision_data.penetration = 0.5f;
 	Vector3 projection_axes[15];
 	for (int i = 0; i < 3; i++)
 	{
@@ -63,12 +63,12 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 				colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 			}
 			CollisionData ret_false;
-			ret_false.did_collide = false;
+			ret_false.type = CollisionClassifier::No_Collision;
 			return ret_false;
 		}
 	}
 
-	collision_data.did_collide = true;
+	collision_data.type = CollisionClassifier::Collision;
 	collision_data.collision_direction = b_t.getPos() - a_t.getPos();
 	collision_data.collision_direction.Normalize();
 	return collision_data;

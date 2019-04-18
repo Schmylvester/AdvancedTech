@@ -5,10 +5,11 @@
 #include "SphereCollider.h"
 #include "GameObject.h"
 
-PhysicsBody::PhysicsBody(Collider * _collider, Transform * _transform)
+PhysicsBody::PhysicsBody(Collider * _collider, Transform * _transform, float _mass)
 {
 	m_collider = _collider;
 	m_obj_transform = _transform;
+	m_mass = _mass;
 }
 
 void PhysicsBody::addForceAtPoint(float force, Vector3 collision_point, Vector3 direction)
@@ -62,12 +63,10 @@ void PhysicsBody::addForceAtBoxPoint(float force, Vector3 collision_point, Vecto
 
 	//lever arm angle of the force
 	float dot = collision_point.Dot(face_inv_normal);
-	float mag_a = collision_point.x * collision_point.x
-		+ collision_point.y * collision_point.y
-		+ collision_point.z * collision_point.z;
-	float mag_b = face_inv_normal.x * face_inv_normal.x
-		+ face_inv_normal.y * face_inv_normal.y
-		+ face_inv_normal.z * face_inv_normal.z;
+	float mag_a = pow(collision_point.x, 2)
+		+ pow(collision_point.y,2) + pow(collision_point.z, 2);
+	float mag_b = pow(face_inv_normal.x, 2)
+		+ pow(face_inv_normal.y, 2) + pow(face_inv_normal.z, 2);
 	float angle = acos(dot / sqrt(mag_a * mag_b));
 	//rotational force
 	float torque_force = force * dist * angle;

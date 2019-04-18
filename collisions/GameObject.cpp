@@ -30,13 +30,13 @@ void GameObject::init(Shape shape, DXApp * _app, CBPerObject * _cb, Camera * cam
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 }
 
-void GameObject::addCollider(Collider * col, CollisionManager * collision_manager, bool add_physics)
+void GameObject::addCollider(Collider * col, CollisionManager * collision_manager, float mass)
 {
 	collision_manager->addCollider(col);
 	m_collider = col;
-	if (add_physics)
+	if (mass > 0)
 	{
-		m_physics = std::make_unique<PhysicsBody>(m_collider, &m_transform);
+		m_physics = std::make_unique<PhysicsBody>(m_collider, &m_transform, mass);
 	}
 }
 
@@ -44,15 +44,19 @@ void GameObject::collision(CollisionData col)
 {
 	if (col.type == CollisionClassifier::Ongoing_Collision)
 	{
+		//get the masses of the objects to determine which moves more
+		float my_mass = m_physics->getMass();
+		float their_mass = col.other_object->getObject()->getPhysics()->getMass();
+		float relative_mass = 1 - (my_mass / (my_mass + their_mass));
 		//move out of the object
-		m_transform.translate(col.collision_direction * col.penetration / 2);
+		m_transform.translate(col.collision_direction * col.penetration * relative_mass);
 		m_collider->objectMoved();
 	}
 	if (col.type == CollisionClassifier::Collision_This_Frame)
 	{
 		if (m_physics != nullptr)
 		{
-			//m_physics->addForceAtPoint(1.0f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
+			m_physics->addForceAtPoint(10.0f, m_transform.getPos() - col.other_object->getTransform()->getPos(), col.collision_direction);
 		}
 	}
 }

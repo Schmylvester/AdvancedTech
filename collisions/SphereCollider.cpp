@@ -5,7 +5,7 @@
 CollisionData SphereCollider::checkIntersection(BoxCollider * col)
 {
 	CollisionData ret_false;
-	ret_false.did_collide = false;
+	ret_false.type = CollisionClassifier::No_Collision;
 	return ret_false;
 }
 
@@ -18,7 +18,7 @@ CollisionData SphereCollider::checkIntersection(SphereCollider * col)
 	if (dist < collide_dist)
 	{
 		CollisionData return_data;
-		return_data.did_collide = true;
+		return_data.type = CollisionClassifier::Collision;
 		return_data.collision_direction = b_pos - a_pos;
 		return_data.penetration = (collide_dist - dist);
 		return_data.other_object = col;
@@ -32,7 +32,7 @@ CollisionData SphereCollider::checkIntersection(SphereCollider * col)
 			colliding_this_frame.erase(colliding_last_frame.begin() + on_list_idx);
 		}
 		CollisionData ret_false;
-		ret_false.did_collide = false;
+		ret_false.type = CollisionClassifier::No_Collision;
 		return ret_false;
 	}
 }

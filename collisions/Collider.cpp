@@ -22,7 +22,7 @@ CollisionData Collider::checkIntersection(Collider * col)
 		return checkIntersection(s);
 	}
 	CollisionData ret_false;
-	ret_false.did_collide = false;
+	ret_false.type = CollisionClassifier::No_Collision;
 	return ret_false;
 }
 

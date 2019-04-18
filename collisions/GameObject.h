@@ -21,12 +21,13 @@ public:
 	void init(Shape shape, DXApp* _app, CBPerObject * _cb, Camera * cam,
 		ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
 	
-	void addCollider(Collider* col, CollisionManager* collision_manager, bool add_physics);
+	void addCollider(Collider* col, CollisionManager* collision_manager, float mass = -1);
 	virtual void collision(CollisionData col);
 	Transform* getTransform();
 	Geometry* getGeometry();
 	virtual void update(float dt);
 	void draw();
+	PhysicsBody* getPhysics() const { return m_physics.get(); }
 
 protected:
 	Camera* m_cam = nullptr;

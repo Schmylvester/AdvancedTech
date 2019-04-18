@@ -21,7 +21,7 @@ void CollisionManager::checkCollisions()
 			if (check)
 			{
 				CollisionData col_data = collisionObjects[i]->checkIntersection(collisionObjects[j]);
-				if (col_data.did_collide)
+				if (col_data.type == CollisionClassifier::Collision)
 				{
 					collisionObjects[j]->addCol(col_data);
 					col_data.other_object = collisionObjects[j];
