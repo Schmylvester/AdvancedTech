@@ -31,8 +31,8 @@ void CollisionsScene::initObjects()
 {
 	m_cam = Camera(getRatio());
 	//box colliders almost work, but don't work so I'm using spheres
-	cubes(5);
-	//spheres(15);
+	//cubes(5);
+	spheres(15);
 }
 
 void CollisionsScene::spheres(int num)

@@ -127,7 +127,6 @@ bool DXApp::initRasteriserStates()
 		errorBox("Problem with solid");
 		return false;
 	}
-
 	return true;
 }
 

@@ -33,6 +33,7 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	CollisionData collision_data;
 	collision_data.other_object = col;
 	collision_data.penetration = 0.5f;
+
 	Vector3 projection_axes[15];
 	for (int i = 0; i < 3; i++)
 	{
@@ -50,8 +51,8 @@ CollisionData BoxCollider::checkIntersection(BoxCollider* col)
 	Transform b_t = *col->getTransform();
 	for (int axis = 0; axis < 15; axis++)
 	{
-		float intersect = checkProjectionIntersect(a_t.getPos(), b_t.getPos(), a_t.getScale(),
-			b_t.getScale(), projection_axes[0], projection_axes[1], projection_axes[2],
+		float intersect = checkProjectionIntersect(a_t.getPos(), b_t.getPos(), a_t.getScale() / 2,
+			b_t.getScale() / 2, projection_axes[0], projection_axes[1], projection_axes[2],
 			projection_axes[3], projection_axes[4], projection_axes[5],
 			projection_axes[axis]);
 
@@ -80,12 +81,12 @@ float BoxCollider::checkProjectionIntersect(Vector3 a_pos, Vector3 b_pos,
 	Vector3 b_z_proj, Vector3 projection)
 {
 	float result = (abs((b_pos - a_pos).Length()));
-	float ax = abs(((a_size.x * 0.5f) * a_x_proj).Dot(projection));
-	float ay = abs(((a_size.y * 0.5f) * a_y_proj).Dot(projection));
-	float az = abs(((a_size.z * 0.5f) * a_z_proj).Dot(projection));
-	float bx = abs(((b_size.x * 0.5f) * b_x_proj).Dot(projection));
-	float by = abs(((b_size.y * 0.5f) * b_y_proj).Dot(projection));
-	float bz = abs(((b_size.z * 0.5f) * b_z_proj).Dot(projection));
+	float ax = abs((a_size.x * a_x_proj).Dot(projection));
+	float ay = abs((a_size.y * a_y_proj).Dot(projection));
+	float az = abs((a_size.z * a_z_proj).Dot(projection));
+	float bx = abs((b_size.x * b_x_proj).Dot(projection));
+	float by = abs((b_size.y * b_y_proj).Dot(projection));
+	float bz = abs((b_size.z * b_z_proj).Dot(projection));
 	float sum = (ax + ay + az + bx + by + bz);
 	return  result - sum;
 }
