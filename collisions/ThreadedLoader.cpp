@@ -75,13 +75,7 @@ void loadTerrain(Terrain* player_loc)
 		}
 	}
 
-	std::vector<Terrain*> geometries;
-	for (GameObject* go : *objects)
-		if (Terrain* t = dynamic_cast<Terrain*>(go))
-		{
-			geometries.push_back(t);
-		}
-	player_loc->createNeighbours(&geometries, gp_app, gp_cb, gp_cam, *gp_dev_con, *gp_const_buffer);
+	player_loc->createNeighbours(objects, gp_app, gp_cb, gp_cam, *gp_dev_con, *gp_const_buffer);
 	static_cast<TerrainScene*>(gp_app)->setGridNeighbours();
 	DXApp::loader_thread_active = false;
 }

@@ -49,7 +49,7 @@ private:
 	int grid_x;
 	int grid_y;
 	int width;
-	int height;
+	int length;
 	float terrain_scale = 4;
 	bool normals_set = false;
 };

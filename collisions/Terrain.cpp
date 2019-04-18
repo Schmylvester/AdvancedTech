@@ -43,10 +43,13 @@ void Terrain::init(const char* _name, int x, int y, DXApp * _app, CBPerObject * 
 
 	m_geometry = new TerrainGeometry(_name, x, y);
 	loadFile();
+
+	width = h_map_info.img_width;
+	length = h_map_info.img_height;
 	static_cast<TerrainGeometry*>(m_geometry)->createVerts(h_map_info);
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 
-	m_transform.translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (height));
+	m_transform.translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (length));
 }
 
 void Terrain::loadFile()
@@ -114,8 +117,8 @@ bool Terrain::playerInCell(int player_x, int player_z)
 {
 	int left = (grid_x * (terrain_scale * width)) - 64;
 	int right = ((grid_x + 1) * (terrain_scale * width)) - 64;
-	int bottom = (grid_y * (terrain_scale * height)) - 64;
-	int top = ((grid_y + 1) * (terrain_scale * height)) - 64;
+	int bottom = (grid_y * (terrain_scale * length)) - 64;
+	int top = ((grid_y + 1) * (terrain_scale * length)) - 64;
 	return (player_x > left && player_x <= right && player_z > bottom && player_z <= top);
 }
 
