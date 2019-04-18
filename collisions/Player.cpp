@@ -59,7 +59,7 @@ void Player::update(float dt)
 	GameObject::update(dt);
 }
 
-void Player::collision(CollisionData col, CollisionClassifier type)
+void Player::collision(CollisionData col)
 {
-	GameObject::collision(col, type);
+	GameObject::collision(col);
 }

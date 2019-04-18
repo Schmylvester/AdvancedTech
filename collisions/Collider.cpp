@@ -32,7 +32,8 @@ void Collider::tickCollider()
 	{
 		if (searchList(&(colliding_this_frame), colliding_last_frame[i].other_object) == -1)
 		{
-			m_game_object->collision(colliding_last_frame[i], CollisionClassifier::Collision_Ended);
+			colliding_last_frame[i].type = CollisionClassifier::Collision_Ended;
+			m_game_object->collision(colliding_last_frame[i]);
 			colliding_last_frame.erase(colliding_last_frame.begin() + i);
 		}
 	}
@@ -40,12 +41,14 @@ void Collider::tickCollider()
 	{
 		if (searchList(&(colliding_last_frame), col.other_object) == -1)
 		{
-			m_game_object->collision(col, CollisionClassifier::Collision_This_Frame);
+			col.type = CollisionClassifier::Collision_This_Frame;
+			m_game_object->collision(col);
 			colliding_last_frame.push_back(col);
 		}
 		else
 		{
-			m_game_object->collision(col, CollisionClassifier::Ongoing_Collision);
+			col.type = CollisionClassifier::Ongoing_Collision;
+			m_game_object->collision(col);
 		}
 	}
 	colliding_this_frame.clear();

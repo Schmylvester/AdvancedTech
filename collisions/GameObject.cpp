@@ -40,15 +40,15 @@ void GameObject::addCollider(Collider * col, CollisionManager * collision_manage
 	}
 }
 
-void GameObject::collision(CollisionData col, CollisionClassifier type)
+void GameObject::collision(CollisionData col)
 {
-	if (type == CollisionClassifier::Ongoing_Collision)
+	if (col.type == CollisionClassifier::Ongoing_Collision)
 	{
 		//move out of the object
 		m_transform.translate(col.collision_direction * col.penetration / 2);
 		m_collider->objectMoved();
 	}
-	if (type == CollisionClassifier::Collision_This_Frame)
+	if (col.type == CollisionClassifier::Collision_This_Frame)
 	{
 		if (m_physics != nullptr)
 		{

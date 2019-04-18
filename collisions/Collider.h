@@ -10,20 +10,21 @@ class GameObject;
 class Quadrant;
 class CollisionManager;
 
+enum class CollisionClassifier
+{
+	Collision_This_Frame,
+	Ongoing_Collision,
+	Collision_Ended,
+};
+
 struct CollisionData
 {
 	Collider* other_object = nullptr;
 	//Vector3 colision_center = Vector3::Zero;
 	Vector3 collision_direction = Vector3::Zero;
 	float penetration = 0.0f;
+	CollisionClassifier type;
 	bool did_collide = false;
-};
-
-enum class CollisionClassifier
-{
-	Collision_This_Frame,
-	Ongoing_Collision,
-	Collision_Ended,
 };
 
 class Collider

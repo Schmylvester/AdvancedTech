@@ -22,7 +22,7 @@ public:
 		ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
 	
 	void addCollider(Collider* col, CollisionManager* collision_manager, bool add_physics);
-	virtual void collision(CollisionData col, CollisionClassifier type);
+	virtual void collision(CollisionData col);
 	Transform* getTransform();
 	Geometry* getGeometry();
 	virtual void update(float dt);
