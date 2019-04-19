@@ -8,30 +8,9 @@
 void errorBox(LPCSTR message);
 
 NavigationCell* g_cells;
-bool Terrain::cell_map_ready = true;
-void assignNeighbours()
-{
-	Terrain::cell_map_ready = false;
-	for (int i = 0; i < 16384; i++)
-	{
-		for (int j = i + 1; j < 16384; j++)
-		{
-			if (g_cells[i].checkNeighbour(&g_cells[j]))
-			{
-				if (g_cells[i].countNeighbours() == 8 || g_cells[j].countNeighbours() == 8)
-				{
-					break;
-				}
-			}
-		}
-	}
-	Terrain::cell_map_ready = true;
-}
-
 Terrain::~Terrain()
 {
 	Memory::SafeDeleteArr(h_map_info.map);
-	while (!cell_map_ready) {}
 }
 
 void Terrain::init(const char* _name, int x, int y, DXApp * _app, CBPerObject * _cb, Camera * cam,
@@ -102,12 +81,6 @@ void Terrain::loadFile()
 				cells[index].setAccessible(false);
 			}
 		}
-	}
-
-	if (cell_map_ready)
-	{
-		g_cells = cells;
-		create_cell_map = std::thread(assignNeighbours);
 	}
 
 	Memory::SafeDeleteArr(bitmap_image);

@@ -36,16 +36,21 @@ void TerrainGeometry::createVerts(ImageMapInfo h_map_info)
 		{
 			int index = (y * cols) + x;
 			vertices[index].position = h_map_info.map[index];
-			float shade = ((float)(rand() % 100)) / 500;
 
+			float r, g, b;
 			if (vertices[index].position.y >= 10)
 			{
-				vertices[index].colour = XMFLOAT4(shade, 0.4f + shade, shade, 1.0f);
+				r = 0;
+				g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+				b = 1 - g;
 			}
 			else
 			{
-				vertices[index].colour = XMFLOAT4(shade, shade, 0.4f + shade, 1.0f);
+				r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+				g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 0.4f - r);
+				b = 0.4f - (r + g);
 			}
+			vertices[index].colour = XMFLOAT4(r, g, b, 1.0f);
 			earliest_instance[index] = (triangle_count * 3) + 1;
 		}
 	}

@@ -64,11 +64,6 @@ void TerrainScene::updateScene(float dt)
 		}
 	}
 
-	for (Terrain* g : terrain)
-	{
-		g->linkCellMap();
-	}
-
 	if (loader_thread.joinable() && !loader_thread_active)
 	{
 		loader_thread.join();
