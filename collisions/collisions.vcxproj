@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{90F70720-F825-46C5-BAE0-94FC292986BD}</ProjectGuid>
     <RootNamespace>collisions</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -120,11 +120,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Collider.cpp" />
-    <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="CollisionsScene.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
     <ClCompile Include="Frustum.cpp" />
@@ -132,16 +128,13 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="NavigationCell.cpp" />
     <ClCompile Include="Pathfinder.cpp" />
-    <ClCompile Include="PhysicsBody.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Quadrant.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sphere.cpp" />
-    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainGeometry.cpp" />
     <ClCompile Include="TerrainScene.cpp" />
@@ -151,12 +144,8 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="BufferStructs.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="Collider.h" />
-    <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="CollisionsScene.h" />
     <ClInclude Include="ConstantBuffers.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DXApp.h" />
@@ -168,16 +157,13 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="NavigationCell.h" />
     <ClInclude Include="Pathfinder.h" />
-    <ClInclude Include="PhysicsBody.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Quadrant.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sphere.h" />
-    <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainGeometry.h" />
     <ClInclude Include="TerrainScene.h" />
