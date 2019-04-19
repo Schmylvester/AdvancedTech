@@ -13,7 +13,7 @@ public:
 
 
 	void createVerts(ImageMapInfo h_map_info);
-	void getNormals();
+	void getNormals(int* earliest_instance);
 
 
 private:
