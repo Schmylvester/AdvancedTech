@@ -2,7 +2,6 @@
 #include "DXUtil.h"
 #include "Vertex.h"
 #include "Transform.h"
-#include "Collider.h"
 
 class GameObject;
 class DXApp;

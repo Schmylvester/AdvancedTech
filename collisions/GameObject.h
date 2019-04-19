@@ -1,8 +1,6 @@
 #pragma once
 #include "Transform.h"
-#include "Collider.h"
 #include "Geometry.h"
-#include "PhysicsBody.h"
 #include <memory>
 
 class CollisionManager;
@@ -21,8 +19,6 @@ public:
 	void init(Shape shape, DXApp* _app, CBPerObject * _cb, Camera * cam,
 		ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
 	
-	void addCollider(Collider* col, CollisionManager* collision_manager, bool add_physics);
-	virtual void collision(CollisionData col, CollisionClassifier type);
 	Transform* getTransform();
 	Geometry* getGeometry();
 	virtual void update(float dt);
@@ -30,9 +26,7 @@ public:
 
 protected:
 	Camera* m_cam = nullptr;
-	Collider* m_collider = nullptr;
 	Geometry* m_geometry = nullptr;
 	Transform m_transform;
-	std::unique_ptr<PhysicsBody> m_physics = nullptr;
 };
 
