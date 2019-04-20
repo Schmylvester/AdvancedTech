@@ -16,8 +16,8 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 	Path open;
 	open.active_cell = from;
 	open.previous_cell = nullptr;
-	open.value = (getDistance(open.active_cell, to));
-	open.value += (getDistance(open.active_cell, from) * 1.2f);
+	open.value = (getDistance(open.active_cell, to) * skew);
+	open.value += (getDistance(open.active_cell, from) * (1 / skew));
 	open_list.push_back(open);
 
 	bool path_found = false;
@@ -53,8 +53,8 @@ std::vector<NavigationCell*> Pathfinder::findpath(NavigationCell * from, Navigat
 						//set a new working candidate
 						open.previous_cell = open_list[best_candidate].active_cell;
 						open.active_cell = cell;
-						open.value = getDistance(open.active_cell, to);
-						open.value += getDistance(open.active_cell, from);
+						open.value = (getDistance(open.active_cell, to) * skew);
+						open.value += (getDistance(open.active_cell, from) * (1 / skew));
 						open_list.push_back(open);
 					}
 				}
@@ -96,11 +96,7 @@ bool Pathfinder::listContains(NavigationCell * cell, std::vector<Path>* list_to_
 //straight line distance between two cells
 float Pathfinder::getDistance(NavigationCell * cell_a, NavigationCell * cell_b) const
 {
-	float x = cell_a->getIndexPos().x - cell_b->getIndexPos().x;
-	float z = cell_a->getIndexPos().z - cell_b->getIndexPos().z;
-	float distance = sqrt(pow(x, 2) + pow(z, 2));
-	//distance = x + z;
-	return distance;
+	return Vector3::Distance(cell_a->getWorldPos(), cell_b->getWorldPos());
 }
 
 //get the cell that led to this cell in the chain

@@ -29,7 +29,11 @@ VOut VShader(float4 position : POSITION, float4 color : COLOR, float3 normal : N
 
 	output.position = mul(position, WVP);
 	output.normal = mul(normal, World);
-	output.color = color;
+	output.color.r = color.r;
+	output.color.g = color.g;
+	output.color.b = color.b;
+	output.color.a = color.a;
+
 
 	return output;
 }

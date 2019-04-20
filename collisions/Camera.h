@@ -5,7 +5,7 @@ class Camera
 {
 public:
 	Camera() = default;
-	Camera(float ratio);
+	Camera(float ratio, bool top_down = false);
 	~Camera() = default;
 
 	XMMATRIX getWVPMatrix(XMMATRIX world_matrix);

@@ -18,6 +18,7 @@ enum NeighbourID
 	BOTTOM_RIGHT
 };
 
+class NavMesh;
 class Terrain : public GameObject
 {
 public:
@@ -25,6 +26,7 @@ public:
 	~Terrain();
 
 	void init(const char* _name, int x, int y, DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
+	NavMesh* addNavMesh();
 
 	void loadFile();
 
@@ -39,6 +41,8 @@ public:
 	NavigationCell* getCell(int index = -1);
 
 private:
+	std::thread nav_thread;
+	NavMesh * nav_mesh = nullptr;
 	NavigationCell cells[16384];
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	ImageMapInfo h_map_info;

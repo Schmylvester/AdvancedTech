@@ -4,12 +4,15 @@
 #include <fstream>
 #include "GameObject.h"
 #include "TerrainGeometry.h"
+#include "NavMesh.h"
 
 void errorBox(LPCSTR message);
 
 NavigationCell* g_cells;
 Terrain::~Terrain()
 {
+	nav_thread.join();
+	Memory::SafeDelete(nav_mesh);
 	Memory::SafeDeleteArr(h_map_info.map);
 }
 
@@ -29,6 +32,16 @@ void Terrain::init(const char* _name, int x, int y, DXApp * _app, CBPerObject * 
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 
 	m_transform.translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (length));
+}
+
+void initNavMesh();
+void setPointers(NavMesh* nav_mesh, ImageMapInfo* map);
+NavMesh* Terrain::addNavMesh()
+{
+	nav_mesh = new NavMesh();
+	setPointers(nav_mesh, &h_map_info);
+	nav_thread = std::thread(initNavMesh);
+	return nav_mesh;
 }
 
 void Terrain::loadFile()

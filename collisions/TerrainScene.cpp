@@ -1,6 +1,7 @@
 #include "TerrainScene.h"
 #include "GeometryIncludes.h"
 #include "Terrain.h"
+#include "Player.h"
 
 void loadTerrain(Terrain* player_loc);
 void setPointers(void* _geometry, DXApp* _app,
@@ -9,6 +10,7 @@ void setPointers(void* _geometry, DXApp* _app,
 
 TerrainScene::~TerrainScene()
 {
+	Memory::SafeDelete(player);
 	for (GameObject* ter : terrain)
 		Memory::SafeDelete(ter);
 }
@@ -16,28 +18,7 @@ TerrainScene::~TerrainScene()
 void TerrainScene::updateScene(float dt)
 {
 	m_input.detectInput();
-	float step = dt * move_speed;
-
-	if (m_input.key(DIK_W, InputState::HELD))
-	{
-		player->getTransform()->translate(0, 0, step);
-		m_cam.move(0, 0, step);
-	}
-	if (m_input.key(DIK_A, InputState::HELD))
-	{
-		player->getTransform()->translate(-step, 0, 0);
-		m_cam.move(-step, 0, 0);
-	}
-	if (m_input.key(DIK_S, InputState::HELD))
-	{
-		player->getTransform()->translate(0, 0, -step);
-		m_cam.move(0, 0, -step);
-	}
-	if (m_input.key(DIK_D, InputState::HELD))
-	{
-		player->getTransform()->translate(step, 0, 0);
-		m_cam.move(step, 0, 0);
-	}
+	player->update(dt);
 
 	float player_x = player->getTransform()->getPos().x;
 	float player_z = player->getTransform()->getPos().z;
@@ -110,7 +91,7 @@ void TerrainScene::initObjects()
 	active_cell = t;
 	terrain.push_back(t);
 
-	player = new GameObject();
+	player = new Player(&m_input);
 	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(256, 55, 256);
 

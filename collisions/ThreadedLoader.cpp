@@ -5,7 +5,8 @@
 #include "Scene.h"
 #include "TerrainScene.h"
 #include "NavigationCell.h"
-#include "Pathfinder.h"
+#include "NavMesh.h"
+#include "ImageMapInfo.h"
 
 void* gp_objects;
 DXApp* gp_app;
@@ -78,4 +79,36 @@ void loadTerrain(Terrain* player_loc)
 	player_loc->createNeighbours(objects, gp_app, gp_cb, gp_cam, *gp_dev_con, *gp_const_buffer);
 	static_cast<TerrainScene*>(gp_app)->setGridNeighbours();
 	DXApp::loader_thread_active = false;
+}
+
+NavMesh* gp_nav_mesh = nullptr;
+ImageMapInfo* gp_map = nullptr;
+void setPointers(NavMesh* nav_mesh, ImageMapInfo* map)
+{
+	gp_nav_mesh = nav_mesh;
+	gp_map = map;
+}
+void initNavMesh()
+{
+	gp_nav_mesh->cell_count = gp_map->img_width * gp_map->img_height;
+	gp_nav_mesh->cells = new NavigationCell[gp_nav_mesh->cell_count];
+	for (int i = 0; i < gp_nav_mesh->cell_count; i++)
+	{
+		int idx = i;
+		gp_nav_mesh->cells[i] = 
+			NavigationCell(idx % gp_map->img_width,
+				gp_map->map[idx].y, idx / gp_map->img_width,
+				gp_map->map[idx]);
+	}
+	for (int i = 0; i < gp_nav_mesh->cell_count; i++)
+	{
+		for (int j = i + 1; j < gp_nav_mesh->cell_count; j++)
+		{
+			if (gp_nav_mesh->cells[j].countNeighbours() < 8)
+				gp_nav_mesh->cells[i].checkNeighbour(&gp_nav_mesh->cells[j]);
+			if (gp_nav_mesh->cells[i].countNeighbours() == 8)
+				break;
+		}
+	}
+	gp_nav_mesh->initialised = true;
 }

@@ -15,6 +15,11 @@ void Transform::setPosition(float x, float y, float z)
 	position_matrix = XMMatrixTranslation(x, y, z);
 }
 
+void Transform::setPosition(Vector3 pos)
+{
+	position_matrix = XMMatrixTranslation(pos.x, pos.y, pos.z);
+}
+
 void Transform::rotate(XMVECTOR axis, float angle)
 {
 	rotation_matrix *= XMMatrixRotationAxis(axis, angle);

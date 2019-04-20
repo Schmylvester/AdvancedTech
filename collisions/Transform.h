@@ -10,6 +10,7 @@ public:
 	void translate(float x, float y, float z);
 	void translate(Vector3 move);
 	void setPosition(float x, float y, float z);
+	void setPosition(Vector3 pos);
 	void rotate(XMVECTOR axis, float angle);
 	void scale(float x, float y, float z);
 	const Vector3 getPos() { return position_matrix.r[3]; }

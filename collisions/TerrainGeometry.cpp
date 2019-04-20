@@ -38,17 +38,17 @@ void TerrainGeometry::createVerts(ImageMapInfo h_map_info)
 			vertices[index].position = h_map_info.map[index];
 
 			float r, g, b;
-			if (vertices[index].position.y >= 10)
+			if (vertices[index].position.y >= 5)
 			{
-				r = 0;
+				b = 0;
 				g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				b = 1 - g;
+				r = 1 - g;
 			}
 			else
 			{
-				r = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 0.4f - r);
-				b = 0.4f - (r + g);
+				b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+				g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 0.4f - b);
+				r = 0.4f - (b + g);
 			}
 			vertices[index].colour = XMFLOAT4(r, g, b, 1.0f);
 			earliest_instance[index] = (triangle_count * 3) + 1;

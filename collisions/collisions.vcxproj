@@ -22,7 +22,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{90F70720-F825-46C5-BAE0-94FC292986BD}</ProjectGuid>
     <RootNamespace>collisions</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -120,6 +120,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AI.cpp" />
+    <ClCompile Include="AIScene.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DXApp.cpp" />
@@ -127,6 +129,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="NavigationCell.cpp" />
+    <ClCompile Include="NavMesh.cpp" />
     <ClCompile Include="Pathfinder.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -144,6 +147,8 @@
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AI.h" />
+    <ClInclude Include="AIScene.h" />
     <ClInclude Include="BufferStructs.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffers.h" />
@@ -156,6 +161,7 @@
     <ClInclude Include="ImageMapInfo.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="NavigationCell.h" />
+    <ClInclude Include="NavMesh.h" />
     <ClInclude Include="Pathfinder.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Player.h" />

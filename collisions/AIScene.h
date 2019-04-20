@@ -3,21 +3,20 @@
 
 class Terrain;
 class Player;
-class TerrainScene : public DXApp
+class AI;
+class AIScene : public DXApp
 {
 public:
-	TerrainScene() = default;
-	~TerrainScene();
+	AIScene() = default;
+	~AIScene();
 
 	virtual void updateScene(float dt) override;
 	virtual void drawScene(float dt) override;
 	virtual void initObjects() override;
-	void setGridNeighbours();
 
 private:
-	Terrain * active_cell;
+	Terrain * map;
 	Player * player;
-	std::vector<Terrain*> terrain;
-	std::vector<GameObject*> safe_geometry;
+	AI* ai;
+	GameObject* ai_target;
 };
-
