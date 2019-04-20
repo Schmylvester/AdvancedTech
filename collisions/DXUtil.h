@@ -5,6 +5,9 @@
 #pragma comment(lib, "D3DCompiler.lib")
 #include <SimpleMath.h>
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 namespace Memory

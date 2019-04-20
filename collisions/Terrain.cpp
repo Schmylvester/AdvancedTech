@@ -11,19 +11,22 @@ void errorBox(LPCSTR message);
 NavigationCell* g_cells;
 Terrain::~Terrain()
 {
-	nav_thread.join();
+	if (nav_mesh)
+	{
+		nav_thread.join();
+	}
 	Memory::SafeDelete(nav_mesh);
 	Memory::SafeDeleteArr(h_map_info.map);
 }
 
-void Terrain::init(const char* _name, int x, int y, DXApp * _app, CBPerObject * _cb, Camera * cam,
+void Terrain::init(std::string _name, int x, int y, DXApp * _app, CBPerObject * _cb, Camera * cam,
 	ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)
 {
 	file_name = _name;
 	grid_x = x;
 	grid_y = y;
 
-	m_geometry = new TerrainGeometry(_name, x, y);
+	m_geometry = new TerrainGeometry(_name.c_str(), x, y);
 	loadFile();
 
 	width = h_map_info.img_width;
@@ -31,7 +34,7 @@ void Terrain::init(const char* _name, int x, int y, DXApp * _app, CBPerObject * 
 	static_cast<TerrainGeometry*>(m_geometry)->createVerts(h_map_info);
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 
-	m_transform.translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (length));
+	m_transform.translate(terrain_scale * (grid_x * 0.99f) * width, 0, terrain_scale * (grid_y * 0.99f) * length);
 }
 
 void initNavMesh(NavMesh* nav_mesh, ImageMapInfo* map);
@@ -52,7 +55,7 @@ void Terrain::loadFile()
 	int index;
 	unsigned char height;
 
-	fopen_s(&file_ptr, file_name, "rb");
+	fopen_s(&file_ptr, file_name.c_str(), "rb");
 
 	if (file_ptr == nullptr)
 	{
@@ -75,7 +78,7 @@ void Terrain::loadFile()
 	//0 = b, 1 = g, 2 = r
 	int colour_idx = 2;
 
-	float height_factor = 20.0f;
+	float height_factor = 5.0f;
 	for (int x = 0; x < h_map_info.img_width; x++)
 	{
 		for (int y = 0; y < h_map_info.img_height; y++)
@@ -86,11 +89,6 @@ void Terrain::loadFile()
 			h_map_info.map[index].y = (float)(height) / height_factor;
 			h_map_info.map[index].z = (float)x * terrain_scale;
 			colour_idx += 3;
-			cells[index] = NavigationCell(x, height / height_factor, y, h_map_info.map[index]);
-			if (height / height_factor <= 10)
-			{
-				cells[index].setAccessible(false);
-			}
 		}
 	}
 
@@ -135,66 +133,88 @@ void Terrain::createNeighbours(std::vector<Terrain*>* geometry_list, DXApp * _ap
 	if (neighbours[TOP_LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x - 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, -1, 1), grid_x - 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 0, 1), grid_x, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP_RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x + 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 1, 1), grid_x + 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x - 1, grid_y, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, -1, 0), grid_x - 1, grid_y, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x + 1, grid_y, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 1, 0), grid_x + 1, grid_y, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM_LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x - 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, -1, -1), grid_x - 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 0, -1), grid_x, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM_RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(file_name, grid_x + 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 1, -1), grid_x + 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 }
 
-NavigationCell * Terrain::getCell(int index)
+std::string Terrain::getNextFile(std::string in, int dir_x, int dir_y)
 {
-	if (index == -1)
+	for (int i = 0; i < 6; i++)
 	{
-		NavigationCell* return_cell = nullptr;
-		do
+		if (in[i + 15] != "Perlin"[i])
 		{
-			return_cell = &(cells[rand() % 16384]);
-		} while (!return_cell->getAccessible());
-		return return_cell;
+			return in;
+		}
 	}
-	else
+	std::string s = "";
+	char x = '\0';
+	char y = '\0';
+	for (int i = 0; i < in.size(); i++)
 	{
-		return &(cells[index]);
+		if (!isdigit(in[i]))
+		{
+			s += in[i];
+		}
+		else
+		{
+			x = in[i];
+			y = in[i + 1];
+			break;
+		}
 	}
+	x += dir_x;
+	y -= dir_y;
+
+	int i_x = ((int)x) - 48;
+	int i_y = ((int)y) - 48;
+	if (i_x < 0 || i_y < 0 || i_x > perl_limit.x || i_y > perl_limit.y)
+	{
+		return in;
+	}
+
+	s = s + x + y + ".bmp";
+	return s;
 }

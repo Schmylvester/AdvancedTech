@@ -38,18 +38,9 @@ void TerrainGeometry::createVerts(ImageMapInfo h_map_info)
 			vertices[index].position = h_map_info.map[index];
 
 			float r, g, b;
-			if (vertices[index].position.y >= 5)
-			{
-				b = 0;
-				g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				r = 1 - g;
-			}
-			else
-			{
-				b = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-				g = static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 0.4f - b);
-				r = 0.4f - (b + g);
-			}
+			g = vertices[index].position.y / 50;
+			r = 1;// static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (0.7f - g));
+			b = 0.4f - (r + g);
 			vertices[index].colour = XMFLOAT4(r, g, b, 1.0f);
 			earliest_instance[index] = (triangle_count * 3) + 1;
 		}
@@ -102,7 +93,6 @@ void TerrainGeometry::getNormals(int* earliest_instance)
 	XMVECTOR edge2 = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	XMVECTOR normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	int faces = 0;
-	int max_faces = 0;
 	for (int i = 0; i < vertex_count; i++)
 	{
 		for (int j = earliest_instance[i]; j < triangle_count && faces < 6; j++)

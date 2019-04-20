@@ -41,7 +41,7 @@ void Player::update(float dt)
 		m_cam->rotateAround(5);
 	}
 
-	//m_cam->setPos(m_transform.getPos().x, m_transform.getPos().y + 3.5f, m_transform.getPos().z - 8);
+	m_cam->setPos(m_transform.getPos().x, m_transform.getPos().y + 3.5f, m_transform.getPos().z - 8);
 
 	GameObject::update(dt);
 }

@@ -14,6 +14,6 @@ public:
 
 private:
 	Input* m_input;
-	float move_speed = 7;
+	float move_speed = 70;
 };
 

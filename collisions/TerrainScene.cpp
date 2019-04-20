@@ -86,7 +86,7 @@ void TerrainScene::initObjects()
 	m_cam.move(256, 55, 256);
 
 	Terrain* t = new Terrain();
-	t->init("..\\Resources\\HeightMap.bmp", 0, 0, this,
+	t->init("..\\Resources\\Perlin\\11.bmp", 0, 0, this,
 		&m_object_cb, &m_cam, m_device_context, m_cb_per_frame);
 	active_cell = t;
 	terrain.push_back(t);

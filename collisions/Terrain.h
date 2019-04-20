@@ -15,7 +15,8 @@ enum NeighbourID
 	RIGHT,
 	BOTTOM_LEFT,
 	BOTTOM,
-	BOTTOM_RIGHT
+	BOTTOM_RIGHT,
+	None
 };
 
 class NavMesh;
@@ -25,7 +26,7 @@ public:
 	Terrain() = default;
 	~Terrain();
 
-	void init(const char* _name, int x, int y, DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
+	void init(std::string _name, int x, int y, DXApp* _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff);
 	NavMesh* addNavMesh();
 
 	void loadFile();
@@ -33,25 +34,26 @@ public:
 	bool playerInCell(int player_x, int player_z);
 	void addNeighbour(Terrain* t, NeighbourID neighbour_idx);
 	bool isNeighbour(Terrain* t);
-
-	void getIndex(int& x, int& y);
+	void getIndex(int & x, int & y);
 	void createNeighbours(std::vector<Terrain*>* geometry_list, DXApp * _app,
 		CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con,
 		ID3D11Buffer * c_buff);
-	NavigationCell* getCell(int index = -1);
-
 private:
+	std::string getNextFile(std::string in, int dir_x, int dir_y);
+
 	std::thread nav_thread;
+
+	Vector2 perl_limit = Vector2(3, 3);
 	NavMesh * nav_mesh = nullptr;
-	NavigationCell cells[16384];
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	ImageMapInfo h_map_info;
-	const char* file_name;
+	std::string file_name;
 	int grid_x;
 	int grid_y;
 	int width;
 	int length;
 	float terrain_scale = 4;
+	float overlap = 0.01f;
 	bool normals_set = false;
 };
 

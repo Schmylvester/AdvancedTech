@@ -1,6 +1,4 @@
 #include "Sphere.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
 #include "DXApp.h"
 
 void Sphere::init(DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff, GameObject * _owner)
