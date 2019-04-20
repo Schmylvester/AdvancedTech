@@ -112,3 +112,28 @@ void initNavMesh()
 	}
 	gp_nav_mesh->initialised = true;
 }
+
+void initNavMesh(NavMesh* nav_mesh, ImageMapInfo* map)
+{
+	nav_mesh->cell_count = map->img_width * map->img_height;
+	nav_mesh->cells = new NavigationCell[nav_mesh->cell_count];
+	for (int i = 0; i < nav_mesh->cell_count; i++)
+	{
+		int idx = i;
+		nav_mesh->cells[i] =
+			NavigationCell(idx % map->img_width,
+				map->map[idx].y, idx / map->img_width,
+				map->map[idx]);
+	}
+	for (int i = 0; i < nav_mesh->cell_count; i++)
+	{
+		for (int j = i + 1; j < nav_mesh->cell_count; j++)
+		{
+			if (nav_mesh->cells[j].countNeighbours() < 4)
+				nav_mesh->cells[i].checkNeighbour(&nav_mesh->cells[j]);
+			if (nav_mesh->cells[i].countNeighbours() == 4)
+				break;
+		}
+	}
+	nav_mesh->initialised = true;
+}

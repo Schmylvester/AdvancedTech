@@ -34,13 +34,11 @@ void Terrain::init(const char* _name, int x, int y, DXApp * _app, CBPerObject * 
 	m_transform.translate(terrain_scale * grid_x * (width), 0, terrain_scale * grid_y * (length));
 }
 
-void initNavMesh();
-void setPointers(NavMesh* nav_mesh, ImageMapInfo* map);
+void initNavMesh(NavMesh* nav_mesh, ImageMapInfo* map);
 NavMesh* Terrain::addNavMesh()
 {
 	nav_mesh = new NavMesh();
-	setPointers(nav_mesh, &h_map_info);
-	nav_thread = std::thread(initNavMesh);
+	nav_thread = std::thread(initNavMesh, nav_mesh, &h_map_info);
 	return nav_mesh;
 }
 

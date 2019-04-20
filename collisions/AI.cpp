@@ -22,9 +22,6 @@ void AI::update(float dt)
 		}
 		else
 		{
-			Vector3 move_dir = path[path_idx]->getWorldPos() - pos;
-			move_dir.Normalize();
-			m_transform.translate(move_dir * move_speed * dt);
 			if (Vector3::Distance(path[path_idx]->getWorldPos(), pos) < 0.3f)
 			{
 				if (++path_idx >= path.size())
@@ -33,6 +30,13 @@ void AI::update(float dt)
 					path_idx = -1;
 				}
 			}
+			else
+			{
+				Vector3 move_dir = path[path_idx]->getWorldPos() - pos;
+				move_dir.Normalize();
+				m_transform.translate(move_dir * move_speed * dt);
+			}
+
 		}
 	}
 }
@@ -44,7 +48,7 @@ void AI::addMesh(NavMesh * _mesh)
 
 Vector3 AI::getTarget()
 {
-	if(path.size() == 0)
+	if (path.size() == 0)
 	{
 		return Vector3::One * INFINITY;
 	}

@@ -65,6 +65,6 @@ void AIScene::initObjects()
 	ai_target->init(Shape::Cube, this, &m_object_cb,
 		&m_cam, m_device_context, m_cb_per_object);
 	ai_target->getTransform()->translate(50, 0, 50);
-	ai_target->getTransform()->scale(3, 150, 3);
+	ai_target->getTransform()->scale(0, 150, 0);
 	ai->addTargetObject(ai_target);
 }
