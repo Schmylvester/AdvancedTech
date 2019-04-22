@@ -34,7 +34,7 @@ void Terrain::init(std::string _name, int x, int y, DXApp * _app, CBPerObject * 
 	static_cast<TerrainGeometry*>(m_geometry)->createVerts(h_map_info);
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 
-	m_transform.translate(terrain_scale * (grid_x * 0.99f) * width, 0, terrain_scale * (grid_y * 0.99f) * length);
+	m_transform.translate(terrain_scale * grid_x * width, 0, terrain_scale * grid_y * length);
 }
 
 void initNavMesh(NavMesh* nav_mesh, ImageMapInfo* map);
@@ -184,7 +184,9 @@ std::string Terrain::getNextFile(std::string in, int dir_x, int dir_y)
 {
 	for (int i = 0; i < 6; i++)
 	{
-		if (in[i + 15] != "Perlin"[i])
+		char in_c = in[i + 13];
+		char perl_c = "Perlin"[i];
+		if (in[i + 13] != "Perlin"[i])
 		{
 			return in;
 		}

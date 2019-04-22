@@ -16,9 +16,7 @@ public:
 	void getNormals(int* earliest_instance);
 
 
-private:
-	std::string removeFileExt(const char * in);
-	
+private:	
 	const char* file_name;
 	int width;
 	int height;

@@ -91,6 +91,8 @@ void TerrainScene::initObjects()
 	active_cell = t;
 	terrain.push_back(t);
 
+
+
 	player = new Player(&m_input);
 	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(256, 55, 256);

@@ -38,9 +38,9 @@ void TerrainGeometry::createVerts(ImageMapInfo h_map_info)
 			vertices[index].position = h_map_info.map[index];
 
 			float r, g, b;
-			g = vertices[index].position.y / 50;
+			g = 1;// vertices[index].position.y / 50;
 			r = 1;// static_cast <float> (rand()) / static_cast <float> (RAND_MAX / (0.7f - g));
-			b = 0.4f - (r + g);
+			b = 1;// 0.4f - (r + g);
 			vertices[index].colour = XMFLOAT4(r, g, b, 1.0f);
 			earliest_instance[index] = (triangle_count * 3) + 1;
 		}
@@ -126,16 +126,4 @@ void TerrainGeometry::getNormals(int* earliest_instance)
 		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		faces = 0;
 	}
-}
-
-std::string TerrainGeometry::removeFileExt(const char* in)
-{
-	std::string return_string = "";
-
-	for (int i = 0; !(in[i] == '.' && in[i + 1] == 'b') && i < 600; i++)
-	{
-		return_string += in[i];
-	}
-
-	return return_string;
 }
