@@ -11,8 +11,10 @@ public:
 	~Player() = default;
 
 	virtual void update(float dt) override;
+	void setFollowCam() { follow_cam = true; }
 
 private:
+	bool follow_cam = false;
 	Input* m_input;
 	float move_speed = 70;
 };

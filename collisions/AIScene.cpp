@@ -20,7 +20,7 @@ void AIScene::updateScene(float dt)
 
 void AIScene::drawScene(float dt)
 {
-	float bg_colour[4]{ 0.0f, 0.0f, 0.0f, 1.0f };
+	float bg_colour[4]{ 1.0f, 1.0f, 1.0f, 1.0f };
 	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
 	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -58,13 +58,13 @@ void AIScene::initObjects()
 		&m_cam, m_device_context, m_cb_per_object);
 	ai->addMesh(mesh);
 
-	ai->getTransform()->translate(50, 0, 50);
+	ai->getTransform()->translate(50, 0, 40);
 	ai->getTransform()->scale(0, 150, 0);
 
 	ai_target = new GameObject();
 	ai_target->init(Shape::Cube, this, &m_object_cb,
 		&m_cam, m_device_context, m_cb_per_object);
-	ai_target->getTransform()->translate(50, 0, 50);
+	ai_target->getTransform()->translate(50, 0, 40);
 	ai_target->getTransform()->scale(0, 150, 0);
 	ai->addTargetObject(ai_target);
 }
