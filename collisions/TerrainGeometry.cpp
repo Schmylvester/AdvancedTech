@@ -84,6 +84,7 @@ void TerrainGeometry::createVerts(ImageMapInfo h_map_info)
 		}
 	}
 	getNormals(earliest_instance);
+	delete[] earliest_instance;
 }
 
 void TerrainGeometry::getNormals(int* earliest_instance)

@@ -5,7 +5,7 @@
 
 Geometry::~Geometry()
 {
-	//Memory::SafeDeleteArr(indices);
+	Memory::SafeDeleteArr(indices);
 	Memory::SafeDeleteArr(vertices);
 }
 
