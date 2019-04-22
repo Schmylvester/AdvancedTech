@@ -34,7 +34,7 @@ void Terrain::init(std::string _name, int x, int y, DXApp * _app, CBPerObject * 
 	static_cast<TerrainGeometry*>(m_geometry)->createVerts(h_map_info);
 	m_geometry->init(_app, _cb, cam, dev_con, c_buff, this);
 
-	m_transform.translate(terrain_scale * grid_x * width, 0, terrain_scale * grid_y * length);
+	m_transform.translate(terrain_scale * (grid_x * 0.98) * width, 0, terrain_scale * (grid_y * 0.98) * length);
 }
 
 void initNavMesh(NavMesh* nav_mesh, ImageMapInfo* map);
@@ -59,7 +59,8 @@ void Terrain::loadFile()
 
 	if (file_ptr == nullptr)
 	{
-		errorBox("Bad job with that file");
+		std::string err = "Bad job with that file: " + file_name;
+		errorBox(err.c_str());
 		return;
 	}
 
@@ -133,19 +134,19 @@ void Terrain::createNeighbours(std::vector<Terrain*>* geometry_list, DXApp * _ap
 	if (neighbours[TOP_LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(getNextFile(file_name, -1, 1), grid_x - 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, -1, -1), grid_x - 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(getNextFile(file_name, 0, 1), grid_x, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 0, -1), grid_x, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[TOP_RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(getNextFile(file_name, 1, 1), grid_x + 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 1, -1), grid_x + 1, grid_y + 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[LEFT] == nullptr)
@@ -163,19 +164,19 @@ void Terrain::createNeighbours(std::vector<Terrain*>* geometry_list, DXApp * _ap
 	if (neighbours[BOTTOM_LEFT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(getNextFile(file_name, -1, -1), grid_x - 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, -1, 1), grid_x - 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(getNextFile(file_name, 0, -1), grid_x, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 0, 1), grid_x, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 	if (neighbours[BOTTOM_RIGHT] == nullptr)
 	{
 		geometry_list->push_back(new Terrain());
-		geometry_list->back()->init(getNextFile(file_name, 1, -1), grid_x + 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
+		geometry_list->back()->init(getNextFile(file_name, 1, 1), grid_x + 1, grid_y - 1, _app, _cb, cam, dev_con, c_buff);
 		Terrain* t = static_cast<Terrain*>(geometry_list->back());
 	}
 }
@@ -184,8 +185,6 @@ std::string Terrain::getNextFile(std::string in, int dir_x, int dir_y)
 {
 	for (int i = 0; i < 6; i++)
 	{
-		char in_c = in[i + 13];
-		char perl_c = "Perlin"[i];
 		if (in[i + 13] != "Perlin"[i])
 		{
 			return in;
@@ -196,7 +195,10 @@ std::string Terrain::getNextFile(std::string in, int dir_x, int dir_y)
 	char y = '\0';
 	for (int i = 0; i < in.size(); i++)
 	{
-		if (!isdigit(in[i]))
+		if (!(isdigit(in[i]) || in[i] == 'A'
+			|| in[i] == 'B' || in[i] == 'C'
+			|| in[i] == 'D' || in[i] == 'E'
+			|| in[i] == 'F'))
 		{
 			s += in[i];
 		}
@@ -208,14 +210,21 @@ std::string Terrain::getNextFile(std::string in, int dir_x, int dir_y)
 		}
 	}
 	x += dir_x;
-	y -= dir_y;
+	y += dir_y;
 
-	int i_x = ((int)x) - 48;
-	int i_y = ((int)y) - 48;
-	if (i_x < 0 || i_y < 0 || i_x > perl_limit.x || i_y > perl_limit.y)
+	if (x < 48 || y < 48 || x > perl_limit_x || y > perl_limit_y)
 	{
 		return in;
 	}
+
+	if (x == ':')
+		x = 'A';
+	if (x == '@')
+		x = '9';
+	if (y == ':')
+		y = 'A';
+	if (y == '@')
+		y = '9';
 
 	s = s + x + y + ".bmp";
 	return s;

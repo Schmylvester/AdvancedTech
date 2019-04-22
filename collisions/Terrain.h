@@ -43,7 +43,8 @@ private:
 
 	std::thread nav_thread;
 
-	Vector2 perl_limit = Vector2(3, 3);
+	char perl_limit_x = 'F';
+	char perl_limit_y = 'F';
 	NavMesh * nav_mesh = nullptr;
 	Terrain * neighbours[8]{ nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	ImageMapInfo h_map_info;
