@@ -128,4 +128,5 @@ void TerrainGeometry::getNormals(int* earliest_instance)
 		normalSum = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 		faces = 0;
 	}
+	return;
 }

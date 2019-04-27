@@ -5,8 +5,16 @@
 
 Geometry::~Geometry()
 {
-	Memory::SafeDeleteArr(indices);
-	Memory::SafeDeleteArr(vertices);
+	if (indices)
+	{
+		delete[] indices;
+		indices = nullptr;
+	}
+	if (vertices)
+	{
+		delete[] vertices;
+		vertices = nullptr;
+	}
 }
 
 void Geometry::init(DXApp * _app, CBPerObject * _cb, Camera * cam,

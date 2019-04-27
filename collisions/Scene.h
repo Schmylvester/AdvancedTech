@@ -9,7 +9,7 @@ public:
 	~Scene();
 
 	virtual void updateScene(float dt) override;
-	virtual void drawScene(float dt) override;
+	virtual void drawObjects(float dt) override;
 	virtual void initObjects() override;
 
 private:

@@ -16,7 +16,11 @@ bool DXApp::initDirectX3D(HINSTANCE h_instance)
 	hr = m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&back_buffer);
 
 	hr = m_device->CreateRenderTargetView(back_buffer, NULL, &m_rt_view);
-	Memory::SafeRelease(back_buffer);
+	if (back_buffer)
+	{
+		back_buffer->Release();
+		back_buffer = nullptr;
+	}
 
 	m_device_context->OMSetRenderTargets(1, &m_rt_view, NULL);
 
@@ -134,6 +138,15 @@ bool DXApp::initRasteriserStates()
 	return true;
 }
 
+void DXApp::release(IUnknown * obj)
+{
+	if (obj != nullptr)
+	{
+		obj->Release();
+		obj = nullptr;
+	}
+}
+
 bool DXApp::createConstBuffer()
 {
 	D3D11_BUFFER_DESC const_buffer_desc;
@@ -222,40 +235,59 @@ bool DXApp::init(HINSTANCE h_instance, int n_show_cmd)
 
 void DXApp::releaseObjects()
 {
-	Memory::SafeRelease(m_swap_chain);
-	Memory::SafeRelease(m_device_context);
-	Memory::SafeRelease(m_device);
-	Memory::SafeRelease(m_rt_view);
-	Memory::SafeRelease(m_v_shader);
-	Memory::SafeRelease(m_p_shader);
-	Memory::SafeRelease(m_v_buffer);
-	Memory::SafeRelease(m_p_buffer);
-	Memory::SafeRelease(m_vertex_layout);
-	Memory::SafeRelease(m_depth_stcl_view);
-	Memory::SafeRelease(m_depth_stcl_buffer);
-	Memory::SafeRelease(m_cb_per_object);
-	Memory::SafeRelease(m_cb_per_frame);
-	Memory::SafeRelease(m_wireframe);
-	Memory::SafeRelease(m_cube_texture);
-	Memory::SafeRelease(m_cubes_text_sampler_state);
-	Memory::SafeRelease(m_texture);
+	release(m_swap_chain);
+	release(m_device_context);
+	release(m_device);
+	release(m_rt_view);
+	release(m_v_shader);
+	release(m_p_shader);
+	release(m_v_buffer);
+	release(m_p_buffer);
+	release(m_vertex_layout);
+	release(m_depth_stcl_view);
+	release(m_depth_stcl_buffer);
+	release(m_cb_per_object);
+	release(m_cb_per_frame);
+	release(m_wireframe);
+	release(m_cube_texture);
+	release(m_cubes_text_sampler_state);
+	release(m_texture);
 	for (GameObject* g : external_geometry)
 	{
-		Memory::SafeDelete(g);
+		if (g)
+		{
+			delete g;
+			g = nullptr;
+		}
 	}
 	for (IndexBuffer& ib : m_geo_index_buffers)
 	{
-		Memory::SafeRelease(ib.buffer);
+		release(ib.buffer);
 	}
 	for (VertexBuffer& vb : m_vertex_buffers)
 	{
-		Memory::SafeRelease(vb.buffer);
+		release(vb.buffer);
 	}
 	while (loader_thread_active) {}
 	if (loader_thread.joinable())
 	{
 		loader_thread.detach();
 	}
+}
+
+void DXApp::drawScene(float dt)
+{
+	float bg_colour[4]{ 0.0f, 0.0f, 0.0f, 1.0f };
+	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
+	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	m_frame_cb.light = m_light;
+	m_device_context->UpdateSubresource(m_cb_per_frame, 0, NULL, &m_frame_cb, 0, 0);
+	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
+
+	drawObjects(dt);
+
+	m_swap_chain->Present(0, 0);
 }
 
 bool DXApp::initScene()

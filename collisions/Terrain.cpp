@@ -15,8 +15,16 @@ Terrain::~Terrain()
 	{
 		nav_thread.join();
 	}
-	Memory::SafeDelete(nav_mesh);
-	Memory::SafeDeleteArr(h_map_info.map);
+	if (nav_mesh)
+	{
+		delete nav_mesh;
+		nav_mesh = nullptr;
+	}
+	if (h_map_info.map)
+	{
+		delete h_map_info.map;
+		h_map_info.map = nullptr;
+	}
 }
 
 void Terrain::init(std::string _name, int x, int y, DXApp * _app, CBPerObject * _cb, Camera * cam,
@@ -92,8 +100,11 @@ void Terrain::loadFile()
 			colour_idx += 3;
 		}
 	}
-
-	Memory::SafeDeleteArr(bitmap_image);
+	if (bitmap_image)
+	{
+		delete bitmap_image;
+		bitmap_image = nullptr;
+	}
 }
 
 bool Terrain::playerInCell(int player_x, int player_z)

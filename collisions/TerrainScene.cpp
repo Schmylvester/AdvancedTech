@@ -10,9 +10,17 @@ void setPointers(void* _geometry, DXApp* _app,
 
 TerrainScene::~TerrainScene()
 {
-	Memory::SafeDelete(player);
+	if (player)
+	{
+		delete player;
+		player = nullptr;
+	}
 	for (GameObject* ter : terrain)
-		Memory::SafeDelete(ter);
+		if (ter)
+		{
+			delete ter;
+			ter = nullptr;
+		}
 }
 
 void TerrainScene::updateScene(float dt)
@@ -52,16 +60,8 @@ void TerrainScene::updateScene(float dt)
 	}
 }
 
-void TerrainScene::drawScene(float dt)
+void TerrainScene::drawObjects(float dt)
 {
-	float bg_colour[4]{ 0.0f, 0.0f, 0.0f, 1.0f };
-	m_device_context->ClearRenderTargetView(m_rt_view, bg_colour);
-	m_device_context->ClearDepthStencilView(m_depth_stcl_view, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-	m_frame_cb.light = m_light;
-	m_device_context->UpdateSubresource(m_cb_per_frame, 0, NULL, &m_frame_cb, 0, 0);
-	m_device_context->PSSetConstantBuffers(0, 1, &m_cb_per_frame);
-
 	if (!loader_thread_active)
 	{
 		for (GameObject* ter : terrain)
@@ -77,7 +77,6 @@ void TerrainScene::drawScene(float dt)
 		}
 	}
 	//player->draw();
-	m_swap_chain->Present(0, 0);
 }
 
 void TerrainScene::initObjects()

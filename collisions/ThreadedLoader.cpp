@@ -33,7 +33,11 @@ void loadUnloadObjects()
 	for (int i = 0; i < 10000; i++)
 	{
 		int delete_index = rand() % objects->size();
-		Memory::SafeDelete((*objects)[delete_index]);
+		if ((*objects)[delete_index])
+		{
+			delete (*objects)[delete_index];
+			(*objects)[delete_index] = nullptr;
+		}
 		objects->erase(objects->begin() + delete_index);
 		int shape = rand() % 2;
 		objects->push_back(new GameObject());
@@ -65,7 +69,11 @@ void loadTerrain(Terrain* player_loc)
 		Terrain* t = static_cast<Terrain*>((*objects)[i]);
 		if (!player_loc->isNeighbour(t) && t != player_loc)
 		{
-			Memory::SafeDelete((*objects)[i]);
+			if ((*objects)[i])
+			{
+				delete (*objects)[i];
+				(*objects)[i] = nullptr;
+			}
 		}
 	}
 	for (int i = count - 1; i >= 0; i--)
@@ -95,7 +103,7 @@ void initNavMesh()
 	for (int i = 0; i < gp_nav_mesh->cell_count; i++)
 	{
 		int idx = i;
-		gp_nav_mesh->cells[i] = 
+		gp_nav_mesh->cells[i] =
 			NavigationCell(idx % gp_map->img_width,
 				gp_map->map[idx].y, idx / gp_map->img_width,
 				gp_map->map[idx]);

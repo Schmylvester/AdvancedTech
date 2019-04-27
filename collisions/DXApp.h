@@ -48,7 +48,8 @@ public:
 protected:
 	virtual void updateScene(float dt) = 0;
 	virtual void initObjects() = 0;
-	virtual void drawScene(float dt) = 0;
+	virtual void drawObjects(float dt) = 0;
+	void drawScene(float dt);
 
 	float getRatio() { return (float)m_client_width / m_client_height; }
 
@@ -60,6 +61,7 @@ protected:
 	bool createDepthStencil();
 	bool createConstBuffer();
 	bool initRasteriserStates();
+	void release(IUnknown* obj);
 
 	void toggleWireframe();
 

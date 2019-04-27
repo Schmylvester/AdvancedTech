@@ -5,7 +5,11 @@
 
 GameObject::~GameObject()
 {
-	Memory::SafeDelete(m_geometry);
+	if (m_geometry)
+	{
+		delete m_geometry;
+		m_geometry = nullptr;
+	}
 }
 
 void GameObject::init(Shape shape, DXApp * _app, CBPerObject * _cb, Camera * cam, ID3D11DeviceContext * dev_con, ID3D11Buffer * c_buff)

@@ -8,6 +8,7 @@ int WINAPI WinMain(__in HINSTANCE h_instance, __in_opt HINSTANCE h_prev_instance
 	srand(time(NULL));
 	TerrainScene app;
 	//AIScene app;
+	//Scene app;
 	if (!app.init(h_instance, n_show_cmd))
 	{
 		return 1;

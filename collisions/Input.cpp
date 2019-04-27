@@ -4,7 +4,11 @@ Input::~Input()
 {
 	DIMouse->Unacquire();
 	DIKeyboard->Unacquire();
-	Memory::SafeRelease(direct_input);
+	if (direct_input)
+	{
+		direct_input->Release();
+		direct_input = nullptr;
+	}
 }
 
 bool Input::init(HINSTANCE h_instance, HWND hwnd)
