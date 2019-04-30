@@ -25,10 +25,16 @@
     <Filter Include="Source Files\Scenes">
       <UniqueIdentifier>{3ae22d63-be65-4f5e-9e57-e556ba48da54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Navigation">
+    <Filter Include="Header Files\AI">
+      <UniqueIdentifier>{87a211ae-4248-48d9-8f15-4c824306a70f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\AI\Navigation">
       <UniqueIdentifier>{81e514a5-6e14-4fe3-bf7f-3505fc5b684e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Navigation">
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{aaf89c9b-de77-4efc-a091-1925013f3644}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI\Navigation">
       <UniqueIdentifier>{3243f3c8-aa55-4d29-ae22-732977c6bbc8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -97,16 +103,22 @@
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Pathfinder.cpp">
-      <Filter>Source Files\Navigation</Filter>
+      <Filter>Source Files\AI\Navigation</Filter>
     </ClCompile>
     <ClCompile Include="NavigationCell.cpp">
-      <Filter>Source Files\Navigation</Filter>
+      <Filter>Source Files\AI\Navigation</Filter>
     </ClCompile>
     <ClCompile Include="AI.cpp">
-      <Filter>Source Files\Navigation</Filter>
+      <Filter>Source Files\AI\Navigation</Filter>
     </ClCompile>
     <ClCompile Include="NavMesh.cpp">
-      <Filter>Source Files\Navigation</Filter>
+      <Filter>Source Files\AI\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="Boid.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="BoidScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -186,16 +198,22 @@
       <Filter>Header Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="NavigationCell.h">
-      <Filter>Header Files\Navigation</Filter>
+      <Filter>Header Files\AI\Navigation</Filter>
     </ClInclude>
     <ClInclude Include="Pathfinder.h">
-      <Filter>Header Files\Navigation</Filter>
+      <Filter>Header Files\AI\Navigation</Filter>
     </ClInclude>
     <ClInclude Include="NavMesh.h">
-      <Filter>Header Files\Navigation</Filter>
+      <Filter>Header Files\AI\Navigation</Filter>
     </ClInclude>
     <ClInclude Include="AI.h">
-      <Filter>Header Files\Navigation</Filter>
+      <Filter>Header Files\AI\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Boid.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="BoidScene.h">
+      <Filter>Header Files\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
