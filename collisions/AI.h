@@ -20,4 +20,7 @@ private:
 	std::vector<NavigationCell*> path;
 	GameObject* target_object = nullptr;
 	float move_speed = 75;
+	
+	Vector2 last_seen;
+	float time_since_seen;
 };
