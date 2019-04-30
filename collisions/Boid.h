@@ -10,22 +10,27 @@ public:
 	~Boid() = default;
 
 	virtual void update(float dt) override;
+	Vector3 getDirection();
 
 private:
 	void fly(float dt);
 	void constrain();
 	void constrainAxis(float& pos, float& direction, float& constraint);
-	std::vector<Boid*> getLocalFlockmates();
+	void constrainSpeed(float& speed);
 
-	int m_local_count = 3;
-	float m_separation;
-	float m_alignment;
-	float m_cohesion;
+	bool validBoid(Boid* other);
+	float alignment_force = 1.0f;
+	void alignment();
+	float separation_force = 14.0f;
+	void separation();
+	float cohesion_force = 14.0f;
+	void cohesion();
 
+	float m_acceleration = 50;
 	Vector3 m_constraints;
-	Vector3 m_move_direction;
-	float m_move_speed = 0;
-	float m_max_speed = 12;
-	float m_acceleration = 6;
+	Vector3 m_move_force;
+	Vector3 m_move_acceleration;
+	float m_view_radius = 1;
+	float m_max_speed = 6;
 	std::vector<Boid*>* m_all_boids = nullptr;
 };
