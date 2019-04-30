@@ -3,6 +3,7 @@
 
 class Terrain;
 class Player;
+class Boid;
 class TerrainScene : public DXApp
 {
 public:
@@ -15,6 +16,9 @@ public:
 	void setGridNeighbours();
 
 private:
+	int boid_count = 100;
+	std::vector<Boid*> m_boids;
+	Vector3 m_player_last_pos;
 	Terrain * active_cell;
 	Player * player;
 	std::vector<Terrain*> terrain;

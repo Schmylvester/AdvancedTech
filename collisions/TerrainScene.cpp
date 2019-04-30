@@ -2,6 +2,7 @@
 #include "GeometryIncludes.h"
 #include "Terrain.h"
 #include "Player.h"
+#include "Boid.h"
 
 void loadTerrain(Terrain* player_loc);
 void setPointers(void* _geometry, DXApp* _app,
@@ -21,12 +22,30 @@ TerrainScene::~TerrainScene()
 			delete ter;
 			ter = nullptr;
 		}
+	for (Boid* boid : m_boids)
+	{
+		if (boid != nullptr)
+		{
+			delete boid;
+			boid = nullptr;
+		}
+	}
+	m_boids.clear();
 }
 
 void TerrainScene::updateScene(float dt)
 {
 	m_input.detectInput();
 	player->update(dt);
+	Vector3 player_pos = player->getTransform()->getPos();
+	if (player_pos != m_player_last_pos)
+	{
+		for (Boid* boid : m_boids)
+		{
+			boid->setMid(Vector3(player_pos.x, boid->getMid().y, player_pos.z));
+		}
+		m_player_last_pos = player_pos;
+	}
 
 	float player_x = player->getTransform()->getPos().x;
 	float player_z = player->getTransform()->getPos().z;
@@ -53,6 +72,21 @@ void TerrainScene::updateScene(float dt)
 		}
 	}
 
+	for (Boid* boid : m_boids)
+	{
+		if (boid != nullptr)
+		{
+			boid->takeSnap();
+		}
+	}
+	for (Boid* boid : m_boids)
+	{
+		if (boid != nullptr)
+		{
+			boid->update(dt);
+		}
+	}
+
 	if (loader_thread.joinable() && !loader_thread_active)
 	{
 		loader_thread.join();
@@ -76,13 +110,21 @@ void TerrainScene::drawObjects(float dt)
 			ter->draw();
 		}
 	}
+
+	for (Boid* boid : m_boids)
+	{
+		if (boid != nullptr)
+		{
+			boid->draw();
+		}
+	}
 	//player->draw();
 }
 
 void TerrainScene::initObjects()
 {
 	m_cam = Camera(getRatio());
-	m_cam.move(256, 55, 256);
+	m_cam.move(256, 55, 206);
 
 	Terrain* t = new Terrain();
 	t->init("..\\Resources\\Perlin\\89.bmp", 0, 0, this,
@@ -90,12 +132,22 @@ void TerrainScene::initObjects()
 	active_cell = t;
 	terrain.push_back(t);
 
-
+	for (int i = 0; i < boid_count; i++)
+	{
+		m_boids.push_back(new Boid(&m_boids, Vector3(256, 55, 206), 40.0f, false));
+		m_boids.back()->init(Shape::Pyramid, this, &m_object_cb,
+			&m_cam, m_device_context, m_cb_per_object);
+		m_boids.back()->getTransform()->translate(
+			256 + ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 50)) - 25), 55,
+			256 + ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 50)) - 25));
+		m_boids.back()->getTransform()->scale(0.03f, 0.03f, 0.03f);
+	}
 
 	player = new Player(&m_input);
 	player->init(Shape::Cube, this, &m_object_cb, &m_cam, m_device_context, m_cb_per_object);
 	player->getTransform()->translate(256, 55, 256);
 	player->setFollowCam();
+	m_player_last_pos = player->getTransform()->getPos();
 
 	setPointers(&(terrain), this, &m_object_cb, &m_device_context, &m_cb_per_object, &m_cam);
 

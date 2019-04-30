@@ -38,7 +38,7 @@ void BoidScene::initObjects()
 	m_cam.setPos(0, 0, -35);
 	for (int i = 0; i < boid_count; i++)
 	{
-		boids.push_back(new Boid(&boids));
+		boids.push_back(new Boid(&boids, Vector3::Zero, 20.0f, true));
 		boids.back()->init(Shape::Pyramid, this, &m_object_cb,
 			&m_cam, m_device_context, m_cb_per_object);
 		boids.back()->getTransform()->translate(
