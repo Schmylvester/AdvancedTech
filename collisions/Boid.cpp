@@ -8,8 +8,6 @@ Boid::Boid(std::vector<Boid*>* _all_boids)
 	float y = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 20)) - 10;
 	float z = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 20)) - 10;
 	m_move_acceleration = Vector3(x, y, z);
-	m_move_acceleration.Normalize();
-	m_move_acceleration *= 8;
 }
 
 void Boid::update(float dt)
@@ -18,21 +16,27 @@ void Boid::update(float dt)
 	constrain();
 }
 
-Vector3 Boid::getDirection()
+void Boid::takeSnap()
 {
-	return m_move_force;
+	m_boid_snapshot = m_move_force;
+}
+
+Vector3 Boid::getSnap()
+{
+	return m_boid_snapshot;
 }
 
 void Boid::fly(float dt)
 {
 	m_move_acceleration.Normalize();
-	m_move_acceleration *= m_acceleration;
-	m_move_force += m_move_acceleration * dt;
+	m_move_force += m_move_acceleration;
 	m_transform.translate(m_move_force * dt);
 	m_move_acceleration = Vector3::Zero;
 	alignment();
 	separation();
 	cohesion();
+	m_move_acceleration.Normalize();
+	m_move_acceleration *= 10;
 }
 
 void Boid::constrain()
@@ -42,6 +46,10 @@ void Boid::constrain()
 	constrainAxis(pos.y, m_move_force.y, m_constraints.y);
 	constrainAxis(pos.z, m_move_force.z, m_constraints.z);
 	m_transform.setPosition(pos);
+
+	Vector3 dir = m_move_force;
+	dir.Normalize();
+	m_move_force = dir * m_max_speed;
 }
 
 void Boid::constrainAxis(float & pos, float & direction, float & constraint)
@@ -74,9 +82,20 @@ bool Boid::validBoid(Boid * other)
 	{
 		Vector3 my_pos = m_transform.getPos();
 		Vector3 their_pos = other->getTransform()->getPos();
-		if (Vector3::Distance(my_pos, their_pos) < m_view_radius)
+
+		float dist = Vector3::Distance(my_pos, their_pos);
+		if (dist < m_view_radius && dist > m_min_dist)
 		{
-			return true;
+			Vector3 direction_to_them = their_pos - my_pos;
+			Vector3 facing_direction = m_move_force;
+			direction_to_them.Normalize();
+			facing_direction.Normalize();
+			float angle_to_them = direction_to_them.Dot(facing_direction);
+
+			if (abs(angle_to_them) < m_view_angle)
+			{
+				return true;
+			}
 		}
 	}
 	return false;
@@ -91,14 +110,13 @@ void Boid::alignment()
 		Boid* boid = (*m_all_boids)[i];
 		if (validBoid(boid))
 		{
-			steering += boid->getDirection();
+			steering += boid->getSnap();
 			count++;
 		}
 	}
 	if (count > 0)
 	{
 		steering /= count;
-		steering -= m_move_force;
 		m_move_acceleration += (steering * alignment_force);
 	}
 }
@@ -114,7 +132,7 @@ void Boid::separation()
 		{
 			Vector3 opposite_direction = m_transform.getPos() - boid->getTransform()->getPos();
 			float dist = Vector3::Distance(m_transform.getPos(), boid->getTransform()->getPos());
-			if(dist > 0)
+			if (dist > 0)
 				opposite_direction /= dist;
 			desired_direction += opposite_direction;
 			count++;
@@ -137,6 +155,7 @@ void Boid::cohesion()
 		Boid* boid = (*m_all_boids)[i];
 		if (validBoid(boid))
 		{
+
 			direction += boid->getTransform()->getPos();
 			count++;
 		}

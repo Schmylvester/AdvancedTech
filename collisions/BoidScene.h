@@ -13,6 +13,6 @@ public:
 	virtual void drawObjects(float dt) override;
 
 private:
-	int boid_count = 60;
+	int boid_count = 100;
 	std::vector<Boid*> boids;
 };

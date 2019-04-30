@@ -20,6 +20,13 @@ void BoidScene::updateScene(float dt)
 	{
 		if (boid != nullptr)
 		{
+			boid->takeSnap();
+		}
+	}
+	for (Boid* boid : boids)
+	{
+		if (boid != nullptr)
+		{
 			boid->update(dt);
 		}
 	}
@@ -35,8 +42,8 @@ void BoidScene::initObjects()
 		boids.back()->init(Shape::Pyramid, this, &m_object_cb,
 			&m_cam, m_device_context, m_cb_per_object);
 		boids.back()->getTransform()->translate(
-			(static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 50)) - 25, 
-			(static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 50)) - 25, 
+			(static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 50)) - 25,
+			(static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 50)) - 25,
 			(static_cast <float> (rand()) / static_cast <float> (RAND_MAX / 50)) - 25);
 	}
 }

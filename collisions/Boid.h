@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "GameObject.h"
+#include "Transform.h"
 
 class Boid : public GameObject
 {
@@ -10,8 +11,9 @@ public:
 	~Boid() = default;
 
 	virtual void update(float dt) override;
-	Vector3 getDirection();
 
+	void takeSnap();
+	Vector3 getSnap();
 private:
 	void fly(float dt);
 	void constrain();
@@ -19,18 +21,20 @@ private:
 	void constrainSpeed(float& speed);
 
 	bool validBoid(Boid* other);
-	float alignment_force = 1.0f;
+	float alignment_force = 1.8f;
 	void alignment();
-	float separation_force = 14.0f;
+	float separation_force = 3.8f;
 	void separation();
-	float cohesion_force = 14.0f;
+	float cohesion_force = 1.0f;
 	void cohesion();
 
-	float m_acceleration = 50;
 	Vector3 m_constraints;
 	Vector3 m_move_force;
 	Vector3 m_move_acceleration;
-	float m_view_radius = 1;
+	float m_view_radius = 5;
+	float m_min_dist = 3;
+	float m_view_angle = 0.3f;
 	float m_max_speed = 6;
 	std::vector<Boid*>* m_all_boids = nullptr;
+	Vector3 m_boid_snapshot;
 };
